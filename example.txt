@@ -1,0 +1,137 @@
+Объявление переменных и констант :
+signed a;
+unsigned a;
+signed a <- 1 + 2;
+unsigned a <- 1u;
+const signed a <- 1;
+const unsigned a <- 12u - 3u;
+
+элемент карты мира???????( я так понял cell - это тип):
+cell a; 
+cell a <- (top,nright);
+const cell a <- top;
+
+Объявление двумерных матриц :
+matrix signed a;
+matrix signed a(3,3);
+
+Доступ:
+b <- a(0,1);
+
+Применяется преобразование типов между signed и unsigned???????:
+-
+a<- kletka + 1
+
+Арифметическиe бинарныe операторы:
+b <- 1 + 2;
+b <- 1 - 2;
+b <- 1 / 2;
+b <- 1 * 2;
+b <- 1 % 2;
+
+matrix  a(3,3);
+matrix signed b(3,3);
+matrix signed c(3,3);
+c <- a - b;
+c <- a + b;
+...
+
+cell a <- (top,nright);
+cell b <- (top,nright);
+a <- a - b;(исключающее или)
+
+Операторы сравнения:
+с <- a (>|<|=) b; (если да 1, иначе 0)
+есть ли не равно?
+
+matrix signed a;
+#a;
+matrix cell a;
+#a;
+
+Объединение предложений в группы с помощью скобок ( ):
+a <- (1 + 2) * 3;
+
+
+Цикл:
+x <- 4;
+a <- 0;
+testrep(x > 0)(
+	a <- a + 2;
+	x <- x - 1;
+)
+
+Условие:
+x <- 4;
+a <- 0;
+i <- 0;
+testrep(x > 0){
+	a <- a + 2;
+	x <- x - 1;
+	testonce(x > 0){
+		i <- i + 1;
+	}
+}
+
+Операторы управления роботом:
+class robot{
+...
+}
+
+robot a;
+a.move(top);(и там примерно уменьшение вертикальной координаты на один)
+matrix cell b(5,5);
+b <- xray; в языке
+ 
+Описатель функции:
+
+
+func sum (int a, int b)(
+	c <- a + b;
+)
+
+a <- 6;
+b <- 5;
+c <- call sum(a b);
+
+--------------------------------------------------------------------------
+рекурсионный алгоритм факториала
+func factorial(int n){
+	signed result;
+	testonce (n = 1){
+		result <- 1;
+	}
+	testonce (n > 1){
+		x = n - 1;
+		result <- factorial(x) * n;
+	}
+	result;
+}		
+
+func main(
+	signed a;
+	a <- call factorial(5);
+)
+--------------------------------------------------------------------------
+сортровка
+matrix signed a[n][n];
+
+signed length <- n * n;
+signed i <- 0;
+signed j <- 0;
+signed tmp;
+testrep(i < length){
+	testrep(j < length - i - 1){
+		testonce( a[j/n][j%n] > a[(j+1)/n][(j+1)%n]){
+			tmp <- a[j/n][j%n];
+			a[j/n][j%n] <- a[(j+1)/n][(j+1)%n];
+			a[(j+1)/n][(j+1)%n] <- a[j/n][j%n];
+		}
+	}
+}
+-----------------------------------------------------------------------------
+
+
+
+
+ 
