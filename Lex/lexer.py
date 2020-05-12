@@ -36,7 +36,7 @@ class Lexer(object):
     tokens = ['VAR', 'DECIMAL', 'ASSIGNMENT','PLUS', 'MINUS', 'STAR', 'PROCENT', 'DIV',
               'LBRACKET', 'RBRACKET', 'LQBRACKET', 'RQBRACKET',
               'LESS', 'GREATER', 'EQ', 'NOTEQ', 'COMMA',
-              'COMMENT', 'SEMICOLON', 'NEWLINE'] + list(reserved.values())
+              'SHARP', 'SEMICOLON', 'NEWLINE'] + list(reserved.values())
 
     t_ASSIGNMENT = r'\<\-'
     t_PLUS = r'\+'
@@ -54,7 +54,7 @@ class Lexer(object):
     t_EQ = r'\='
     t_NOTEQ = r'\<\>'
     t_SEMICOLON = r'\;'
-    t_COMMENT = r'\#'
+    t_SHARP = r'\#'
 
     t_ignore = ' \t'
 
@@ -85,6 +85,7 @@ class Lexer(object):
 
 # data = '''
 # cell a <- (top, down);
+#
 #
 # '''
 #

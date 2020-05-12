@@ -1,0 +1,2204 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    BOTTOM
+    CALL
+    FUNC
+    LQBRACKET
+    RQBRACKET
+    TESTONCE
+    TESTREP
+    XRAY
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> state
+Rule 2     state -> state statement
+Rule 3     state -> statement
+Rule 4     statement -> declaration SEMICOLON NEWLINE
+Rule 5     statement -> assignment SEMICOLON NEWLINE
+Rule 6     statement -> compare SEMICOLON NEWLINE
+Rule 7     statement -> prison SEMICOLON NEWLINE
+Rule 8     declaration -> type VAR
+Rule 9     declaration -> type VAR ASSIGNMENT expression
+Rule 10    declaration -> CONST type VAR ASSIGNMENT expression
+Rule 11    declaration -> MATRIX type VAR
+Rule 12    declaration -> MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
+Rule 13    type -> SIGNED
+Rule 14    type -> UNSIGNED
+Rule 15    type -> CELL
+Rule 16    expression -> math_expression
+Rule 17    expression -> const
+Rule 18    expression -> variable
+Rule 19    expression -> side
+Rule 20    expression -> compare
+Rule 21    expression -> prison
+Rule 22    expression -> LBRACKET expression RBRACKET
+Rule 23    side -> LBRACKET directions RBRACKET
+Rule 24    directions -> direction COMMA directions
+Rule 25    directions -> direction
+Rule 26    direction -> TOP
+Rule 27    direction -> NTOP
+Rule 28    direction -> LEFT
+Rule 29    direction -> NLEFT
+Rule 30    direction -> RIGHT
+Rule 31    direction -> NRIGHT
+Rule 32    direction -> DOWN
+Rule 33    direction -> NDOWN
+Rule 34    compare -> expression EQ expression
+Rule 35    compare -> expression LESS expression
+Rule 36    compare -> expression GREATER expression
+Rule 37    compare -> expression NOTEQ expression
+Rule 38    math_expression -> expression PLUS expression
+Rule 39    math_expression -> expression MINUS expression
+Rule 40    math_expression -> expression STAR expression
+Rule 41    math_expression -> expression DIV expression
+Rule 42    math_expression -> expression PROCENT expression
+Rule 43    const -> DECIMAL
+Rule 44    variable -> VAR
+Rule 45    variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+Rule 46    index -> UNSIGNED
+Rule 47    prison -> SHARP variable
+Rule 48    assignment -> variable ASSIGNMENT expression
+
+Terminals, with rules where they appear
+
+ASSIGNMENT           : 9 10 48
+BOTTOM               : 
+CALL                 : 
+CELL                 : 15
+COMMA                : 12 24
+CONST                : 10
+DECIMAL              : 43
+DIV                  : 41
+DOWN                 : 32
+EQ                   : 34
+FUNC                 : 
+GREATER              : 36
+LBRACKET             : 12 22 23 45 45
+LEFT                 : 28
+LESS                 : 35
+LQBRACKET            : 
+MATRIX               : 11 12
+MINUS                : 39
+NDOWN                : 33
+NEWLINE              : 4 5 6 7
+NLEFT                : 29
+NOTEQ                : 37
+NRIGHT               : 31
+NTOP                 : 27
+PLUS                 : 38
+PROCENT              : 42
+RBRACKET             : 12 22 23 45 45
+RIGHT                : 30
+RQBRACKET            : 
+SEMICOLON            : 4 5 6 7
+SHARP                : 47
+SIGNED               : 13
+STAR                 : 40
+TESTONCE             : 
+TESTREP              : 
+TOP                  : 26
+UNSIGNED             : 14 46
+VAR                  : 8 9 10 11 12 44 45
+XRAY                 : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+assignment           : 5
+compare              : 6 20
+const                : 17
+declaration          : 4
+direction            : 24 25
+directions           : 23 24
+expression           : 9 10 12 12 22 34 34 35 35 36 36 37 37 38 38 39 39 40 40 41 41 42 42 48
+index                : 45 45
+math_expression      : 16
+prison               : 7 21
+program              : 0
+side                 : 19
+state                : 1 2
+statement            : 2 3
+type                 : 8 9 10 11 12
+variable             : 18 47 48
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . state
+    (2) state -> . state statement
+    (3) state -> . statement
+    (4) statement -> . declaration SEMICOLON NEWLINE
+    (5) statement -> . assignment SEMICOLON NEWLINE
+    (6) statement -> . compare SEMICOLON NEWLINE
+    (7) statement -> . prison SEMICOLON NEWLINE
+    (8) declaration -> . type VAR
+    (9) declaration -> . type VAR ASSIGNMENT expression
+    (10) declaration -> . CONST type VAR ASSIGNMENT expression
+    (11) declaration -> . MATRIX type VAR
+    (12) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
+    (48) assignment -> . variable ASSIGNMENT expression
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+    (13) type -> . SIGNED
+    (14) type -> . UNSIGNED
+    (15) type -> . CELL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (23) side -> . LBRACKET directions RBRACKET
+
+    CONST           shift and go to state 11
+    MATRIX          shift and go to state 12
+    SHARP           shift and go to state 15
+    SIGNED          shift and go to state 16
+    UNSIGNED        shift and go to state 17
+    CELL            shift and go to state 18
+    VAR             shift and go to state 9
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+
+    program                        shift and go to state 1
+    state                          shift and go to state 2
+    statement                      shift and go to state 3
+    declaration                    shift and go to state 4
+    assignment                     shift and go to state 5
+    compare                        shift and go to state 6
+    prison                         shift and go to state 7
+    type                           shift and go to state 8
+    expression                     shift and go to state 10
+    variable                       shift and go to state 14
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    side                           shift and go to state 21
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> state .
+    (2) state -> state . statement
+    (4) statement -> . declaration SEMICOLON NEWLINE
+    (5) statement -> . assignment SEMICOLON NEWLINE
+    (6) statement -> . compare SEMICOLON NEWLINE
+    (7) statement -> . prison SEMICOLON NEWLINE
+    (8) declaration -> . type VAR
+    (9) declaration -> . type VAR ASSIGNMENT expression
+    (10) declaration -> . CONST type VAR ASSIGNMENT expression
+    (11) declaration -> . MATRIX type VAR
+    (12) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
+    (48) assignment -> . variable ASSIGNMENT expression
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+    (13) type -> . SIGNED
+    (14) type -> . UNSIGNED
+    (15) type -> . CELL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (23) side -> . LBRACKET directions RBRACKET
+
+    $end            reduce using rule 1 (program -> state .)
+    CONST           shift and go to state 11
+    MATRIX          shift and go to state 12
+    SHARP           shift and go to state 15
+    SIGNED          shift and go to state 16
+    UNSIGNED        shift and go to state 17
+    CELL            shift and go to state 18
+    VAR             shift and go to state 9
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+
+    statement                      shift and go to state 23
+    declaration                    shift and go to state 4
+    assignment                     shift and go to state 5
+    compare                        shift and go to state 6
+    prison                         shift and go to state 7
+    type                           shift and go to state 8
+    expression                     shift and go to state 10
+    variable                       shift and go to state 14
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    side                           shift and go to state 21
+
+state 3
+
+    (3) state -> statement .
+
+    CONST           reduce using rule 3 (state -> statement .)
+    MATRIX          reduce using rule 3 (state -> statement .)
+    SHARP           reduce using rule 3 (state -> statement .)
+    SIGNED          reduce using rule 3 (state -> statement .)
+    UNSIGNED        reduce using rule 3 (state -> statement .)
+    CELL            reduce using rule 3 (state -> statement .)
+    VAR             reduce using rule 3 (state -> statement .)
+    LBRACKET        reduce using rule 3 (state -> statement .)
+    DECIMAL         reduce using rule 3 (state -> statement .)
+    $end            reduce using rule 3 (state -> statement .)
+
+
+state 4
+
+    (4) statement -> declaration . SEMICOLON NEWLINE
+
+    SEMICOLON       shift and go to state 24
+
+
+state 5
+
+    (5) statement -> assignment . SEMICOLON NEWLINE
+
+    SEMICOLON       shift and go to state 25
+
+
+state 6
+
+    (6) statement -> compare . SEMICOLON NEWLINE
+    (20) expression -> compare .
+
+    SEMICOLON       shift and go to state 26
+    EQ              reduce using rule 20 (expression -> compare .)
+    LESS            reduce using rule 20 (expression -> compare .)
+    GREATER         reduce using rule 20 (expression -> compare .)
+    NOTEQ           reduce using rule 20 (expression -> compare .)
+    PLUS            reduce using rule 20 (expression -> compare .)
+    MINUS           reduce using rule 20 (expression -> compare .)
+    STAR            reduce using rule 20 (expression -> compare .)
+    DIV             reduce using rule 20 (expression -> compare .)
+    PROCENT         reduce using rule 20 (expression -> compare .)
+
+
+state 7
+
+    (7) statement -> prison . SEMICOLON NEWLINE
+    (21) expression -> prison .
+
+    SEMICOLON       shift and go to state 27
+    EQ              reduce using rule 21 (expression -> prison .)
+    LESS            reduce using rule 21 (expression -> prison .)
+    GREATER         reduce using rule 21 (expression -> prison .)
+    NOTEQ           reduce using rule 21 (expression -> prison .)
+    PLUS            reduce using rule 21 (expression -> prison .)
+    MINUS           reduce using rule 21 (expression -> prison .)
+    STAR            reduce using rule 21 (expression -> prison .)
+    DIV             reduce using rule 21 (expression -> prison .)
+    PROCENT         reduce using rule 21 (expression -> prison .)
+
+
+state 8
+
+    (8) declaration -> type . VAR
+    (9) declaration -> type . VAR ASSIGNMENT expression
+
+    VAR             shift and go to state 28
+
+
+state 9
+
+    (44) variable -> VAR .
+    (45) variable -> VAR . LBRACKET index RBRACKET LBRACKET index RBRACKET
+
+    ASSIGNMENT      reduce using rule 44 (variable -> VAR .)
+    EQ              reduce using rule 44 (variable -> VAR .)
+    LESS            reduce using rule 44 (variable -> VAR .)
+    GREATER         reduce using rule 44 (variable -> VAR .)
+    NOTEQ           reduce using rule 44 (variable -> VAR .)
+    PLUS            reduce using rule 44 (variable -> VAR .)
+    MINUS           reduce using rule 44 (variable -> VAR .)
+    STAR            reduce using rule 44 (variable -> VAR .)
+    DIV             reduce using rule 44 (variable -> VAR .)
+    PROCENT         reduce using rule 44 (variable -> VAR .)
+    RBRACKET        reduce using rule 44 (variable -> VAR .)
+    SEMICOLON       reduce using rule 44 (variable -> VAR .)
+    COMMA           reduce using rule 44 (variable -> VAR .)
+    LBRACKET        shift and go to state 29
+
+
+state 10
+
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+
+
+state 11
+
+    (10) declaration -> CONST . type VAR ASSIGNMENT expression
+    (13) type -> . SIGNED
+    (14) type -> . UNSIGNED
+    (15) type -> . CELL
+
+    SIGNED          shift and go to state 16
+    UNSIGNED        shift and go to state 17
+    CELL            shift and go to state 18
+
+    type                           shift and go to state 39
+
+state 12
+
+    (11) declaration -> MATRIX . type VAR
+    (12) declaration -> MATRIX . type VAR LBRACKET expression COMMA expression RBRACKET
+    (13) type -> . SIGNED
+    (14) type -> . UNSIGNED
+    (15) type -> . CELL
+
+    SIGNED          shift and go to state 16
+    UNSIGNED        shift and go to state 17
+    CELL            shift and go to state 18
+
+    type                           shift and go to state 40
+
+state 13
+
+    (22) expression -> LBRACKET . expression RBRACKET
+    (23) side -> LBRACKET . directions RBRACKET
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (24) directions -> . direction COMMA directions
+    (25) directions -> . direction
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+    (26) direction -> . TOP
+    (27) direction -> . NTOP
+    (28) direction -> . LEFT
+    (29) direction -> . NLEFT
+    (30) direction -> . RIGHT
+    (31) direction -> . NRIGHT
+    (32) direction -> . DOWN
+    (33) direction -> . NDOWN
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+    TOP             shift and go to state 47
+    NTOP            shift and go to state 48
+    LEFT            shift and go to state 49
+    NLEFT           shift and go to state 50
+    RIGHT           shift and go to state 51
+    NRIGHT          shift and go to state 52
+    DOWN            shift and go to state 53
+    NDOWN           shift and go to state 54
+
+    expression                     shift and go to state 41
+    directions                     shift and go to state 42
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+    direction                      shift and go to state 46
+
+state 14
+
+    (48) assignment -> variable . ASSIGNMENT expression
+    (18) expression -> variable .
+
+    ASSIGNMENT      shift and go to state 55
+    EQ              reduce using rule 18 (expression -> variable .)
+    LESS            reduce using rule 18 (expression -> variable .)
+    GREATER         reduce using rule 18 (expression -> variable .)
+    NOTEQ           reduce using rule 18 (expression -> variable .)
+    PLUS            reduce using rule 18 (expression -> variable .)
+    MINUS           reduce using rule 18 (expression -> variable .)
+    STAR            reduce using rule 18 (expression -> variable .)
+    DIV             reduce using rule 18 (expression -> variable .)
+    PROCENT         reduce using rule 18 (expression -> variable .)
+
+
+state 15
+
+    (47) prison -> SHARP . variable
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+
+    VAR             shift and go to state 9
+
+    variable                       shift and go to state 56
+
+state 16
+
+    (13) type -> SIGNED .
+
+    VAR             reduce using rule 13 (type -> SIGNED .)
+
+
+state 17
+
+    (14) type -> UNSIGNED .
+
+    VAR             reduce using rule 14 (type -> UNSIGNED .)
+
+
+state 18
+
+    (15) type -> CELL .
+
+    VAR             reduce using rule 15 (type -> CELL .)
+
+
+state 19
+
+    (16) expression -> math_expression .
+
+    EQ              reduce using rule 16 (expression -> math_expression .)
+    LESS            reduce using rule 16 (expression -> math_expression .)
+    GREATER         reduce using rule 16 (expression -> math_expression .)
+    NOTEQ           reduce using rule 16 (expression -> math_expression .)
+    PLUS            reduce using rule 16 (expression -> math_expression .)
+    MINUS           reduce using rule 16 (expression -> math_expression .)
+    STAR            reduce using rule 16 (expression -> math_expression .)
+    DIV             reduce using rule 16 (expression -> math_expression .)
+    PROCENT         reduce using rule 16 (expression -> math_expression .)
+    RBRACKET        reduce using rule 16 (expression -> math_expression .)
+    SEMICOLON       reduce using rule 16 (expression -> math_expression .)
+    COMMA           reduce using rule 16 (expression -> math_expression .)
+
+
+state 20
+
+    (17) expression -> const .
+
+    EQ              reduce using rule 17 (expression -> const .)
+    LESS            reduce using rule 17 (expression -> const .)
+    GREATER         reduce using rule 17 (expression -> const .)
+    NOTEQ           reduce using rule 17 (expression -> const .)
+    PLUS            reduce using rule 17 (expression -> const .)
+    MINUS           reduce using rule 17 (expression -> const .)
+    STAR            reduce using rule 17 (expression -> const .)
+    DIV             reduce using rule 17 (expression -> const .)
+    PROCENT         reduce using rule 17 (expression -> const .)
+    RBRACKET        reduce using rule 17 (expression -> const .)
+    SEMICOLON       reduce using rule 17 (expression -> const .)
+    COMMA           reduce using rule 17 (expression -> const .)
+
+
+state 21
+
+    (19) expression -> side .
+
+    EQ              reduce using rule 19 (expression -> side .)
+    LESS            reduce using rule 19 (expression -> side .)
+    GREATER         reduce using rule 19 (expression -> side .)
+    NOTEQ           reduce using rule 19 (expression -> side .)
+    PLUS            reduce using rule 19 (expression -> side .)
+    MINUS           reduce using rule 19 (expression -> side .)
+    STAR            reduce using rule 19 (expression -> side .)
+    DIV             reduce using rule 19 (expression -> side .)
+    PROCENT         reduce using rule 19 (expression -> side .)
+    RBRACKET        reduce using rule 19 (expression -> side .)
+    SEMICOLON       reduce using rule 19 (expression -> side .)
+    COMMA           reduce using rule 19 (expression -> side .)
+
+
+state 22
+
+    (43) const -> DECIMAL .
+
+    EQ              reduce using rule 43 (const -> DECIMAL .)
+    LESS            reduce using rule 43 (const -> DECIMAL .)
+    GREATER         reduce using rule 43 (const -> DECIMAL .)
+    NOTEQ           reduce using rule 43 (const -> DECIMAL .)
+    PLUS            reduce using rule 43 (const -> DECIMAL .)
+    MINUS           reduce using rule 43 (const -> DECIMAL .)
+    STAR            reduce using rule 43 (const -> DECIMAL .)
+    DIV             reduce using rule 43 (const -> DECIMAL .)
+    PROCENT         reduce using rule 43 (const -> DECIMAL .)
+    RBRACKET        reduce using rule 43 (const -> DECIMAL .)
+    SEMICOLON       reduce using rule 43 (const -> DECIMAL .)
+    COMMA           reduce using rule 43 (const -> DECIMAL .)
+
+
+state 23
+
+    (2) state -> state statement .
+
+    CONST           reduce using rule 2 (state -> state statement .)
+    MATRIX          reduce using rule 2 (state -> state statement .)
+    SHARP           reduce using rule 2 (state -> state statement .)
+    SIGNED          reduce using rule 2 (state -> state statement .)
+    UNSIGNED        reduce using rule 2 (state -> state statement .)
+    CELL            reduce using rule 2 (state -> state statement .)
+    VAR             reduce using rule 2 (state -> state statement .)
+    LBRACKET        reduce using rule 2 (state -> state statement .)
+    DECIMAL         reduce using rule 2 (state -> state statement .)
+    $end            reduce using rule 2 (state -> state statement .)
+
+
+state 24
+
+    (4) statement -> declaration SEMICOLON . NEWLINE
+
+    NEWLINE         shift and go to state 57
+
+
+state 25
+
+    (5) statement -> assignment SEMICOLON . NEWLINE
+
+    NEWLINE         shift and go to state 58
+
+
+state 26
+
+    (6) statement -> compare SEMICOLON . NEWLINE
+
+    NEWLINE         shift and go to state 59
+
+
+state 27
+
+    (7) statement -> prison SEMICOLON . NEWLINE
+
+    NEWLINE         shift and go to state 60
+
+
+state 28
+
+    (8) declaration -> type VAR .
+    (9) declaration -> type VAR . ASSIGNMENT expression
+
+    SEMICOLON       reduce using rule 8 (declaration -> type VAR .)
+    ASSIGNMENT      shift and go to state 61
+
+
+state 29
+
+    (45) variable -> VAR LBRACKET . index RBRACKET LBRACKET index RBRACKET
+    (46) index -> . UNSIGNED
+
+    UNSIGNED        shift and go to state 63
+
+    index                          shift and go to state 62
+
+state 30
+
+    (34) compare -> expression EQ . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 64
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 31
+
+    (35) compare -> expression LESS . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 65
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 32
+
+    (36) compare -> expression GREATER . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 66
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 33
+
+    (37) compare -> expression NOTEQ . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 67
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 34
+
+    (38) math_expression -> expression PLUS . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 68
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 35
+
+    (39) math_expression -> expression MINUS . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 69
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 36
+
+    (40) math_expression -> expression STAR . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 70
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 37
+
+    (41) math_expression -> expression DIV . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 71
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 38
+
+    (42) math_expression -> expression PROCENT . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 72
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 39
+
+    (10) declaration -> CONST type . VAR ASSIGNMENT expression
+
+    VAR             shift and go to state 73
+
+
+state 40
+
+    (11) declaration -> MATRIX type . VAR
+    (12) declaration -> MATRIX type . VAR LBRACKET expression COMMA expression RBRACKET
+
+    VAR             shift and go to state 74
+
+
+state 41
+
+    (22) expression -> LBRACKET expression . RBRACKET
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+    RBRACKET        shift and go to state 75
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+
+state 42
+
+    (23) side -> LBRACKET directions . RBRACKET
+
+    RBRACKET        shift and go to state 76
+
+
+state 43
+
+    (18) expression -> variable .
+
+    RBRACKET        reduce using rule 18 (expression -> variable .)
+    PLUS            reduce using rule 18 (expression -> variable .)
+    MINUS           reduce using rule 18 (expression -> variable .)
+    STAR            reduce using rule 18 (expression -> variable .)
+    DIV             reduce using rule 18 (expression -> variable .)
+    PROCENT         reduce using rule 18 (expression -> variable .)
+    EQ              reduce using rule 18 (expression -> variable .)
+    LESS            reduce using rule 18 (expression -> variable .)
+    GREATER         reduce using rule 18 (expression -> variable .)
+    NOTEQ           reduce using rule 18 (expression -> variable .)
+    SEMICOLON       reduce using rule 18 (expression -> variable .)
+    COMMA           reduce using rule 18 (expression -> variable .)
+
+
+state 44
+
+    (20) expression -> compare .
+
+    RBRACKET        reduce using rule 20 (expression -> compare .)
+    PLUS            reduce using rule 20 (expression -> compare .)
+    MINUS           reduce using rule 20 (expression -> compare .)
+    STAR            reduce using rule 20 (expression -> compare .)
+    DIV             reduce using rule 20 (expression -> compare .)
+    PROCENT         reduce using rule 20 (expression -> compare .)
+    EQ              reduce using rule 20 (expression -> compare .)
+    LESS            reduce using rule 20 (expression -> compare .)
+    GREATER         reduce using rule 20 (expression -> compare .)
+    NOTEQ           reduce using rule 20 (expression -> compare .)
+    SEMICOLON       reduce using rule 20 (expression -> compare .)
+    COMMA           reduce using rule 20 (expression -> compare .)
+
+
+state 45
+
+    (21) expression -> prison .
+
+    RBRACKET        reduce using rule 21 (expression -> prison .)
+    PLUS            reduce using rule 21 (expression -> prison .)
+    MINUS           reduce using rule 21 (expression -> prison .)
+    STAR            reduce using rule 21 (expression -> prison .)
+    DIV             reduce using rule 21 (expression -> prison .)
+    PROCENT         reduce using rule 21 (expression -> prison .)
+    EQ              reduce using rule 21 (expression -> prison .)
+    LESS            reduce using rule 21 (expression -> prison .)
+    GREATER         reduce using rule 21 (expression -> prison .)
+    NOTEQ           reduce using rule 21 (expression -> prison .)
+    SEMICOLON       reduce using rule 21 (expression -> prison .)
+    COMMA           reduce using rule 21 (expression -> prison .)
+
+
+state 46
+
+    (24) directions -> direction . COMMA directions
+    (25) directions -> direction .
+
+    COMMA           shift and go to state 77
+    RBRACKET        reduce using rule 25 (directions -> direction .)
+
+
+state 47
+
+    (26) direction -> TOP .
+
+    COMMA           reduce using rule 26 (direction -> TOP .)
+    RBRACKET        reduce using rule 26 (direction -> TOP .)
+
+
+state 48
+
+    (27) direction -> NTOP .
+
+    COMMA           reduce using rule 27 (direction -> NTOP .)
+    RBRACKET        reduce using rule 27 (direction -> NTOP .)
+
+
+state 49
+
+    (28) direction -> LEFT .
+
+    COMMA           reduce using rule 28 (direction -> LEFT .)
+    RBRACKET        reduce using rule 28 (direction -> LEFT .)
+
+
+state 50
+
+    (29) direction -> NLEFT .
+
+    COMMA           reduce using rule 29 (direction -> NLEFT .)
+    RBRACKET        reduce using rule 29 (direction -> NLEFT .)
+
+
+state 51
+
+    (30) direction -> RIGHT .
+
+    COMMA           reduce using rule 30 (direction -> RIGHT .)
+    RBRACKET        reduce using rule 30 (direction -> RIGHT .)
+
+
+state 52
+
+    (31) direction -> NRIGHT .
+
+    COMMA           reduce using rule 31 (direction -> NRIGHT .)
+    RBRACKET        reduce using rule 31 (direction -> NRIGHT .)
+
+
+state 53
+
+    (32) direction -> DOWN .
+
+    COMMA           reduce using rule 32 (direction -> DOWN .)
+    RBRACKET        reduce using rule 32 (direction -> DOWN .)
+
+
+state 54
+
+    (33) direction -> NDOWN .
+
+    COMMA           reduce using rule 33 (direction -> NDOWN .)
+    RBRACKET        reduce using rule 33 (direction -> NDOWN .)
+
+
+state 55
+
+    (48) assignment -> variable ASSIGNMENT . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    variable                       shift and go to state 43
+    expression                     shift and go to state 78
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 56
+
+    (47) prison -> SHARP variable .
+
+    SEMICOLON       reduce using rule 47 (prison -> SHARP variable .)
+    EQ              reduce using rule 47 (prison -> SHARP variable .)
+    LESS            reduce using rule 47 (prison -> SHARP variable .)
+    GREATER         reduce using rule 47 (prison -> SHARP variable .)
+    NOTEQ           reduce using rule 47 (prison -> SHARP variable .)
+    PLUS            reduce using rule 47 (prison -> SHARP variable .)
+    MINUS           reduce using rule 47 (prison -> SHARP variable .)
+    STAR            reduce using rule 47 (prison -> SHARP variable .)
+    DIV             reduce using rule 47 (prison -> SHARP variable .)
+    PROCENT         reduce using rule 47 (prison -> SHARP variable .)
+    RBRACKET        reduce using rule 47 (prison -> SHARP variable .)
+    COMMA           reduce using rule 47 (prison -> SHARP variable .)
+
+
+state 57
+
+    (4) statement -> declaration SEMICOLON NEWLINE .
+
+    CONST           reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    MATRIX          reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    SHARP           reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    SIGNED          reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    UNSIGNED        reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    CELL            reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    VAR             reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    LBRACKET        reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    DECIMAL         reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+    $end            reduce using rule 4 (statement -> declaration SEMICOLON NEWLINE .)
+
+
+state 58
+
+    (5) statement -> assignment SEMICOLON NEWLINE .
+
+    CONST           reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    MATRIX          reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    SHARP           reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    SIGNED          reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    UNSIGNED        reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    CELL            reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    VAR             reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    LBRACKET        reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    DECIMAL         reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+    $end            reduce using rule 5 (statement -> assignment SEMICOLON NEWLINE .)
+
+
+state 59
+
+    (6) statement -> compare SEMICOLON NEWLINE .
+
+    CONST           reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    MATRIX          reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    SHARP           reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    SIGNED          reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    UNSIGNED        reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    CELL            reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    VAR             reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    LBRACKET        reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    DECIMAL         reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+    $end            reduce using rule 6 (statement -> compare SEMICOLON NEWLINE .)
+
+
+state 60
+
+    (7) statement -> prison SEMICOLON NEWLINE .
+
+    CONST           reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    MATRIX          reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    SHARP           reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    SIGNED          reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    UNSIGNED        reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    CELL            reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    VAR             reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    LBRACKET        reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    DECIMAL         reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+    $end            reduce using rule 7 (statement -> prison SEMICOLON NEWLINE .)
+
+
+state 61
+
+    (9) declaration -> type VAR ASSIGNMENT . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 79
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 62
+
+    (45) variable -> VAR LBRACKET index . RBRACKET LBRACKET index RBRACKET
+
+    RBRACKET        shift and go to state 80
+
+
+state 63
+
+    (46) index -> UNSIGNED .
+
+    RBRACKET        reduce using rule 46 (index -> UNSIGNED .)
+
+
+state 64
+
+    (34) compare -> expression EQ expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    SEMICOLON       reduce using rule 34 (compare -> expression EQ expression .)
+    RBRACKET        reduce using rule 34 (compare -> expression EQ expression .)
+    COMMA           reduce using rule 34 (compare -> expression EQ expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 34 (compare -> expression EQ expression .) ]
+  ! LESS            [ reduce using rule 34 (compare -> expression EQ expression .) ]
+  ! GREATER         [ reduce using rule 34 (compare -> expression EQ expression .) ]
+  ! NOTEQ           [ reduce using rule 34 (compare -> expression EQ expression .) ]
+  ! PLUS            [ reduce using rule 34 (compare -> expression EQ expression .) ]
+  ! MINUS           [ reduce using rule 34 (compare -> expression EQ expression .) ]
+  ! STAR            [ reduce using rule 34 (compare -> expression EQ expression .) ]
+  ! DIV             [ reduce using rule 34 (compare -> expression EQ expression .) ]
+  ! PROCENT         [ reduce using rule 34 (compare -> expression EQ expression .) ]
+
+
+state 65
+
+    (35) compare -> expression LESS expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    SEMICOLON       reduce using rule 35 (compare -> expression LESS expression .)
+    RBRACKET        reduce using rule 35 (compare -> expression LESS expression .)
+    COMMA           reduce using rule 35 (compare -> expression LESS expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 35 (compare -> expression LESS expression .) ]
+  ! LESS            [ reduce using rule 35 (compare -> expression LESS expression .) ]
+  ! GREATER         [ reduce using rule 35 (compare -> expression LESS expression .) ]
+  ! NOTEQ           [ reduce using rule 35 (compare -> expression LESS expression .) ]
+  ! PLUS            [ reduce using rule 35 (compare -> expression LESS expression .) ]
+  ! MINUS           [ reduce using rule 35 (compare -> expression LESS expression .) ]
+  ! STAR            [ reduce using rule 35 (compare -> expression LESS expression .) ]
+  ! DIV             [ reduce using rule 35 (compare -> expression LESS expression .) ]
+  ! PROCENT         [ reduce using rule 35 (compare -> expression LESS expression .) ]
+
+
+state 66
+
+    (36) compare -> expression GREATER expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    SEMICOLON       reduce using rule 36 (compare -> expression GREATER expression .)
+    RBRACKET        reduce using rule 36 (compare -> expression GREATER expression .)
+    COMMA           reduce using rule 36 (compare -> expression GREATER expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+  ! LESS            [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+  ! GREATER         [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+  ! NOTEQ           [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+  ! PLUS            [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+  ! MINUS           [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+  ! STAR            [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+  ! DIV             [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+  ! PROCENT         [ reduce using rule 36 (compare -> expression GREATER expression .) ]
+
+
+state 67
+
+    (37) compare -> expression NOTEQ expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    SEMICOLON       reduce using rule 37 (compare -> expression NOTEQ expression .)
+    RBRACKET        reduce using rule 37 (compare -> expression NOTEQ expression .)
+    COMMA           reduce using rule 37 (compare -> expression NOTEQ expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+  ! LESS            [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+  ! GREATER         [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+  ! NOTEQ           [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+  ! PLUS            [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+  ! MINUS           [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+  ! STAR            [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+  ! DIV             [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+  ! PROCENT         [ reduce using rule 37 (compare -> expression NOTEQ expression .) ]
+
+
+state 68
+
+    (38) math_expression -> expression PLUS expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    RBRACKET        reduce using rule 38 (math_expression -> expression PLUS expression .)
+    SEMICOLON       reduce using rule 38 (math_expression -> expression PLUS expression .)
+    COMMA           reduce using rule 38 (math_expression -> expression PLUS expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+  ! LESS            [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+  ! GREATER         [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+  ! NOTEQ           [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+  ! PLUS            [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+  ! MINUS           [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+  ! STAR            [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+  ! DIV             [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+  ! PROCENT         [ reduce using rule 38 (math_expression -> expression PLUS expression .) ]
+
+
+state 69
+
+    (39) math_expression -> expression MINUS expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    RBRACKET        reduce using rule 39 (math_expression -> expression MINUS expression .)
+    SEMICOLON       reduce using rule 39 (math_expression -> expression MINUS expression .)
+    COMMA           reduce using rule 39 (math_expression -> expression MINUS expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+  ! LESS            [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+  ! GREATER         [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+  ! NOTEQ           [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+  ! PLUS            [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+  ! MINUS           [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+  ! STAR            [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+  ! DIV             [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+  ! PROCENT         [ reduce using rule 39 (math_expression -> expression MINUS expression .) ]
+
+
+state 70
+
+    (40) math_expression -> expression STAR expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    RBRACKET        reduce using rule 40 (math_expression -> expression STAR expression .)
+    SEMICOLON       reduce using rule 40 (math_expression -> expression STAR expression .)
+    COMMA           reduce using rule 40 (math_expression -> expression STAR expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+  ! LESS            [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+  ! GREATER         [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+  ! NOTEQ           [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+  ! PLUS            [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+  ! MINUS           [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+  ! STAR            [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+  ! DIV             [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+  ! PROCENT         [ reduce using rule 40 (math_expression -> expression STAR expression .) ]
+
+
+state 71
+
+    (41) math_expression -> expression DIV expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    RBRACKET        reduce using rule 41 (math_expression -> expression DIV expression .)
+    SEMICOLON       reduce using rule 41 (math_expression -> expression DIV expression .)
+    COMMA           reduce using rule 41 (math_expression -> expression DIV expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+  ! LESS            [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+  ! GREATER         [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+  ! NOTEQ           [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+  ! PLUS            [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+  ! MINUS           [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+  ! STAR            [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+  ! DIV             [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+  ! PROCENT         [ reduce using rule 41 (math_expression -> expression DIV expression .) ]
+
+
+state 72
+
+    (42) math_expression -> expression PROCENT expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for STAR resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for PROCENT resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for LESS resolved as shift
+  ! shift/reduce conflict for GREATER resolved as shift
+  ! shift/reduce conflict for NOTEQ resolved as shift
+    RBRACKET        reduce using rule 42 (math_expression -> expression PROCENT expression .)
+    SEMICOLON       reduce using rule 42 (math_expression -> expression PROCENT expression .)
+    COMMA           reduce using rule 42 (math_expression -> expression PROCENT expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+  ! EQ              [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+  ! LESS            [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+  ! GREATER         [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+  ! NOTEQ           [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+  ! PLUS            [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+  ! MINUS           [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+  ! STAR            [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+  ! DIV             [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+  ! PROCENT         [ reduce using rule 42 (math_expression -> expression PROCENT expression .) ]
+
+
+state 73
+
+    (10) declaration -> CONST type VAR . ASSIGNMENT expression
+
+    ASSIGNMENT      shift and go to state 81
+
+
+state 74
+
+    (11) declaration -> MATRIX type VAR .
+    (12) declaration -> MATRIX type VAR . LBRACKET expression COMMA expression RBRACKET
+
+    SEMICOLON       reduce using rule 11 (declaration -> MATRIX type VAR .)
+    LBRACKET        shift and go to state 82
+
+
+state 75
+
+    (22) expression -> LBRACKET expression RBRACKET .
+
+    EQ              reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    LESS            reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    GREATER         reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    NOTEQ           reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    PLUS            reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    MINUS           reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    STAR            reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    DIV             reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    PROCENT         reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    RBRACKET        reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    SEMICOLON       reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+    COMMA           reduce using rule 22 (expression -> LBRACKET expression RBRACKET .)
+
+
+state 76
+
+    (23) side -> LBRACKET directions RBRACKET .
+
+    EQ              reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    LESS            reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    GREATER         reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    NOTEQ           reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    PLUS            reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    MINUS           reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    STAR            reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    DIV             reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    PROCENT         reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    RBRACKET        reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    SEMICOLON       reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+    COMMA           reduce using rule 23 (side -> LBRACKET directions RBRACKET .)
+
+
+state 77
+
+    (24) directions -> direction COMMA . directions
+    (24) directions -> . direction COMMA directions
+    (25) directions -> . direction
+    (26) direction -> . TOP
+    (27) direction -> . NTOP
+    (28) direction -> . LEFT
+    (29) direction -> . NLEFT
+    (30) direction -> . RIGHT
+    (31) direction -> . NRIGHT
+    (32) direction -> . DOWN
+    (33) direction -> . NDOWN
+
+    TOP             shift and go to state 47
+    NTOP            shift and go to state 48
+    LEFT            shift and go to state 49
+    NLEFT           shift and go to state 50
+    RIGHT           shift and go to state 51
+    NRIGHT          shift and go to state 52
+    DOWN            shift and go to state 53
+    NDOWN           shift and go to state 54
+
+    direction                      shift and go to state 46
+    directions                     shift and go to state 83
+
+state 78
+
+    (48) assignment -> variable ASSIGNMENT expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+    SEMICOLON       reduce using rule 48 (assignment -> variable ASSIGNMENT expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+
+state 79
+
+    (9) declaration -> type VAR ASSIGNMENT expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+    SEMICOLON       reduce using rule 9 (declaration -> type VAR ASSIGNMENT expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+
+state 80
+
+    (45) variable -> VAR LBRACKET index RBRACKET . LBRACKET index RBRACKET
+
+    LBRACKET        shift and go to state 84
+
+
+state 81
+
+    (10) declaration -> CONST type VAR ASSIGNMENT . expression
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 85
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 82
+
+    (12) declaration -> MATRIX type VAR LBRACKET . expression COMMA expression RBRACKET
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 86
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 83
+
+    (24) directions -> direction COMMA directions .
+
+    RBRACKET        reduce using rule 24 (directions -> direction COMMA directions .)
+
+
+state 84
+
+    (45) variable -> VAR LBRACKET index RBRACKET LBRACKET . index RBRACKET
+    (46) index -> . UNSIGNED
+
+    UNSIGNED        shift and go to state 63
+
+    index                          shift and go to state 87
+
+state 85
+
+    (10) declaration -> CONST type VAR ASSIGNMENT expression .
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+    SEMICOLON       reduce using rule 10 (declaration -> CONST type VAR ASSIGNMENT expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+
+state 86
+
+    (12) declaration -> MATRIX type VAR LBRACKET expression . COMMA expression RBRACKET
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+    COMMA           shift and go to state 88
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+
+state 87
+
+    (45) variable -> VAR LBRACKET index RBRACKET LBRACKET index . RBRACKET
+
+    RBRACKET        shift and go to state 89
+
+
+state 88
+
+    (12) declaration -> MATRIX type VAR LBRACKET expression COMMA . expression RBRACKET
+    (16) expression -> . math_expression
+    (17) expression -> . const
+    (18) expression -> . variable
+    (19) expression -> . side
+    (20) expression -> . compare
+    (21) expression -> . prison
+    (22) expression -> . LBRACKET expression RBRACKET
+    (38) math_expression -> . expression PLUS expression
+    (39) math_expression -> . expression MINUS expression
+    (40) math_expression -> . expression STAR expression
+    (41) math_expression -> . expression DIV expression
+    (42) math_expression -> . expression PROCENT expression
+    (43) const -> . DECIMAL
+    (44) variable -> . VAR
+    (45) variable -> . VAR LBRACKET index RBRACKET LBRACKET index RBRACKET
+    (23) side -> . LBRACKET directions RBRACKET
+    (34) compare -> . expression EQ expression
+    (35) compare -> . expression LESS expression
+    (36) compare -> . expression GREATER expression
+    (37) compare -> . expression NOTEQ expression
+    (47) prison -> . SHARP variable
+
+    LBRACKET        shift and go to state 13
+    DECIMAL         shift and go to state 22
+    VAR             shift and go to state 9
+    SHARP           shift and go to state 15
+
+    expression                     shift and go to state 90
+    math_expression                shift and go to state 19
+    const                          shift and go to state 20
+    variable                       shift and go to state 43
+    side                           shift and go to state 21
+    compare                        shift and go to state 44
+    prison                         shift and go to state 45
+
+state 89
+
+    (45) variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .
+
+    ASSIGNMENT      reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    EQ              reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    LESS            reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    GREATER         reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    NOTEQ           reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    PLUS            reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    MINUS           reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    STAR            reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    DIV             reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    PROCENT         reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    RBRACKET        reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    SEMICOLON       reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+    COMMA           reduce using rule 45 (variable -> VAR LBRACKET index RBRACKET LBRACKET index RBRACKET .)
+
+
+state 90
+
+    (12) declaration -> MATRIX type VAR LBRACKET expression COMMA expression . RBRACKET
+    (38) math_expression -> expression . PLUS expression
+    (39) math_expression -> expression . MINUS expression
+    (40) math_expression -> expression . STAR expression
+    (41) math_expression -> expression . DIV expression
+    (42) math_expression -> expression . PROCENT expression
+    (34) compare -> expression . EQ expression
+    (35) compare -> expression . LESS expression
+    (36) compare -> expression . GREATER expression
+    (37) compare -> expression . NOTEQ expression
+
+    RBRACKET        shift and go to state 91
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    STAR            shift and go to state 36
+    DIV             shift and go to state 37
+    PROCENT         shift and go to state 38
+    EQ              shift and go to state 30
+    LESS            shift and go to state 31
+    GREATER         shift and go to state 32
+    NOTEQ           shift and go to state 33
+
+
+state 91
+
+    (12) declaration -> MATRIX type VAR LBRACKET expression COMMA expression RBRACKET .
+
+    SEMICOLON       reduce using rule 12 (declaration -> MATRIX type VAR LBRACKET expression COMMA expression RBRACKET .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for PLUS in state 64 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 64 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 64 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 64 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 64 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 64 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 64 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 64 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 64 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 65 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 65 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 65 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 65 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 65 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 65 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 65 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 65 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 65 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 66 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 66 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 66 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 66 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 66 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 66 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 66 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 66 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 66 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 67 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 67 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 67 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 67 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 67 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 67 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 67 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 67 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 67 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 68 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 68 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 68 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 68 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 68 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 68 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 68 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 68 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 68 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 69 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 69 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 69 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 69 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 69 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 69 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 69 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 69 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 69 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 70 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 70 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 70 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 70 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 70 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 70 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 70 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 70 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 70 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 71 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 71 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 71 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 71 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 71 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 71 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 71 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 71 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 71 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 72 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 72 resolved as shift
+WARNING: shift/reduce conflict for STAR in state 72 resolved as shift
+WARNING: shift/reduce conflict for DIV in state 72 resolved as shift
+WARNING: shift/reduce conflict for PROCENT in state 72 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 72 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 72 resolved as shift
+WARNING: shift/reduce conflict for GREATER in state 72 resolved as shift
+WARNING: shift/reduce conflict for NOTEQ in state 72 resolved as shift

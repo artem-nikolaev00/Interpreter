@@ -12,7 +12,7 @@ class Parser():
     def __init__(self):
         self.ok = True
         self.lexer = Lexer()
-        self.parser = yacc.yacc(module=self, optimize=1, debug=False, write_tables=False)
+        self.parser = yacc.yacc(module=self)
 
 
     def parse(self, t):
@@ -35,8 +35,10 @@ class Parser():
             p[0] = Tree('state', children=[p[1], p[2]])
 
     def p_statement(self, p):
-        """statement : declaration SEMICOLON NEWLINE"""
-                    # | assignment SEMICOLON NEWLINE
+        """statement : declaration SEMICOLON NEWLINE
+                     | assignment SEMICOLON NEWLINE
+                     | compare SEMICOLON NEWLINE
+                     | prison SEMICOLON NEWLINE"""
                     # | while SEMICOLON NEWLINE
                     # | if SEMICOLON NEWLINE
                     # | operator SEMICOLON NEWLINE
@@ -81,8 +83,46 @@ class Parser():
     def p_expression(self, p):
         """expression : math_expression
                       | const
-                      | variable"""
-        p[0] = Tree('expression', children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+                      | variable
+                      | side
+                      | compare
+                      | prison
+                      | LBRACKET expression RBRACKET"""
+        if len(p) == 2:
+            p[0] = Tree('expression', children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+        else:
+            p[0] = Tree('brackets', value=p[2], children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
+
+    def p_side(self, p):
+        """side : LBRACKET directions RBRACKET"""
+        p[0] = Tree('diractions', children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
+
+    def p_directions(self, p):
+        """directions : direction COMMA directions
+                    | direction"""
+        if len(p) == 4:
+            p[0] = Tree('directions', children=[p[1], p[3]], lineno=p.lineno(1), lexpos=p.lexpos(1))
+        else:
+            p[0] = Tree('directions', children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+
+    def p_direction(self, p):
+        """direction : TOP
+                    | NTOP
+                    | LEFT
+                    | NLEFT
+                    | RIGHT
+                    | NRIGHT
+                    | DOWN
+                    | NDOWN"""
+        p[0] = Tree('direction', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+
+    def p_compare(self, p):
+        """compare : expression EQ expression
+                    | expression LESS expression
+                    | expression GREATER expression
+                    | expression NOTEQ expression"""
+        p[0] = Tree('bin_op', value=p[2], children=[p[1], p[3]], lineno=p.lineno(2), lexpos=p.lexpos(2))
+
 
     def p_math_expression(self, p):
         """math_expression : expression PLUS expression
@@ -118,7 +158,27 @@ class Parser():
             sys.stderr.write(f'Error\n')
         self.ok = False
 
-data = '''matrix unsigned a(1,1);
+    def p_prison(self, p):
+        """prison : SHARP variable"""
+        p[0] = Tree('prison', value=p[1], children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
+
+    def p_assignment(self, p):
+        """assignment : variable ASSIGNMENT expression"""
+        if len(p) == 4:
+            p[0] = Tree('assignment', value=p[1], children=p[3], lineno=p.lineno(1), lexpos=p.lexpos(1))
+
+data = '''matrix cell a (3,3);
+const unsigned a <- 1 + 1;
+a <- 1 + 1;
+a <- (1 + 1) + 1;
+a > b;
+#a;
+a <- #r;
+
+cell a <- (top);
+unsigned b <- 3;
+a <- b + 3;
+
 
 '''
 
