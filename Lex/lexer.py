@@ -35,7 +35,7 @@ class Lexer(object):
 
     tokens = ['VAR', 'DECIMAL', 'ASSIGNMENT','PLUS', 'MINUS', 'STAR', 'PROCENT', 'DIV',
               'LBRACKET', 'RBRACKET', 'LQBRACKET', 'RQBRACKET',
-              'LESS', 'GREATER', 'EQ', 'NOTEQ',
+              'LESS', 'GREATER', 'EQ', 'NOTEQ', 'COMMA',
               'COMMENT', 'SEMICOLON', 'NEWLINE'] + list(reserved.values())
 
     t_ASSIGNMENT = r'\<\-'
@@ -50,6 +50,7 @@ class Lexer(object):
     t_LQBRACKET = r'\['
     t_LESS = r'\<'
     t_GREATER = r'\>'
+    t_COMMA = r'\,'
     t_EQ = r'\='
     t_NOTEQ = r'\<\>'
     t_SEMICOLON = r'\;'
@@ -83,21 +84,8 @@ class Lexer(object):
         return self.lexer.token()
 
 # data = '''
-# matrix signed a[n][n];
+# cell a <- (top, down);
 #
-# signed length <- n * n;
-# signed i <- 0;
-# signed j <- 0;
-# signed tmp;
-# testrep(i < length)(
-# 	testrep(j < length - i - 1)(
-# 		testonce( a[j/n][j%n] > a[(j+1)/n][(j+1)%n])(
-# 			tmp <- a[j/n][j%n];
-# 			a[j/n][j%n] <- a[(j+1)/n][(j+1)%n];
-# 			a[(j+1)/n][(j+1)%n] <- a[j/n][j%n];
-# 		)
-# 	)
-# )
 # '''
 #
 # lexer = Lexer()

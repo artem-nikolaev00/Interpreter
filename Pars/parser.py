@@ -36,38 +36,46 @@ class Parser():
 
     def p_statement(self, p):
         """statement : declaration SEMICOLON NEWLINE"""
-                    # | assignment NEWLINE
-                    # | while NEWLINE
-                    # | if NEWLINE
-                    # | operator NEWLINE
-                    # | function NEWLINE
-                    # | function_call NEWLINE"""
+                    # | assignment SEMICOLON NEWLINE
+                    # | while SEMICOLON NEWLINE
+                    # | if SEMICOLON NEWLINE
+                    # | operator SEMICOLON NEWLINE
+                    # | function SEMICOLON NEWLINE
+                    # | function_call SEMICOLON NEWLINE"""
         p[0] = p[1]
 
     def p_declaration(self, p):
 
         """declaration : type VAR
                        | type VAR ASSIGNMENT expression
-                       | CONST type VAR ASSIGNMENT expression"""
+                       | CONST type VAR ASSIGNMENT expression
+                       | MATRIX type VAR
+                       | MATRIX type VAR LBRACKET expression COMMA expression RBRACKET"""
         if len(p) == 3:
             p[0] = Tree('declaration', value=p[1],
                         children=[Tree('init', value=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))],
                         lineno=p.lineno(2), lexpos=p.lexpos(2))
-
         elif len(p) == 5:
             p[0] = Tree('declaration', value=p[1],
                         children=[Tree('init', value=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2)), p[4]],
                         lineno=p.lineno(2), lexpos=p.lexpos(2))
-        else:
+        elif len(p) == 6:
             p[0] = Tree('declaration', value=[p[2], p[1]],
                         children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3)), p[5]],
+                        lineno=p.lineno(3), lexpos=p.lexpos(3))
+        elif len(p) == 4:
+            p[0] = Tree('declaration', value=[p[2], p[1]],
+                        children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3))],
+                        lineno=p.lineno(3), lexpos=p.lexpos(3))
+        else:
+            p[0] = Tree('declaration', value=[p[2], p[1]],
+                        children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3)), p[5], p[7]],
                         lineno=p.lineno(3), lexpos=p.lexpos(3))
 
     def p_type(self, p):
         """type : SIGNED
                 | UNSIGNED
-                | CELL
-                | MATRIX"""
+                | CELL"""
         p[0] = p[1]
 
     def p_expression(self, p):
@@ -78,7 +86,10 @@ class Parser():
 
     def p_math_expression(self, p):
         """math_expression : expression PLUS expression
-                        | expression MINUS expression"""
+                        | expression MINUS expression
+                        | expression STAR expression
+                        | expression DIV expression
+                        | expression PROCENT expression"""
         # if len(p) == 3 and p[2] == '+':
         #     p[0] = Tree('bin_op', value=p[2], children=[p[1], p[3]], lineno=p.lineno(1), lexpos=p.lexpos(1))
         # else:
@@ -100,7 +111,15 @@ class Parser():
         """index : UNSIGNED"""
         p[0] = p[1]
 
-data = '''unsigned a <- 1 + 1;
+    def p_error(self, p):
+        try:
+            sys.stderr.write(f'Error at {p.lineno} line\n')
+        except:
+            sys.stderr.write(f'Error\n')
+        self.ok = False
+
+data = '''matrix unsigned a(1,1);
+
 '''
 
 lexer = Lexer()
