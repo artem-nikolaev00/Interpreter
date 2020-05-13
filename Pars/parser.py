@@ -38,13 +38,23 @@ class Parser():
         """statement : declaration SEMICOLON NEWLINE
                      | assignment SEMICOLON NEWLINE
                      | compare SEMICOLON NEWLINE
-                     | prison SEMICOLON NEWLINE"""
-                    # | while SEMICOLON NEWLINE
-                    # | if SEMICOLON NEWLINE
-                    # | operator SEMICOLON NEWLINE
-                    # | function SEMICOLON NEWLINE
-                    # | function_call SEMICOLON NEWLINE"""
+                     | prison SEMICOLON NEWLINE
+                     | if NEWLINE
+                     | while NEWLINE
+                     | operator SEMICOLON NEWLINE
+                     | function NEWLINE
+                     | function_call SEMICOLON NEWLINE"""
         p[0] = p[1]
+
+    def p_statement_error(self, p):
+        """statement : declaration error NEWLINE
+                     | assignment error NEWLINE
+                     | compare error NEWLINE
+                     | prison error NEWLINE
+                     | operator error NEWLINE
+                     | function_call error NEWLINE"""
+        p[0] = Tree('error', value="SEMICOLON is absent", children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+        sys.stderr.write(f'-> SEMICOLON is absent <-\n')
 
     def p_declaration(self, p):
 
@@ -73,6 +83,22 @@ class Parser():
             p[0] = Tree('declaration', value=[p[2], p[1]],
                         children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3)), p[5], p[7]],
                         lineno=p.lineno(3), lexpos=p.lexpos(3))
+
+    def p_declaration_error(self, p):
+        """declaration : error VAR
+                        | error VAR ASSIGNMENT expression
+                        | CONST error VAR ASSIGNMENT expression
+                        | MATRIX error VAR
+                       | MATRIX error VAR LBRACKET expression COMMA expression RBRACKET"""
+        if p[1] == 'const':
+            p[0] = Tree('error', value='TYPE ERROR', lineno=p.lineno(2), lexpos=p.lexpos(2))
+            sys.stderr.write(f'-> Error in TYPE of declarated varible <-\n')
+        elif p[1] == 'matrix':
+            p[0] = Tree('error', value='TYPE ERROR', lineno=p.lineno(2), lexpos=p.lexpos(2))
+            sys.stderr.write(f'-> Error in TYPE of declarated varible <-\n')
+        else:
+            p[0] = Tree('error', value='TYPE ERROR', lineno=p.lineno(1), lexpos=p.lexpos(1))
+            sys.stderr.write(f'-> Error in TYPE of declarated varible <-\n')
 
     def p_type(self, p):
         """type : SIGNED
@@ -113,7 +139,8 @@ class Parser():
                     | RIGHT
                     | NRIGHT
                     | DOWN
-                    | NDOWN"""
+                    | NDOWN
+                    | BOTTOM"""
         p[0] = Tree('direction', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_compare(self, p):
@@ -141,7 +168,7 @@ class Parser():
 
     def p_variable(self, p):
         """variable : VAR
-                    | VAR LBRACKET index RBRACKET LBRACKET index RBRACKET"""
+                    | VAR LQBRACKET index RBRACKET LQBRACKET index RQBRACKET"""
         if len(p) == 2:
             p[0] = Tree('variable', p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
         else:
@@ -150,13 +177,6 @@ class Parser():
     def p_index(self, p):
         """index : UNSIGNED"""
         p[0] = p[1]
-
-    def p_error(self, p):
-        try:
-            sys.stderr.write(f'Error at {p.lineno} line\n')
-        except:
-            sys.stderr.write(f'Error\n')
-        self.ok = False
 
     def p_prison(self, p):
         """prison : SHARP variable"""
@@ -167,18 +187,69 @@ class Parser():
         if len(p) == 4:
             p[0] = Tree('assignment', value=p[1], children=p[3], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-data = '''matrix cell a (3,3);
-const unsigned a <- 1 + 1;
-a <- 1 + 1;
-a <- (1 + 1) + 1;
-a > b;
-#a;
-a <- #r;
+    def p_if(self, p):
+        """if : TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+              | TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET"""
+        p[0] = Tree('if', children={
+            'cond_exp': Tree('condition', children=p[3], lineno=p.lineno(3),
+                                    lexpos=p.lexpos(3)), 'body': p[7]}, lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-cell a <- (top);
-unsigned b <- 3;
-a <- b + 3;
+    def p_for(self, p):
+        """while : TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+              | TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET"""
+        p[0] = Tree('while', children={
+            'cond_exp': Tree('condition', children=p[3], lineno=p.lineno(3),
+                                    lexpos=p.lexpos(3)), 'body': p[7]}, lineno=p.lineno(1), lexpos=p.lexpos(1))
 
+    def p_operator(self, p):
+        """operator : variable ASSIGNMENT robot"""
+        p[0] = Tree('operator', value=p[1], children=p[3], lineno=p.lineno(1), lexpos=p.lexpos(1))
+
+    def p_robot(self, p):
+        """robot : direction
+                | XRAY"""
+        if p[1] == 'xray':
+            p[0] = Tree('scan', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+        else:
+            p[0] = Tree('direction', value=p[1], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+
+    def p_error(self, p):
+        try:
+            sys.stderr.write(f'Error at {p.lineno} line\n')
+        except:
+            sys.stderr.write(f'Error\n')
+        self.ok = False
+
+    def p_function(self, p):
+        """function : FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET"""
+        p[0] = Tree('function', value=p[2], children={
+            'parameters': Tree('par', value=p[4], children=p[4], lineno=p.lineno(4),
+                                    lexpos=p.lexpos(4)), 'body': p[8]}, lineno=p.lineno(2), lexpos=p.lexpos(2))
+#TODO доделать вызов функции и получение элемента матрицы
+    def p_function_call(self, p):
+        """function_call : CALL VAR LBRACKET vars RBRACKET"""
+
+    def p_vars(self, p):
+        """vars : vars
+                | VAR"""
+        p[0] = p[1]
+
+    def p_parameters(self, p):
+        """parameters : type VAR COMMA parameters
+                        | type VAR"""
+        if len(p) == 5:
+            p[0] = Tree('parameters', value=[p[2], p[1]], children=[p[4], p[1]], lineno=p.lineno(4), lexpos=p.lexpos(4))
+        else:
+            p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+
+
+
+data = '''func a(cell b)(
+cell c;
+const unsigned a <- 1;
+)
+
+call a(b c);
 
 '''
 
