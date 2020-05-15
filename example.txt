@@ -96,39 +96,39 @@ c <- call sum(a b);
 
 --------------------------------------------------------------------------
 рекурсионный алгоритм факториала
-func factorial(int n){
+func factorial(signed n)(
 	signed result;
-	testonce (n = 1){
+	testonce (n = 1)(
 		result <- 1;
-	}
-	testonce (n > 1){
+	)
+	testonce (n > 1)(
 		x = n - 1;
-		result <- factorial(x) * n;
-	}
+		result <- call factorial(x) * n;
+	)
 	result;
-}		
+)		
 
-func main(
+func main()(
 	signed a;
 	a <- call factorial(5);
 )
 --------------------------------------------------------------------------
 сортровка
-matrix signed a[n][n];
+matrix signed a(n,n);
 
 signed length <- n * n;
 signed i <- 0;
 signed j <- 0;
 signed tmp;
-testrep(i < length){
-	testrep(j < length - i - 1){
-		testonce( a[j/n][j%n] > a[(j+1)/n][(j+1)%n]){
-			tmp <- a[j/n][j%n];
-			a[j/n][j%n] <- a[(j+1)/n][(j+1)%n];
-			a[(j+1)/n][(j+1)%n] <- a[j/n][j%n];
-		}
-	}
-}
+testrep(i < length)(
+	testrep(j < length - i - 1)(
+		testonce( a(j/n,j%n) > a((j+1)/n,(j+1)%n))(
+			tmp <- a(j/n,j%n);
+			a(j/n,j%n) <- a((j+1)/n,(j+1)%n);
+			a((j+1)/n,(j+1)%n) <- a(j/n,j%n);
+		)
+	)
+)
 -----------------------------------------------------------------------------
 
 

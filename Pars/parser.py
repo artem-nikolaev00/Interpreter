@@ -43,7 +43,8 @@ class Parser():
                      | while NEWLINE
                      | operator SEMICOLON NEWLINE
                      | function NEWLINE
-                     | function_call SEMICOLON NEWLINE"""
+                     | function_call SEMICOLON NEWLINE
+                     | function_return SEMICOLON NEWLINE"""
         p[0] = p[1]
 
     def p_statement_error(self, p):
@@ -52,7 +53,8 @@ class Parser():
                      | compare error NEWLINE
                      | prison error NEWLINE
                      | operator error NEWLINE
-                     | function_call error NEWLINE"""
+                     | function_call error NEWLINE
+                     | function_return error NEWLINE"""
         p[0] = Tree('error', value="SEMICOLON is absent", children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
         sys.stderr.write(f'-> SEMICOLON is absent <-\n')
 
@@ -113,6 +115,7 @@ class Parser():
                       | side
                       | compare
                       | prison
+                      | function_call
                       | LBRACKET expression RBRACKET"""
         if len(p) == 2:
             p[0] = Tree('expression', children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
@@ -168,14 +171,14 @@ class Parser():
 
     def p_variable(self, p):
         """variable : VAR
-                    | VAR LQBRACKET index RBRACKET LQBRACKET index RQBRACKET"""
+                    | VAR LBRACKET index COMMA index RBRACKET"""
         if len(p) == 2:
             p[0] = Tree('variable', p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
         else:
-            p[0] = Tree('indexing', p[1], children=[p[3], p[6]], lineno=p.lineno(1), lexpos=p.lexpos(1))
+            p[0] = Tree('indexing', p[1], children=[p[3], p[5]], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_index(self, p):
-        """index : UNSIGNED"""
+        """index : expression"""
         p[0] = p[1]
 
     def p_prison(self, p):
@@ -185,21 +188,23 @@ class Parser():
     def p_assignment(self, p):
         """assignment : variable ASSIGNMENT expression"""
         if len(p) == 4:
-            p[0] = Tree('assignment', value=p[1], children=p[3], lineno=p.lineno(1), lexpos=p.lexpos(1))
+            p[0] = Tree('assignment', value=p[1], children=[p[1], p[3]], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_if(self, p):
         """if : TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
               | TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET"""
         p[0] = Tree('if', children={
             'cond_exp': Tree('condition', children=p[3], lineno=p.lineno(3),
-                                    lexpos=p.lexpos(3)), 'body': p[7]}, lineno=p.lineno(1), lexpos=p.lexpos(1))
+                                    lexpos=p.lexpos(3)), 'body_exp': Tree('body', children=p[7], lineno=p.lineno(7),
+                                    lexpos=p.lexpos(7))}, lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_for(self, p):
         """while : TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
               | TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET"""
         p[0] = Tree('while', children={
             'cond_exp': Tree('condition', children=p[3], lineno=p.lineno(3),
-                                    lexpos=p.lexpos(3)), 'body': p[7]}, lineno=p.lineno(1), lexpos=p.lexpos(1))
+                                    lexpos=p.lexpos(3)), 'body_exp': Tree('body', children=p[7], lineno=p.lineno(7),
+                                    lexpos=p.lexpos(7))}, lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_operator(self, p):
         """operator : variable ASSIGNMENT robot"""
@@ -221,18 +226,35 @@ class Parser():
         self.ok = False
 
     def p_function(self, p):
-        """function : FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET"""
+        """function : FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
+                    | FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET"""
+        p[0] = Tree('function', value=p[2], children={ 'func_body': Tree('body', value=p[7], children=p[7], lineno=p.lineno(7),
+                                lexpos=p.lexpos(7))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
         p[0] = Tree('function', value=p[2], children={
-            'parameters': Tree('par', value=p[4], children=p[4], lineno=p.lineno(4),
-                                    lexpos=p.lexpos(4)), 'body': p[8]}, lineno=p.lineno(2), lexpos=p.lexpos(2))
-#TODO доделать вызов функции и получение элемента матрицы
+                                 'func_body': Tree('body', value=p[7], children=p[7], lineno=p.lineno(7),
+                                lexpos=p.lexpos(7))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
+
+    def p_function_return(self, p):
+        """function_return : VAR"""
+        p[0] = Tree('var', value=p[1], lineno=p.lineno(1),  lexpos=p.lexpos(1))
+
     def p_function_call(self, p):
-        """function_call : CALL VAR LBRACKET vars RBRACKET"""
+        """function_call : CALL VAR LBRACKET vars RBRACKET
+                        | CALL VAR LBRACKET RBRACKET"""
+        if len(p) == 6:
+            p[0] = Tree('call',  value=p[2],
+                    children=Tree('var', value=p[4], children=p[4], lineno=p.lineno(4),  lexpos=p.lexpos(4)),
+                    lineno=p.lineno(2), lexpos=p.lexpos(2))
+        else:
+            p[0] = Tree('call', value=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
 
     def p_vars(self, p):
-        """vars : vars
+        """vars : VAR vars
                 | VAR"""
-        p[0] = p[1]
+        if len(p) == 3:
+            p[0] = Tree('var', value=p[1], children=p[2], lineno=p.lineno(1),  lexpos=p.lexpos(1))
+        else:
+            p[0] = Tree('var', value=p[1], lineno=p.lineno(1),  lexpos=p.lexpos(1))
 
     def p_parameters(self, p):
         """parameters : type VAR COMMA parameters
@@ -244,14 +266,20 @@ class Parser():
 
 
 
-data = '''func a(cell b)(
-cell c;
-const unsigned a <- 1;
-)
-
-call a(b c);
+data = '''func factorial(signed n)(
+	signed result;
+	testonce (n = 1)(
+		result <- 1;
+	)
+	testonce (n > 1)(
+		x = n - 1;
+		result <- call factorial(x) * n;
+	)
+	result;
+)	
 
 '''
+
 
 lexer = Lexer()
 lexer.input(data)
