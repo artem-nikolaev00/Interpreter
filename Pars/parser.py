@@ -284,6 +284,7 @@ data = '''func factorial(cell a)(
 '''
 
 
+
 lexer = Lexer()
 lexer.input(data)
 while True:
