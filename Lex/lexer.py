@@ -34,7 +34,7 @@ class Lexer(object):
         self.lexer = lex.lex(module=self)
 
     tokens = ['VAR', 'DECIMAL', 'ASSIGNMENT','PLUS', 'MINUS', 'STAR', 'PROCENT', 'DIV',
-              'LBRACKET', 'RBRACKET', 'LQBRACKET', 'RQBRACKET',
+              'LBRACKET', 'RBRACKET',
               'LESS', 'GREATER', 'EQ', 'NOTEQ', 'COMMA',
               'SHARP', 'SEMICOLON', 'NEWLINE'] + list(reserved.values())
 
@@ -46,8 +46,6 @@ class Lexer(object):
     t_DIV = r'\/'
     t_LBRACKET = r'\('
     t_RBRACKET = r'\)'
-    t_RQBRACKET = r'\]'
-    t_LQBRACKET = r'\['
     t_LESS = r'\<'
     t_GREATER = r'\>'
     t_COMMA = r'\,'
@@ -84,7 +82,7 @@ class Lexer(object):
         return self.lexer.token()
 
 # data = '''
-# cell a <- (top, down);
+# testonce;
 #
 #
 # '''
