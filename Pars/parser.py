@@ -228,9 +228,14 @@ class Parser():
     def p_function(self, p):
         """function : FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
                     | FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET"""
-        p[0] = Tree('function', value=p[2], children={ 'func_body': Tree('body', value=p[7], children=p[7], lineno=p.lineno(7),
-                                lexpos=p.lexpos(7))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
-        p[0] = Tree('function', value=p[2], children={
+        if len(p) == 10:
+            p[0] = Tree('function', value=p[2], children={
+                'par_body': Tree('par', value=p[4], children=p[4], lineno=p.lineno(4),
+                                  lexpos=p.lexpos(4)),
+                                 'func_body': Tree('body', value=p[8], children=p[8], lineno=p.lineno(8),
+                                lexpos=p.lexpos(8))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
+        else:
+            p[0] = Tree('function', value=p[2], children={
                                  'func_body': Tree('body', value=p[7], children=p[7], lineno=p.lineno(7),
                                 lexpos=p.lexpos(7))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
 
@@ -264,9 +269,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-
-
-data = '''func factorial(signed n)(
+data = '''func factorial(cell a)(
 	signed result;
 	testonce (n = 1)(
 		result <- 1;
