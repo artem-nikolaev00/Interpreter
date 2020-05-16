@@ -47,6 +47,20 @@ class Parser():
                      | function_return SEMICOLON NEWLINE"""
         p[0] = p[1]
 
+    def p_statement_error_no_nl(self, p):
+        """statement : declaration SEMICOLON
+                     | assignment SEMICOLON
+                     | compare SEMICOLON
+                     | prison SEMICOLON
+                     | if
+                     | while
+                     | operator SEMICOLON
+                     | function
+                     | function_call SEMICOLON
+                     | function_return SEMICOLON """
+        p[0] = Tree('error', value="NEWLINE is absent", lineno=p.lineno(1), lexpos=p.lexpos(1))
+        sys.stderr.write(f'-> NEWLINE is absent <-\n')
+
     def p_statement_error(self, p):
         """statement : declaration error NEWLINE
                      | assignment error NEWLINE
@@ -55,7 +69,7 @@ class Parser():
                      | operator error NEWLINE
                      | function_call error NEWLINE
                      | function_return error NEWLINE"""
-        p[0] = Tree('error', value="SEMICOLON is absent", children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+        p[0] = Tree('error', value="SEMICOLON is absent", children=p[2], lineno=p.lineno(1), lexpos=p.lexpos(1))
         sys.stderr.write(f'-> SEMICOLON is absent <-\n')
 
     def p_declaration(self, p):
@@ -93,13 +107,13 @@ class Parser():
                         | MATRIX error VAR
                        | MATRIX error VAR LBRACKET expression COMMA expression RBRACKET"""
         if p[1] == 'const':
-            p[0] = Tree('error', value='TYPE ERROR', lineno=p.lineno(2), lexpos=p.lexpos(2))
+            p[0] = Tree('error', value='TYPE ERROR', children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
             sys.stderr.write(f'-> Error in TYPE of declarated varible <-\n')
         elif p[1] == 'matrix':
-            p[0] = Tree('error', value='TYPE ERROR', lineno=p.lineno(2), lexpos=p.lexpos(2))
+            p[0] = Tree('error', value='TYPE ERROR', children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
             sys.stderr.write(f'-> Error in TYPE of declarated varible <-\n')
         else:
-            p[0] = Tree('error', value='TYPE ERROR', lineno=p.lineno(1), lexpos=p.lexpos(1))
+            p[0] = Tree('error', value='TYPE ERROR',  children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
             sys.stderr.write(f'-> Error in TYPE of declarated varible <-\n')
 
     def p_type(self, p):
@@ -125,6 +139,11 @@ class Parser():
     def p_side(self, p):
         """side : LBRACKET directions RBRACKET"""
         p[0] = Tree('diractions', children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
+
+    def p_side_error(self, p):
+        """side : LBRACKET error RBRACKET"""
+        p[0] = Tree('error', value='SIDE ERROR', children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
+        sys.stderr.write(f'-> Error in SIDE of declarated varible <-\n')
 
     def p_directions(self, p):
         """directions : direction COMMA directions
@@ -160,13 +179,11 @@ class Parser():
                         | expression STAR expression
                         | expression DIV expression
                         | expression PROCENT expression"""
-        # if len(p) == 3 and p[2] == '+':
-        #     p[0] = Tree('bin_op', value=p[2], children=[p[1], p[3]], lineno=p.lineno(1), lexpos=p.lexpos(1))
-        # else:
         p[0] = Tree('bin_op', value=p[2], children=[p[1], p[3]], lineno=p.lineno(2), lexpos=p.lexpos(2))
 
     def p_const(self, p):
-        """const : DECIMAL"""
+        """const : DECIMAL
+                | UDECIMAL"""
         p[0] = Tree('const', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_variable(self, p):
@@ -190,6 +207,11 @@ class Parser():
         if len(p) == 4:
             p[0] = Tree('assignment', value=p[1], children=[p[1], p[3]], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
+    def p_assignment_err(self, p):
+        """assignment : variable ASSIGNMENT error"""
+        p[0] = Tree('error', value="Wrong assignment", lineno=p.lineno(1), lexpos=p.lexpos(1))
+        sys.stderr.write(f'-> Wrong assignment <-\n')
+
     def p_if(self, p):
         """if : TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
               | TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET"""
@@ -198,6 +220,11 @@ class Parser():
                                     lexpos=p.lexpos(3)), 'body_exp': Tree('body', children=p[7], lineno=p.lineno(7),
                                     lexpos=p.lexpos(7))}, lineno=p.lineno(1), lexpos=p.lexpos(1))
 
+    def p_if_error(self, p):
+        """if : TESTONCE error"""
+        p[0] = Tree('error', value="Incorrect if", lineno=p.lineno(2), lexpos=p.lexpos(2))
+        sys.stderr.write(f'-> Incorrect if <-\n')
+
     def p_for(self, p):
         """while : TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
               | TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET"""
@@ -205,6 +232,11 @@ class Parser():
             'cond_exp': Tree('condition', children=p[3], lineno=p.lineno(3),
                                     lexpos=p.lexpos(3)), 'body_exp': Tree('body', children=p[7], lineno=p.lineno(7),
                                     lexpos=p.lexpos(7))}, lineno=p.lineno(1), lexpos=p.lexpos(1))
+
+    def p_for_error(self, p):
+        """if : TESTREP error"""
+        p[0] = Tree('error', value="Incorrect for", lineno=p.lineno(2), lexpos=p.lexpos(2))
+        sys.stderr.write(f'-> Incorrect for <-\n')
 
     def p_operator(self, p):
         """operator : variable ASSIGNMENT robot"""
@@ -253,6 +285,16 @@ class Parser():
         else:
             p[0] = Tree('call', value=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
 
+    def p_function_call_error(self, p):
+        """function_call : VAR LBRACKET vars RBRACKET error
+                        | VAR LBRACKET RBRACKET error"""
+        if len(p) == 5:
+            p[0] = Tree('error', value="Incorrect call", lineno=p.lineno(2), lexpos=p.lexpos(2))
+            sys.stderr.write(f'-> Incorrect call <-\n')
+        else:
+            p[0] = Tree('error', value="Incorrect call",  lineno=p.lineno(2), lexpos=p.lexpos(2))
+            sys.stderr.write(f'-> Incorrect call <-\n')
+
     def p_vars(self, p):
         """vars : VAR vars
                 | VAR"""
@@ -269,7 +311,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-data = '''func factorial(cell a)(
+data = '''func factorial(signed n)(
 	signed result;
 	testonce (n = 1)(
 		result <- 1;
@@ -279,8 +321,29 @@ data = '''func factorial(cell a)(
 		result <- call factorial(x) * n;
 	)
 	result;
-)	
+)		
 
+matrix signed a(n,n);
+
+signed length <- n * n;
+signed i <- 0;
+signed j <- 0;
+signed tmp;
+testrep(i < length)(
+	testrep(j < length - i - 1)(
+		testonce( a(j/n,j%n) > a((j+1)/n,(j+1)%n))(
+			tmp <- a(j/n,j%n);
+			a(j/n,j%n) <- a((j+1)/n,(j+1)%n);
+			a((j+1)/n,(j+1)%n) <- a(j/n,j%n);
+		)
+	)
+)
+
+func main()(
+	signed a;
+	signed n <- 5;
+	a <- call factorial(n);
+)
 '''
 
 

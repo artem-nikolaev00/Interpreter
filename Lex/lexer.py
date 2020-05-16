@@ -33,7 +33,7 @@ class Lexer(object):
     def __init__(self):
         self.lexer = lex.lex(module=self)
 
-    tokens = ['VAR', 'DECIMAL', 'ASSIGNMENT','PLUS', 'MINUS', 'STAR', 'PROCENT', 'DIV',
+    tokens = ['VAR', 'UDECIMAL', 'DECIMAL', 'ASSIGNMENT','PLUS', 'MINUS', 'STAR', 'PROCENT', 'DIV',
               'LBRACKET', 'RBRACKET',
               'LESS', 'GREATER', 'EQ', 'NOTEQ', 'COMMA',
               'SHARP', 'SEMICOLON', 'NEWLINE'] + list(reserved.values())
@@ -61,6 +61,10 @@ class Lexer(object):
         t.type = reserved.get(t.value, 'VAR')
         return t
 
+    def t_UDECIMAL(self, t):
+        r'\d+u'
+        return t
+
     def t_DECIMAL(self, t):
         r'\d+'
         t.value = int(t.value)
@@ -82,9 +86,7 @@ class Lexer(object):
         return self.lexer.token()
 
 # data = '''
-# testonce;
-#
-#
+# 123u ;
 # '''
 #
 # lexer = Lexer()
