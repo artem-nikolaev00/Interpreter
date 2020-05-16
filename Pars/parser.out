@@ -100,18 +100,19 @@ Rule 94    function_call -> CALL VAR LBRACKET vars RBRACKET
 Rule 95    function_call -> CALL VAR LBRACKET RBRACKET
 Rule 96    function_call -> VAR LBRACKET vars RBRACKET error
 Rule 97    function_call -> VAR LBRACKET RBRACKET error
-Rule 98    vars -> VAR vars
-Rule 99    vars -> VAR
-Rule 100   parameters -> type VAR COMMA parameters
-Rule 101   parameters -> type VAR
+Rule 98    function_call -> CALL VAR LBRACKET error RBRACKET
+Rule 99    vars -> VAR vars
+Rule 100   vars -> VAR
+Rule 101   parameters -> type VAR COMMA parameters
+Rule 102   parameters -> type VAR
 
 Terminals, with rules where they appear
 
 ASSIGNMENT           : 32 33 37 38 80 81 88
 BOTTOM               : 64
-CALL                 : 94 95
+CALL                 : 94 95 98
 CELL                 : 43
-COMMA                : 35 40 54 77 100
+COMMA                : 35 40 54 77 101
 CONST                : 33 38
 DECIMAL              : 74
 DIV                  : 72
@@ -119,7 +120,7 @@ DOWN                 : 62
 EQ                   : 65
 FUNC                 : 91 92
 GREATER              : 67
-LBRACKET             : 35 40 51 52 53 77 82 82 83 83 85 85 86 86 91 91 92 92 94 95 96 97
+LBRACKET             : 35 40 51 52 53 77 82 82 83 83 85 85 86 86 91 91 92 92 94 95 96 97 98
 LEFT                 : 58
 LESS                 : 66
 MATRIX               : 34 35 39 40
@@ -132,7 +133,7 @@ NRIGHT               : 61
 NTOP                 : 57
 PLUS                 : 69
 PROCENT              : 73
-RBRACKET             : 35 40 51 52 53 77 82 82 83 83 85 85 86 86 91 91 92 92 94 95 96 97
+RBRACKET             : 35 40 51 52 53 77 82 82 83 83 85 85 86 86 91 91 92 92 94 95 96 97 98
 RIGHT                : 60
 SEMICOLON            : 4 5 6 7 10 12 13 14 15 16 17 20 22 23
 SHARP                : 79
@@ -143,9 +144,9 @@ TESTREP              : 85 86 87
 TOP                  : 56
 UDECIMAL             : 75
 UNSIGNED             : 42
-VAR                  : 31 32 33 34 35 36 37 38 39 40 76 77 91 92 93 94 95 96 97 98 99 100 101
+VAR                  : 31 32 33 34 35 36 37 38 39 40 76 77 91 92 93 94 95 96 97 98 99 100 101 102
 XRAY                 : 90
-error                : 24 25 26 27 28 29 30 36 37 38 39 40 53 81 84 87 96 97
+error                : 24 25 26 27 28 29 30 36 37 38 39 40 53 81 84 87 96 97 98
 
 Nonterminals, with rules where they appear
 
@@ -163,16 +164,16 @@ if                   : 8 18
 index                : 77 77
 math_expression      : 44 82 85
 operator             : 10 20 28
-parameters           : 91 100
+parameters           : 91 101
 prison               : 7 17 27 49
 program              : 0
 robot                : 88
 side                 : 47
 state                : 1 2 82 83 85 86 91 92
 statement            : 2 3
-type                 : 31 32 33 34 35 100 101
+type                 : 31 32 33 34 35 101 102
 variable             : 46 79 80 81 88
-vars                 : 94 96 98
+vars                 : 94 96 99
 while                : 9 19
 
 Parsing method: LALR
@@ -240,6 +241,7 @@ state 0
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -367,6 +369,7 @@ state 2
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -753,6 +756,7 @@ state 20
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (56) direction -> . TOP
     (57) direction -> . NTOP
     (58) direction -> . LEFT
@@ -871,6 +875,7 @@ state 27
 
     (94) function_call -> CALL . VAR LBRACKET vars RBRACKET
     (95) function_call -> CALL . VAR LBRACKET RBRACKET
+    (98) function_call -> CALL . VAR LBRACKET error RBRACKET
 
     VAR             shift and go to state 95
 
@@ -1313,8 +1318,8 @@ state 55
     (96) function_call -> VAR LBRACKET . vars RBRACKET error
     (97) function_call -> VAR LBRACKET . RBRACKET error
     (77) variable -> VAR LBRACKET . index COMMA index RBRACKET
-    (98) vars -> . VAR vars
-    (99) vars -> . VAR
+    (99) vars -> . VAR vars
+    (100) vars -> . VAR
     (78) index -> . expression
     (44) expression -> . math_expression
     (45) expression -> . const
@@ -1344,6 +1349,7 @@ state 55
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     RBRACKET        shift and go to state 114
     VAR             shift and go to state 112
@@ -1395,6 +1401,7 @@ state 56
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -1443,6 +1450,7 @@ state 57
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -1491,6 +1499,7 @@ state 58
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -1539,6 +1548,7 @@ state 59
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -1587,6 +1597,7 @@ state 60
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -1635,6 +1646,7 @@ state 61
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -1683,6 +1695,7 @@ state 62
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -1731,6 +1744,7 @@ state 63
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -1779,6 +1793,7 @@ state 64
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -2098,6 +2113,7 @@ state 87
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (56) direction -> . TOP
     (57) direction -> . NTOP
     (58) direction -> . LEFT
@@ -2209,6 +2225,7 @@ state 90
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -2306,6 +2323,7 @@ state 93
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -2335,6 +2353,7 @@ state 95
 
     (94) function_call -> CALL VAR . LBRACKET vars RBRACKET
     (95) function_call -> CALL VAR . LBRACKET RBRACKET
+    (98) function_call -> CALL VAR . LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 147
 
@@ -2692,6 +2711,7 @@ state 110
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -2740,6 +2760,7 @@ state 111
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -2759,16 +2780,16 @@ state 111
 
 state 112
 
-    (98) vars -> VAR . vars
-    (99) vars -> VAR .
+    (99) vars -> VAR . vars
+    (100) vars -> VAR .
     (76) variable -> VAR .
     (77) variable -> VAR . LBRACKET index COMMA index RBRACKET
     (96) function_call -> VAR . LBRACKET vars RBRACKET error
     (97) function_call -> VAR . LBRACKET RBRACKET error
-    (98) vars -> . VAR vars
-    (99) vars -> . VAR
+    (99) vars -> . VAR vars
+    (100) vars -> . VAR
 
-    RBRACKET        reduce using rule 99 (vars -> VAR .)
+    RBRACKET        reduce using rule 100 (vars -> VAR .)
     PLUS            reduce using rule 76 (variable -> VAR .)
     MINUS           reduce using rule 76 (variable -> VAR .)
     STAR            reduce using rule 76 (variable -> VAR .)
@@ -3379,8 +3400,8 @@ state 134
     (96) function_call -> VAR LBRACKET . vars RBRACKET error
     (97) function_call -> VAR LBRACKET . RBRACKET error
     (78) index -> . expression
-    (98) vars -> . VAR vars
-    (99) vars -> . VAR
+    (99) vars -> . VAR vars
+    (100) vars -> . VAR
     (44) expression -> . math_expression
     (45) expression -> . const
     (46) expression -> . variable
@@ -3409,6 +3430,7 @@ state 134
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     RBRACKET        shift and go to state 114
     VAR             shift and go to state 112
@@ -3519,6 +3541,7 @@ state 140
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -3632,8 +3655,8 @@ state 146
 
     (91) function -> FUNC VAR LBRACKET . parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (92) function -> FUNC VAR LBRACKET . RBRACKET LBRACKET NEWLINE state RBRACKET
-    (100) parameters -> . type VAR COMMA parameters
-    (101) parameters -> . type VAR
+    (101) parameters -> . type VAR COMMA parameters
+    (102) parameters -> . type VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
     (43) type -> . CELL
@@ -3650,10 +3673,12 @@ state 147
 
     (94) function_call -> CALL VAR LBRACKET . vars RBRACKET
     (95) function_call -> CALL VAR LBRACKET . RBRACKET
-    (98) vars -> . VAR vars
-    (99) vars -> . VAR
+    (98) function_call -> CALL VAR LBRACKET . error RBRACKET
+    (99) vars -> . VAR vars
+    (100) vars -> . VAR
 
     RBRACKET        shift and go to state 168
+    error           shift and go to state 169
     VAR             shift and go to state 150
 
     vars                           shift and go to state 167
@@ -3712,28 +3737,28 @@ state 149
 
 state 150
 
-    (98) vars -> VAR . vars
-    (99) vars -> VAR .
-    (98) vars -> . VAR vars
-    (99) vars -> . VAR
+    (99) vars -> VAR . vars
+    (100) vars -> VAR .
+    (99) vars -> . VAR vars
+    (100) vars -> . VAR
 
-    RBRACKET        reduce using rule 99 (vars -> VAR .)
+    RBRACKET        reduce using rule 100 (vars -> VAR .)
     VAR             shift and go to state 150
 
     vars                           shift and go to state 151
 
 state 151
 
-    (98) vars -> VAR vars .
+    (99) vars -> VAR vars .
 
-    RBRACKET        reduce using rule 98 (vars -> VAR vars .)
+    RBRACKET        reduce using rule 99 (vars -> VAR vars .)
 
 
 state 152
 
     (96) function_call -> VAR LBRACKET vars RBRACKET . error
 
-    error           shift and go to state 169
+    error           shift and go to state 170
 
 
 state 153
@@ -3787,6 +3812,7 @@ state 154
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -3795,7 +3821,7 @@ state 154
     SHARP           shift and go to state 22
     CALL            shift and go to state 27
 
-    index                          shift and go to state 170
+    index                          shift and go to state 171
     expression                     shift and go to state 116
     math_expression                shift and go to state 24
     const                          shift and go to state 31
@@ -3836,6 +3862,7 @@ state 155
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -3844,7 +3871,7 @@ state 155
     SHARP           shift and go to state 22
     CALL            shift and go to state 27
 
-    expression                     shift and go to state 171
+    expression                     shift and go to state 172
     math_expression                shift and go to state 24
     const                          shift and go to state 31
     variable                       shift and go to state 72
@@ -3884,6 +3911,7 @@ state 156
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -3892,7 +3920,7 @@ state 156
     SHARP           shift and go to state 22
     CALL            shift and go to state 27
 
-    expression                     shift and go to state 172
+    expression                     shift and go to state 173
     math_expression                shift and go to state 24
     const                          shift and go to state 31
     variable                       shift and go to state 72
@@ -3932,6 +3960,7 @@ state 157
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -3940,7 +3969,7 @@ state 157
     SHARP           shift and go to state 22
     CALL            shift and go to state 27
 
-    expression                     shift and go to state 173
+    expression                     shift and go to state 174
     math_expression                shift and go to state 24
     const                          shift and go to state 31
     variable                       shift and go to state 72
@@ -3980,6 +4009,7 @@ state 158
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -3988,7 +4018,7 @@ state 158
     SHARP           shift and go to state 22
     CALL            shift and go to state 27
 
-    expression                     shift and go to state 174
+    expression                     shift and go to state 175
     math_expression                shift and go to state 24
     const                          shift and go to state 31
     variable                       shift and go to state 72
@@ -4008,57 +4038,57 @@ state 160
 
     (82) if -> TESTONCE LBRACKET math_expression RBRACKET . LBRACKET NEWLINE state RBRACKET
 
-    LBRACKET        shift and go to state 175
+    LBRACKET        shift and go to state 176
 
 
 state 161
 
     (83) if -> TESTONCE LBRACKET compare RBRACKET . LBRACKET NEWLINE state RBRACKET
 
-    LBRACKET        shift and go to state 176
+    LBRACKET        shift and go to state 177
 
 
 state 162
 
     (85) while -> TESTREP LBRACKET math_expression RBRACKET . LBRACKET NEWLINE state RBRACKET
 
-    LBRACKET        shift and go to state 177
+    LBRACKET        shift and go to state 178
 
 
 state 163
 
     (86) while -> TESTREP LBRACKET compare RBRACKET . LBRACKET NEWLINE state RBRACKET
 
-    LBRACKET        shift and go to state 178
+    LBRACKET        shift and go to state 179
 
 
 state 164
 
     (91) function -> FUNC VAR LBRACKET parameters . RBRACKET LBRACKET NEWLINE state RBRACKET
 
-    RBRACKET        shift and go to state 179
+    RBRACKET        shift and go to state 180
 
 
 state 165
 
     (92) function -> FUNC VAR LBRACKET RBRACKET . LBRACKET NEWLINE state RBRACKET
 
-    LBRACKET        shift and go to state 180
+    LBRACKET        shift and go to state 181
 
 
 state 166
 
-    (100) parameters -> type . VAR COMMA parameters
-    (101) parameters -> type . VAR
+    (101) parameters -> type . VAR COMMA parameters
+    (102) parameters -> type . VAR
 
-    VAR             shift and go to state 181
+    VAR             shift and go to state 182
 
 
 state 167
 
     (94) function_call -> CALL VAR LBRACKET vars . RBRACKET
 
-    RBRACKET        shift and go to state 182
+    RBRACKET        shift and go to state 183
 
 
 state 168
@@ -4082,6 +4112,13 @@ state 168
 
 state 169
 
+    (98) function_call -> CALL VAR LBRACKET error . RBRACKET
+
+    RBRACKET        shift and go to state 184
+
+
+state 170
+
     (96) function_call -> VAR LBRACKET vars RBRACKET error .
 
     SEMICOLON       reduce using rule 96 (function_call -> VAR LBRACKET vars RBRACKET error .)
@@ -4099,14 +4136,14 @@ state 169
     COMMA           reduce using rule 96 (function_call -> VAR LBRACKET vars RBRACKET error .)
 
 
-state 170
+state 171
 
     (77) variable -> VAR LBRACKET index COMMA index . RBRACKET
 
-    RBRACKET        shift and go to state 183
+    RBRACKET        shift and go to state 185
 
 
-state 171
+state 172
 
     (33) declaration -> CONST type VAR ASSIGNMENT expression .
     (69) math_expression -> expression . PLUS expression
@@ -4132,7 +4169,7 @@ state 171
     NOTEQ           shift and go to state 59
 
 
-state 172
+state 173
 
     (38) declaration -> CONST error VAR ASSIGNMENT expression .
     (69) math_expression -> expression . PLUS expression
@@ -4158,7 +4195,7 @@ state 172
     NOTEQ           shift and go to state 59
 
 
-state 173
+state 174
 
     (35) declaration -> MATRIX type VAR LBRACKET expression . COMMA expression RBRACKET
     (69) math_expression -> expression . PLUS expression
@@ -4171,32 +4208,7 @@ state 173
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-    COMMA           shift and go to state 184
-    PLUS            shift and go to state 60
-    MINUS           shift and go to state 61
-    STAR            shift and go to state 62
-    DIV             shift and go to state 63
-    PROCENT         shift and go to state 64
-    EQ              shift and go to state 56
-    LESS            shift and go to state 57
-    GREATER         shift and go to state 58
-    NOTEQ           shift and go to state 59
-
-
-state 174
-
-    (40) declaration -> MATRIX error VAR LBRACKET expression . COMMA expression RBRACKET
-    (69) math_expression -> expression . PLUS expression
-    (70) math_expression -> expression . MINUS expression
-    (71) math_expression -> expression . STAR expression
-    (72) math_expression -> expression . DIV expression
-    (73) math_expression -> expression . PROCENT expression
-    (65) compare -> expression . EQ expression
-    (66) compare -> expression . LESS expression
-    (67) compare -> expression . GREATER expression
-    (68) compare -> expression . NOTEQ expression
-
-    COMMA           shift and go to state 185
+    COMMA           shift and go to state 186
     PLUS            shift and go to state 60
     MINUS           shift and go to state 61
     STAR            shift and go to state 62
@@ -4210,56 +4222,81 @@ state 174
 
 state 175
 
-    (82) if -> TESTONCE LBRACKET math_expression RBRACKET LBRACKET . NEWLINE state RBRACKET
+    (40) declaration -> MATRIX error VAR LBRACKET expression . COMMA expression RBRACKET
+    (69) math_expression -> expression . PLUS expression
+    (70) math_expression -> expression . MINUS expression
+    (71) math_expression -> expression . STAR expression
+    (72) math_expression -> expression . DIV expression
+    (73) math_expression -> expression . PROCENT expression
+    (65) compare -> expression . EQ expression
+    (66) compare -> expression . LESS expression
+    (67) compare -> expression . GREATER expression
+    (68) compare -> expression . NOTEQ expression
 
-    NEWLINE         shift and go to state 186
+    COMMA           shift and go to state 187
+    PLUS            shift and go to state 60
+    MINUS           shift and go to state 61
+    STAR            shift and go to state 62
+    DIV             shift and go to state 63
+    PROCENT         shift and go to state 64
+    EQ              shift and go to state 56
+    LESS            shift and go to state 57
+    GREATER         shift and go to state 58
+    NOTEQ           shift and go to state 59
 
 
 state 176
 
-    (83) if -> TESTONCE LBRACKET compare RBRACKET LBRACKET . NEWLINE state RBRACKET
-
-    NEWLINE         shift and go to state 187
-
-
-state 177
-
-    (85) while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET . NEWLINE state RBRACKET
+    (82) if -> TESTONCE LBRACKET math_expression RBRACKET LBRACKET . NEWLINE state RBRACKET
 
     NEWLINE         shift and go to state 188
 
 
-state 178
+state 177
 
-    (86) while -> TESTREP LBRACKET compare RBRACKET LBRACKET . NEWLINE state RBRACKET
+    (83) if -> TESTONCE LBRACKET compare RBRACKET LBRACKET . NEWLINE state RBRACKET
 
     NEWLINE         shift and go to state 189
 
 
+state 178
+
+    (85) while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET . NEWLINE state RBRACKET
+
+    NEWLINE         shift and go to state 190
+
+
 state 179
 
-    (91) function -> FUNC VAR LBRACKET parameters RBRACKET . LBRACKET NEWLINE state RBRACKET
-
-    LBRACKET        shift and go to state 190
-
-
-state 180
-
-    (92) function -> FUNC VAR LBRACKET RBRACKET LBRACKET . NEWLINE state RBRACKET
+    (86) while -> TESTREP LBRACKET compare RBRACKET LBRACKET . NEWLINE state RBRACKET
 
     NEWLINE         shift and go to state 191
 
 
+state 180
+
+    (91) function -> FUNC VAR LBRACKET parameters RBRACKET . LBRACKET NEWLINE state RBRACKET
+
+    LBRACKET        shift and go to state 192
+
+
 state 181
 
-    (100) parameters -> type VAR . COMMA parameters
-    (101) parameters -> type VAR .
+    (92) function -> FUNC VAR LBRACKET RBRACKET LBRACKET . NEWLINE state RBRACKET
 
-    COMMA           shift and go to state 192
-    RBRACKET        reduce using rule 101 (parameters -> type VAR .)
+    NEWLINE         shift and go to state 193
 
 
 state 182
+
+    (101) parameters -> type VAR . COMMA parameters
+    (102) parameters -> type VAR .
+
+    COMMA           shift and go to state 194
+    RBRACKET        reduce using rule 102 (parameters -> type VAR .)
+
+
+state 183
 
     (94) function_call -> CALL VAR LBRACKET vars RBRACKET .
 
@@ -4278,7 +4315,26 @@ state 182
     COMMA           reduce using rule 94 (function_call -> CALL VAR LBRACKET vars RBRACKET .)
 
 
-state 183
+state 184
+
+    (98) function_call -> CALL VAR LBRACKET error RBRACKET .
+
+    SEMICOLON       reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    error           reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    EQ              reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    LESS            reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    GREATER         reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    NOTEQ           reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    PLUS            reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    MINUS           reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    STAR            reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    DIV             reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    PROCENT         reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    RBRACKET        reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+    COMMA           reduce using rule 98 (function_call -> CALL VAR LBRACKET error RBRACKET .)
+
+
+state 185
 
     (77) variable -> VAR LBRACKET index COMMA index RBRACKET .
 
@@ -4298,7 +4354,7 @@ state 183
     COMMA           reduce using rule 77 (variable -> VAR LBRACKET index COMMA index RBRACKET .)
 
 
-state 184
+state 186
 
     (35) declaration -> MATRIX type VAR LBRACKET expression COMMA . expression RBRACKET
     (44) expression -> . math_expression
@@ -4329,6 +4385,7 @@ state 184
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -4337,7 +4394,7 @@ state 184
     SHARP           shift and go to state 22
     CALL            shift and go to state 27
 
-    expression                     shift and go to state 193
+    expression                     shift and go to state 195
     math_expression                shift and go to state 24
     const                          shift and go to state 31
     variable                       shift and go to state 72
@@ -4346,7 +4403,7 @@ state 184
     prison                         shift and go to state 74
     function_call                  shift and go to state 75
 
-state 185
+state 187
 
     (40) declaration -> MATRIX error VAR LBRACKET expression COMMA . expression RBRACKET
     (44) expression -> . math_expression
@@ -4377,6 +4434,7 @@ state 185
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
 
     LBRACKET        shift and go to state 20
     DECIMAL         shift and go to state 33
@@ -4385,7 +4443,7 @@ state 185
     SHARP           shift and go to state 22
     CALL            shift and go to state 27
 
-    expression                     shift and go to state 194
+    expression                     shift and go to state 196
     math_expression                shift and go to state 24
     const                          shift and go to state 31
     variable                       shift and go to state 72
@@ -4394,7 +4452,7 @@ state 185
     prison                         shift and go to state 74
     function_call                  shift and go to state 75
 
-state 186
+state 188
 
     (82) if -> TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE . state RBRACKET
     (2) state -> . state statement
@@ -4456,248 +4514,7 @@ state 186
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
-    (93) function_return -> . VAR
-    (41) type -> . SIGNED
-    (42) type -> . UNSIGNED
-    (43) type -> . CELL
-    (76) variable -> . VAR
-    (77) variable -> . VAR LBRACKET index COMMA index RBRACKET
-    (44) expression -> . math_expression
-    (45) expression -> . const
-    (46) expression -> . variable
-    (47) expression -> . side
-    (48) expression -> . compare
-    (49) expression -> . prison
-    (50) expression -> . function_call
-    (51) expression -> . LBRACKET expression RBRACKET
-    (69) math_expression -> . expression PLUS expression
-    (70) math_expression -> . expression MINUS expression
-    (71) math_expression -> . expression STAR expression
-    (72) math_expression -> . expression DIV expression
-    (73) math_expression -> . expression PROCENT expression
-    (74) const -> . DECIMAL
-    (75) const -> . UDECIMAL
-    (52) side -> . LBRACKET directions RBRACKET
-    (53) side -> . LBRACKET error RBRACKET
-
-    CONST           shift and go to state 18
-    MATRIX          shift and go to state 19
-    error           shift and go to state 14
-    SHARP           shift and go to state 22
-    TESTONCE        shift and go to state 23
-    TESTREP         shift and go to state 25
-    FUNC            shift and go to state 26
-    CALL            shift and go to state 27
-    VAR             shift and go to state 16
-    SIGNED          shift and go to state 28
-    UNSIGNED        shift and go to state 29
-    CELL            shift and go to state 30
-    LBRACKET        shift and go to state 20
-    DECIMAL         shift and go to state 33
-    UDECIMAL        shift and go to state 34
-
-    math_expression                shift and go to state 24
-    state                          shift and go to state 195
-    statement                      shift and go to state 3
-    declaration                    shift and go to state 4
-    assignment                     shift and go to state 5
-    compare                        shift and go to state 6
-    prison                         shift and go to state 7
-    if                             shift and go to state 8
-    while                          shift and go to state 9
-    operator                       shift and go to state 10
-    function                       shift and go to state 11
-    function_call                  shift and go to state 12
-    function_return                shift and go to state 13
-    type                           shift and go to state 15
-    expression                     shift and go to state 17
-    variable                       shift and go to state 21
-    const                          shift and go to state 31
-    side                           shift and go to state 32
-
-state 187
-
-    (83) if -> TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE . state RBRACKET
-    (2) state -> . state statement
-    (3) state -> . statement
-    (4) statement -> . declaration SEMICOLON NEWLINE
-    (5) statement -> . assignment SEMICOLON NEWLINE
-    (6) statement -> . compare SEMICOLON NEWLINE
-    (7) statement -> . prison SEMICOLON NEWLINE
-    (8) statement -> . if NEWLINE
-    (9) statement -> . while NEWLINE
-    (10) statement -> . operator SEMICOLON NEWLINE
-    (11) statement -> . function NEWLINE
-    (12) statement -> . function_call SEMICOLON NEWLINE
-    (13) statement -> . function_return SEMICOLON NEWLINE
-    (14) statement -> . declaration SEMICOLON
-    (15) statement -> . assignment SEMICOLON
-    (16) statement -> . compare SEMICOLON
-    (17) statement -> . prison SEMICOLON
-    (18) statement -> . if
-    (19) statement -> . while
-    (20) statement -> . operator SEMICOLON
-    (21) statement -> . function
-    (22) statement -> . function_call SEMICOLON
-    (23) statement -> . function_return SEMICOLON
-    (24) statement -> . declaration error NEWLINE
-    (25) statement -> . assignment error NEWLINE
-    (26) statement -> . compare error NEWLINE
-    (27) statement -> . prison error NEWLINE
-    (28) statement -> . operator error NEWLINE
-    (29) statement -> . function_call error NEWLINE
-    (30) statement -> . function_return error NEWLINE
-    (31) declaration -> . type VAR
-    (32) declaration -> . type VAR ASSIGNMENT expression
-    (33) declaration -> . CONST type VAR ASSIGNMENT expression
-    (34) declaration -> . MATRIX type VAR
-    (35) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
-    (36) declaration -> . error VAR
-    (37) declaration -> . error VAR ASSIGNMENT expression
-    (38) declaration -> . CONST error VAR ASSIGNMENT expression
-    (39) declaration -> . MATRIX error VAR
-    (40) declaration -> . MATRIX error VAR LBRACKET expression COMMA expression RBRACKET
-    (80) assignment -> . variable ASSIGNMENT expression
-    (81) assignment -> . variable ASSIGNMENT error
-    (65) compare -> . expression EQ expression
-    (66) compare -> . expression LESS expression
-    (67) compare -> . expression GREATER expression
-    (68) compare -> . expression NOTEQ expression
-    (79) prison -> . SHARP variable
-    (82) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
-    (83) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-    (84) if -> . TESTONCE error
-    (87) if -> . TESTREP error
-    (85) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
-    (86) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-    (88) operator -> . variable ASSIGNMENT robot
-    (91) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
-    (92) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
-    (94) function_call -> . CALL VAR LBRACKET vars RBRACKET
-    (95) function_call -> . CALL VAR LBRACKET RBRACKET
-    (96) function_call -> . VAR LBRACKET vars RBRACKET error
-    (97) function_call -> . VAR LBRACKET RBRACKET error
-    (93) function_return -> . VAR
-    (41) type -> . SIGNED
-    (42) type -> . UNSIGNED
-    (43) type -> . CELL
-    (76) variable -> . VAR
-    (77) variable -> . VAR LBRACKET index COMMA index RBRACKET
-    (44) expression -> . math_expression
-    (45) expression -> . const
-    (46) expression -> . variable
-    (47) expression -> . side
-    (48) expression -> . compare
-    (49) expression -> . prison
-    (50) expression -> . function_call
-    (51) expression -> . LBRACKET expression RBRACKET
-    (69) math_expression -> . expression PLUS expression
-    (70) math_expression -> . expression MINUS expression
-    (71) math_expression -> . expression STAR expression
-    (72) math_expression -> . expression DIV expression
-    (73) math_expression -> . expression PROCENT expression
-    (74) const -> . DECIMAL
-    (75) const -> . UDECIMAL
-    (52) side -> . LBRACKET directions RBRACKET
-    (53) side -> . LBRACKET error RBRACKET
-
-    CONST           shift and go to state 18
-    MATRIX          shift and go to state 19
-    error           shift and go to state 14
-    SHARP           shift and go to state 22
-    TESTONCE        shift and go to state 23
-    TESTREP         shift and go to state 25
-    FUNC            shift and go to state 26
-    CALL            shift and go to state 27
-    VAR             shift and go to state 16
-    SIGNED          shift and go to state 28
-    UNSIGNED        shift and go to state 29
-    CELL            shift and go to state 30
-    LBRACKET        shift and go to state 20
-    DECIMAL         shift and go to state 33
-    UDECIMAL        shift and go to state 34
-
-    compare                        shift and go to state 6
-    state                          shift and go to state 196
-    statement                      shift and go to state 3
-    declaration                    shift and go to state 4
-    assignment                     shift and go to state 5
-    prison                         shift and go to state 7
-    if                             shift and go to state 8
-    while                          shift and go to state 9
-    operator                       shift and go to state 10
-    function                       shift and go to state 11
-    function_call                  shift and go to state 12
-    function_return                shift and go to state 13
-    type                           shift and go to state 15
-    expression                     shift and go to state 17
-    variable                       shift and go to state 21
-    math_expression                shift and go to state 24
-    const                          shift and go to state 31
-    side                           shift and go to state 32
-
-state 188
-
-    (85) while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE . state RBRACKET
-    (2) state -> . state statement
-    (3) state -> . statement
-    (4) statement -> . declaration SEMICOLON NEWLINE
-    (5) statement -> . assignment SEMICOLON NEWLINE
-    (6) statement -> . compare SEMICOLON NEWLINE
-    (7) statement -> . prison SEMICOLON NEWLINE
-    (8) statement -> . if NEWLINE
-    (9) statement -> . while NEWLINE
-    (10) statement -> . operator SEMICOLON NEWLINE
-    (11) statement -> . function NEWLINE
-    (12) statement -> . function_call SEMICOLON NEWLINE
-    (13) statement -> . function_return SEMICOLON NEWLINE
-    (14) statement -> . declaration SEMICOLON
-    (15) statement -> . assignment SEMICOLON
-    (16) statement -> . compare SEMICOLON
-    (17) statement -> . prison SEMICOLON
-    (18) statement -> . if
-    (19) statement -> . while
-    (20) statement -> . operator SEMICOLON
-    (21) statement -> . function
-    (22) statement -> . function_call SEMICOLON
-    (23) statement -> . function_return SEMICOLON
-    (24) statement -> . declaration error NEWLINE
-    (25) statement -> . assignment error NEWLINE
-    (26) statement -> . compare error NEWLINE
-    (27) statement -> . prison error NEWLINE
-    (28) statement -> . operator error NEWLINE
-    (29) statement -> . function_call error NEWLINE
-    (30) statement -> . function_return error NEWLINE
-    (31) declaration -> . type VAR
-    (32) declaration -> . type VAR ASSIGNMENT expression
-    (33) declaration -> . CONST type VAR ASSIGNMENT expression
-    (34) declaration -> . MATRIX type VAR
-    (35) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
-    (36) declaration -> . error VAR
-    (37) declaration -> . error VAR ASSIGNMENT expression
-    (38) declaration -> . CONST error VAR ASSIGNMENT expression
-    (39) declaration -> . MATRIX error VAR
-    (40) declaration -> . MATRIX error VAR LBRACKET expression COMMA expression RBRACKET
-    (80) assignment -> . variable ASSIGNMENT expression
-    (81) assignment -> . variable ASSIGNMENT error
-    (65) compare -> . expression EQ expression
-    (66) compare -> . expression LESS expression
-    (67) compare -> . expression GREATER expression
-    (68) compare -> . expression NOTEQ expression
-    (79) prison -> . SHARP variable
-    (82) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
-    (83) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-    (84) if -> . TESTONCE error
-    (87) if -> . TESTREP error
-    (85) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
-    (86) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-    (88) operator -> . variable ASSIGNMENT robot
-    (91) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
-    (92) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
-    (94) function_call -> . CALL VAR LBRACKET vars RBRACKET
-    (95) function_call -> . CALL VAR LBRACKET RBRACKET
-    (96) function_call -> . VAR LBRACKET vars RBRACKET error
-    (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -4759,7 +4576,7 @@ state 188
 
 state 189
 
-    (86) while -> TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE . state RBRACKET
+    (83) if -> TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE . state RBRACKET
     (2) state -> . state statement
     (3) state -> . statement
     (4) statement -> . declaration SEMICOLON NEWLINE
@@ -4819,6 +4636,7 @@ state 189
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -4880,12 +4698,256 @@ state 189
 
 state 190
 
-    (91) function -> FUNC VAR LBRACKET parameters RBRACKET LBRACKET . NEWLINE state RBRACKET
+    (85) while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE . state RBRACKET
+    (2) state -> . state statement
+    (3) state -> . statement
+    (4) statement -> . declaration SEMICOLON NEWLINE
+    (5) statement -> . assignment SEMICOLON NEWLINE
+    (6) statement -> . compare SEMICOLON NEWLINE
+    (7) statement -> . prison SEMICOLON NEWLINE
+    (8) statement -> . if NEWLINE
+    (9) statement -> . while NEWLINE
+    (10) statement -> . operator SEMICOLON NEWLINE
+    (11) statement -> . function NEWLINE
+    (12) statement -> . function_call SEMICOLON NEWLINE
+    (13) statement -> . function_return SEMICOLON NEWLINE
+    (14) statement -> . declaration SEMICOLON
+    (15) statement -> . assignment SEMICOLON
+    (16) statement -> . compare SEMICOLON
+    (17) statement -> . prison SEMICOLON
+    (18) statement -> . if
+    (19) statement -> . while
+    (20) statement -> . operator SEMICOLON
+    (21) statement -> . function
+    (22) statement -> . function_call SEMICOLON
+    (23) statement -> . function_return SEMICOLON
+    (24) statement -> . declaration error NEWLINE
+    (25) statement -> . assignment error NEWLINE
+    (26) statement -> . compare error NEWLINE
+    (27) statement -> . prison error NEWLINE
+    (28) statement -> . operator error NEWLINE
+    (29) statement -> . function_call error NEWLINE
+    (30) statement -> . function_return error NEWLINE
+    (31) declaration -> . type VAR
+    (32) declaration -> . type VAR ASSIGNMENT expression
+    (33) declaration -> . CONST type VAR ASSIGNMENT expression
+    (34) declaration -> . MATRIX type VAR
+    (35) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
+    (36) declaration -> . error VAR
+    (37) declaration -> . error VAR ASSIGNMENT expression
+    (38) declaration -> . CONST error VAR ASSIGNMENT expression
+    (39) declaration -> . MATRIX error VAR
+    (40) declaration -> . MATRIX error VAR LBRACKET expression COMMA expression RBRACKET
+    (80) assignment -> . variable ASSIGNMENT expression
+    (81) assignment -> . variable ASSIGNMENT error
+    (65) compare -> . expression EQ expression
+    (66) compare -> . expression LESS expression
+    (67) compare -> . expression GREATER expression
+    (68) compare -> . expression NOTEQ expression
+    (79) prison -> . SHARP variable
+    (82) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+    (83) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (84) if -> . TESTONCE error
+    (87) if -> . TESTREP error
+    (85) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+    (86) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) operator -> . variable ASSIGNMENT robot
+    (91) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
+    (92) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
+    (94) function_call -> . CALL VAR LBRACKET vars RBRACKET
+    (95) function_call -> . CALL VAR LBRACKET RBRACKET
+    (96) function_call -> . VAR LBRACKET vars RBRACKET error
+    (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
+    (93) function_return -> . VAR
+    (41) type -> . SIGNED
+    (42) type -> . UNSIGNED
+    (43) type -> . CELL
+    (76) variable -> . VAR
+    (77) variable -> . VAR LBRACKET index COMMA index RBRACKET
+    (44) expression -> . math_expression
+    (45) expression -> . const
+    (46) expression -> . variable
+    (47) expression -> . side
+    (48) expression -> . compare
+    (49) expression -> . prison
+    (50) expression -> . function_call
+    (51) expression -> . LBRACKET expression RBRACKET
+    (69) math_expression -> . expression PLUS expression
+    (70) math_expression -> . expression MINUS expression
+    (71) math_expression -> . expression STAR expression
+    (72) math_expression -> . expression DIV expression
+    (73) math_expression -> . expression PROCENT expression
+    (74) const -> . DECIMAL
+    (75) const -> . UDECIMAL
+    (52) side -> . LBRACKET directions RBRACKET
+    (53) side -> . LBRACKET error RBRACKET
 
-    NEWLINE         shift and go to state 199
+    CONST           shift and go to state 18
+    MATRIX          shift and go to state 19
+    error           shift and go to state 14
+    SHARP           shift and go to state 22
+    TESTONCE        shift and go to state 23
+    TESTREP         shift and go to state 25
+    FUNC            shift and go to state 26
+    CALL            shift and go to state 27
+    VAR             shift and go to state 16
+    SIGNED          shift and go to state 28
+    UNSIGNED        shift and go to state 29
+    CELL            shift and go to state 30
+    LBRACKET        shift and go to state 20
+    DECIMAL         shift and go to state 33
+    UDECIMAL        shift and go to state 34
 
+    math_expression                shift and go to state 24
+    state                          shift and go to state 199
+    statement                      shift and go to state 3
+    declaration                    shift and go to state 4
+    assignment                     shift and go to state 5
+    compare                        shift and go to state 6
+    prison                         shift and go to state 7
+    if                             shift and go to state 8
+    while                          shift and go to state 9
+    operator                       shift and go to state 10
+    function                       shift and go to state 11
+    function_call                  shift and go to state 12
+    function_return                shift and go to state 13
+    type                           shift and go to state 15
+    expression                     shift and go to state 17
+    variable                       shift and go to state 21
+    const                          shift and go to state 31
+    side                           shift and go to state 32
 
 state 191
+
+    (86) while -> TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE . state RBRACKET
+    (2) state -> . state statement
+    (3) state -> . statement
+    (4) statement -> . declaration SEMICOLON NEWLINE
+    (5) statement -> . assignment SEMICOLON NEWLINE
+    (6) statement -> . compare SEMICOLON NEWLINE
+    (7) statement -> . prison SEMICOLON NEWLINE
+    (8) statement -> . if NEWLINE
+    (9) statement -> . while NEWLINE
+    (10) statement -> . operator SEMICOLON NEWLINE
+    (11) statement -> . function NEWLINE
+    (12) statement -> . function_call SEMICOLON NEWLINE
+    (13) statement -> . function_return SEMICOLON NEWLINE
+    (14) statement -> . declaration SEMICOLON
+    (15) statement -> . assignment SEMICOLON
+    (16) statement -> . compare SEMICOLON
+    (17) statement -> . prison SEMICOLON
+    (18) statement -> . if
+    (19) statement -> . while
+    (20) statement -> . operator SEMICOLON
+    (21) statement -> . function
+    (22) statement -> . function_call SEMICOLON
+    (23) statement -> . function_return SEMICOLON
+    (24) statement -> . declaration error NEWLINE
+    (25) statement -> . assignment error NEWLINE
+    (26) statement -> . compare error NEWLINE
+    (27) statement -> . prison error NEWLINE
+    (28) statement -> . operator error NEWLINE
+    (29) statement -> . function_call error NEWLINE
+    (30) statement -> . function_return error NEWLINE
+    (31) declaration -> . type VAR
+    (32) declaration -> . type VAR ASSIGNMENT expression
+    (33) declaration -> . CONST type VAR ASSIGNMENT expression
+    (34) declaration -> . MATRIX type VAR
+    (35) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
+    (36) declaration -> . error VAR
+    (37) declaration -> . error VAR ASSIGNMENT expression
+    (38) declaration -> . CONST error VAR ASSIGNMENT expression
+    (39) declaration -> . MATRIX error VAR
+    (40) declaration -> . MATRIX error VAR LBRACKET expression COMMA expression RBRACKET
+    (80) assignment -> . variable ASSIGNMENT expression
+    (81) assignment -> . variable ASSIGNMENT error
+    (65) compare -> . expression EQ expression
+    (66) compare -> . expression LESS expression
+    (67) compare -> . expression GREATER expression
+    (68) compare -> . expression NOTEQ expression
+    (79) prison -> . SHARP variable
+    (82) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+    (83) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (84) if -> . TESTONCE error
+    (87) if -> . TESTREP error
+    (85) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+    (86) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) operator -> . variable ASSIGNMENT robot
+    (91) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
+    (92) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
+    (94) function_call -> . CALL VAR LBRACKET vars RBRACKET
+    (95) function_call -> . CALL VAR LBRACKET RBRACKET
+    (96) function_call -> . VAR LBRACKET vars RBRACKET error
+    (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
+    (93) function_return -> . VAR
+    (41) type -> . SIGNED
+    (42) type -> . UNSIGNED
+    (43) type -> . CELL
+    (76) variable -> . VAR
+    (77) variable -> . VAR LBRACKET index COMMA index RBRACKET
+    (44) expression -> . math_expression
+    (45) expression -> . const
+    (46) expression -> . variable
+    (47) expression -> . side
+    (48) expression -> . compare
+    (49) expression -> . prison
+    (50) expression -> . function_call
+    (51) expression -> . LBRACKET expression RBRACKET
+    (69) math_expression -> . expression PLUS expression
+    (70) math_expression -> . expression MINUS expression
+    (71) math_expression -> . expression STAR expression
+    (72) math_expression -> . expression DIV expression
+    (73) math_expression -> . expression PROCENT expression
+    (74) const -> . DECIMAL
+    (75) const -> . UDECIMAL
+    (52) side -> . LBRACKET directions RBRACKET
+    (53) side -> . LBRACKET error RBRACKET
+
+    CONST           shift and go to state 18
+    MATRIX          shift and go to state 19
+    error           shift and go to state 14
+    SHARP           shift and go to state 22
+    TESTONCE        shift and go to state 23
+    TESTREP         shift and go to state 25
+    FUNC            shift and go to state 26
+    CALL            shift and go to state 27
+    VAR             shift and go to state 16
+    SIGNED          shift and go to state 28
+    UNSIGNED        shift and go to state 29
+    CELL            shift and go to state 30
+    LBRACKET        shift and go to state 20
+    DECIMAL         shift and go to state 33
+    UDECIMAL        shift and go to state 34
+
+    compare                        shift and go to state 6
+    state                          shift and go to state 200
+    statement                      shift and go to state 3
+    declaration                    shift and go to state 4
+    assignment                     shift and go to state 5
+    prison                         shift and go to state 7
+    if                             shift and go to state 8
+    while                          shift and go to state 9
+    operator                       shift and go to state 10
+    function                       shift and go to state 11
+    function_call                  shift and go to state 12
+    function_return                shift and go to state 13
+    type                           shift and go to state 15
+    expression                     shift and go to state 17
+    variable                       shift and go to state 21
+    math_expression                shift and go to state 24
+    const                          shift and go to state 31
+    side                           shift and go to state 32
+
+state 192
+
+    (91) function -> FUNC VAR LBRACKET parameters RBRACKET LBRACKET . NEWLINE state RBRACKET
+
+    NEWLINE         shift and go to state 201
+
+
+state 193
 
     (92) function -> FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE . state RBRACKET
     (2) state -> . state statement
@@ -4947,6 +5009,7 @@ state 191
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -4987,7 +5050,7 @@ state 191
     DECIMAL         shift and go to state 33
     UDECIMAL        shift and go to state 34
 
-    state                          shift and go to state 200
+    state                          shift and go to state 202
     statement                      shift and go to state 3
     declaration                    shift and go to state 4
     assignment                     shift and go to state 5
@@ -5006,11 +5069,11 @@ state 191
     const                          shift and go to state 31
     side                           shift and go to state 32
 
-state 192
+state 194
 
-    (100) parameters -> type VAR COMMA . parameters
-    (100) parameters -> . type VAR COMMA parameters
-    (101) parameters -> . type VAR
+    (101) parameters -> type VAR COMMA . parameters
+    (101) parameters -> . type VAR COMMA parameters
+    (102) parameters -> . type VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
     (43) type -> . CELL
@@ -5020,9 +5083,9 @@ state 192
     CELL            shift and go to state 30
 
     type                           shift and go to state 166
-    parameters                     shift and go to state 201
+    parameters                     shift and go to state 203
 
-state 193
+state 195
 
     (35) declaration -> MATRIX type VAR LBRACKET expression COMMA expression . RBRACKET
     (69) math_expression -> expression . PLUS expression
@@ -5035,7 +5098,7 @@ state 193
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-    RBRACKET        shift and go to state 202
+    RBRACKET        shift and go to state 204
     PLUS            shift and go to state 60
     MINUS           shift and go to state 61
     STAR            shift and go to state 62
@@ -5047,7 +5110,7 @@ state 193
     NOTEQ           shift and go to state 59
 
 
-state 194
+state 196
 
     (40) declaration -> MATRIX error VAR LBRACKET expression COMMA expression . RBRACKET
     (69) math_expression -> expression . PLUS expression
@@ -5060,7 +5123,7 @@ state 194
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-    RBRACKET        shift and go to state 203
+    RBRACKET        shift and go to state 205
     PLUS            shift and go to state 60
     MINUS           shift and go to state 61
     STAR            shift and go to state 62
@@ -5072,7 +5135,7 @@ state 194
     NOTEQ           shift and go to state 59
 
 
-state 195
+state 197
 
     (82) if -> TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state . RBRACKET
     (2) state -> state . statement
@@ -5133,246 +5196,7 @@ state 195
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
-    (93) function_return -> . VAR
-    (41) type -> . SIGNED
-    (42) type -> . UNSIGNED
-    (43) type -> . CELL
-    (76) variable -> . VAR
-    (77) variable -> . VAR LBRACKET index COMMA index RBRACKET
-    (44) expression -> . math_expression
-    (45) expression -> . const
-    (46) expression -> . variable
-    (47) expression -> . side
-    (48) expression -> . compare
-    (49) expression -> . prison
-    (50) expression -> . function_call
-    (51) expression -> . LBRACKET expression RBRACKET
-    (69) math_expression -> . expression PLUS expression
-    (70) math_expression -> . expression MINUS expression
-    (71) math_expression -> . expression STAR expression
-    (72) math_expression -> . expression DIV expression
-    (73) math_expression -> . expression PROCENT expression
-    (74) const -> . DECIMAL
-    (75) const -> . UDECIMAL
-    (52) side -> . LBRACKET directions RBRACKET
-    (53) side -> . LBRACKET error RBRACKET
-
-    RBRACKET        shift and go to state 204
-    CONST           shift and go to state 18
-    MATRIX          shift and go to state 19
-    error           shift and go to state 14
-    SHARP           shift and go to state 22
-    TESTONCE        shift and go to state 23
-    TESTREP         shift and go to state 25
-    FUNC            shift and go to state 26
-    CALL            shift and go to state 27
-    VAR             shift and go to state 16
-    SIGNED          shift and go to state 28
-    UNSIGNED        shift and go to state 29
-    CELL            shift and go to state 30
-    LBRACKET        shift and go to state 20
-    DECIMAL         shift and go to state 33
-    UDECIMAL        shift and go to state 34
-
-    math_expression                shift and go to state 24
-    statement                      shift and go to state 35
-    declaration                    shift and go to state 4
-    assignment                     shift and go to state 5
-    compare                        shift and go to state 6
-    prison                         shift and go to state 7
-    if                             shift and go to state 8
-    while                          shift and go to state 9
-    operator                       shift and go to state 10
-    function                       shift and go to state 11
-    function_call                  shift and go to state 12
-    function_return                shift and go to state 13
-    type                           shift and go to state 15
-    expression                     shift and go to state 17
-    variable                       shift and go to state 21
-    const                          shift and go to state 31
-    side                           shift and go to state 32
-
-state 196
-
-    (83) if -> TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state . RBRACKET
-    (2) state -> state . statement
-    (4) statement -> . declaration SEMICOLON NEWLINE
-    (5) statement -> . assignment SEMICOLON NEWLINE
-    (6) statement -> . compare SEMICOLON NEWLINE
-    (7) statement -> . prison SEMICOLON NEWLINE
-    (8) statement -> . if NEWLINE
-    (9) statement -> . while NEWLINE
-    (10) statement -> . operator SEMICOLON NEWLINE
-    (11) statement -> . function NEWLINE
-    (12) statement -> . function_call SEMICOLON NEWLINE
-    (13) statement -> . function_return SEMICOLON NEWLINE
-    (14) statement -> . declaration SEMICOLON
-    (15) statement -> . assignment SEMICOLON
-    (16) statement -> . compare SEMICOLON
-    (17) statement -> . prison SEMICOLON
-    (18) statement -> . if
-    (19) statement -> . while
-    (20) statement -> . operator SEMICOLON
-    (21) statement -> . function
-    (22) statement -> . function_call SEMICOLON
-    (23) statement -> . function_return SEMICOLON
-    (24) statement -> . declaration error NEWLINE
-    (25) statement -> . assignment error NEWLINE
-    (26) statement -> . compare error NEWLINE
-    (27) statement -> . prison error NEWLINE
-    (28) statement -> . operator error NEWLINE
-    (29) statement -> . function_call error NEWLINE
-    (30) statement -> . function_return error NEWLINE
-    (31) declaration -> . type VAR
-    (32) declaration -> . type VAR ASSIGNMENT expression
-    (33) declaration -> . CONST type VAR ASSIGNMENT expression
-    (34) declaration -> . MATRIX type VAR
-    (35) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
-    (36) declaration -> . error VAR
-    (37) declaration -> . error VAR ASSIGNMENT expression
-    (38) declaration -> . CONST error VAR ASSIGNMENT expression
-    (39) declaration -> . MATRIX error VAR
-    (40) declaration -> . MATRIX error VAR LBRACKET expression COMMA expression RBRACKET
-    (80) assignment -> . variable ASSIGNMENT expression
-    (81) assignment -> . variable ASSIGNMENT error
-    (65) compare -> . expression EQ expression
-    (66) compare -> . expression LESS expression
-    (67) compare -> . expression GREATER expression
-    (68) compare -> . expression NOTEQ expression
-    (79) prison -> . SHARP variable
-    (82) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
-    (83) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-    (84) if -> . TESTONCE error
-    (87) if -> . TESTREP error
-    (85) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
-    (86) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-    (88) operator -> . variable ASSIGNMENT robot
-    (91) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
-    (92) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
-    (94) function_call -> . CALL VAR LBRACKET vars RBRACKET
-    (95) function_call -> . CALL VAR LBRACKET RBRACKET
-    (96) function_call -> . VAR LBRACKET vars RBRACKET error
-    (97) function_call -> . VAR LBRACKET RBRACKET error
-    (93) function_return -> . VAR
-    (41) type -> . SIGNED
-    (42) type -> . UNSIGNED
-    (43) type -> . CELL
-    (76) variable -> . VAR
-    (77) variable -> . VAR LBRACKET index COMMA index RBRACKET
-    (44) expression -> . math_expression
-    (45) expression -> . const
-    (46) expression -> . variable
-    (47) expression -> . side
-    (48) expression -> . compare
-    (49) expression -> . prison
-    (50) expression -> . function_call
-    (51) expression -> . LBRACKET expression RBRACKET
-    (69) math_expression -> . expression PLUS expression
-    (70) math_expression -> . expression MINUS expression
-    (71) math_expression -> . expression STAR expression
-    (72) math_expression -> . expression DIV expression
-    (73) math_expression -> . expression PROCENT expression
-    (74) const -> . DECIMAL
-    (75) const -> . UDECIMAL
-    (52) side -> . LBRACKET directions RBRACKET
-    (53) side -> . LBRACKET error RBRACKET
-
-    RBRACKET        shift and go to state 205
-    CONST           shift and go to state 18
-    MATRIX          shift and go to state 19
-    error           shift and go to state 14
-    SHARP           shift and go to state 22
-    TESTONCE        shift and go to state 23
-    TESTREP         shift and go to state 25
-    FUNC            shift and go to state 26
-    CALL            shift and go to state 27
-    VAR             shift and go to state 16
-    SIGNED          shift and go to state 28
-    UNSIGNED        shift and go to state 29
-    CELL            shift and go to state 30
-    LBRACKET        shift and go to state 20
-    DECIMAL         shift and go to state 33
-    UDECIMAL        shift and go to state 34
-
-    compare                        shift and go to state 6
-    statement                      shift and go to state 35
-    declaration                    shift and go to state 4
-    assignment                     shift and go to state 5
-    prison                         shift and go to state 7
-    if                             shift and go to state 8
-    while                          shift and go to state 9
-    operator                       shift and go to state 10
-    function                       shift and go to state 11
-    function_call                  shift and go to state 12
-    function_return                shift and go to state 13
-    type                           shift and go to state 15
-    expression                     shift and go to state 17
-    variable                       shift and go to state 21
-    math_expression                shift and go to state 24
-    const                          shift and go to state 31
-    side                           shift and go to state 32
-
-state 197
-
-    (85) while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state . RBRACKET
-    (2) state -> state . statement
-    (4) statement -> . declaration SEMICOLON NEWLINE
-    (5) statement -> . assignment SEMICOLON NEWLINE
-    (6) statement -> . compare SEMICOLON NEWLINE
-    (7) statement -> . prison SEMICOLON NEWLINE
-    (8) statement -> . if NEWLINE
-    (9) statement -> . while NEWLINE
-    (10) statement -> . operator SEMICOLON NEWLINE
-    (11) statement -> . function NEWLINE
-    (12) statement -> . function_call SEMICOLON NEWLINE
-    (13) statement -> . function_return SEMICOLON NEWLINE
-    (14) statement -> . declaration SEMICOLON
-    (15) statement -> . assignment SEMICOLON
-    (16) statement -> . compare SEMICOLON
-    (17) statement -> . prison SEMICOLON
-    (18) statement -> . if
-    (19) statement -> . while
-    (20) statement -> . operator SEMICOLON
-    (21) statement -> . function
-    (22) statement -> . function_call SEMICOLON
-    (23) statement -> . function_return SEMICOLON
-    (24) statement -> . declaration error NEWLINE
-    (25) statement -> . assignment error NEWLINE
-    (26) statement -> . compare error NEWLINE
-    (27) statement -> . prison error NEWLINE
-    (28) statement -> . operator error NEWLINE
-    (29) statement -> . function_call error NEWLINE
-    (30) statement -> . function_return error NEWLINE
-    (31) declaration -> . type VAR
-    (32) declaration -> . type VAR ASSIGNMENT expression
-    (33) declaration -> . CONST type VAR ASSIGNMENT expression
-    (34) declaration -> . MATRIX type VAR
-    (35) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
-    (36) declaration -> . error VAR
-    (37) declaration -> . error VAR ASSIGNMENT expression
-    (38) declaration -> . CONST error VAR ASSIGNMENT expression
-    (39) declaration -> . MATRIX error VAR
-    (40) declaration -> . MATRIX error VAR LBRACKET expression COMMA expression RBRACKET
-    (80) assignment -> . variable ASSIGNMENT expression
-    (81) assignment -> . variable ASSIGNMENT error
-    (65) compare -> . expression EQ expression
-    (66) compare -> . expression LESS expression
-    (67) compare -> . expression GREATER expression
-    (68) compare -> . expression NOTEQ expression
-    (79) prison -> . SHARP variable
-    (82) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
-    (83) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-    (84) if -> . TESTONCE error
-    (87) if -> . TESTREP error
-    (85) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
-    (86) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-    (88) operator -> . variable ASSIGNMENT robot
-    (91) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
-    (92) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
-    (94) function_call -> . CALL VAR LBRACKET vars RBRACKET
-    (95) function_call -> . CALL VAR LBRACKET RBRACKET
-    (96) function_call -> . VAR LBRACKET vars RBRACKET error
-    (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -5434,7 +5258,7 @@ state 197
 
 state 198
 
-    (86) while -> TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state . RBRACKET
+    (83) if -> TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state . RBRACKET
     (2) state -> state . statement
     (4) statement -> . declaration SEMICOLON NEWLINE
     (5) statement -> . assignment SEMICOLON NEWLINE
@@ -5493,6 +5317,7 @@ state 198
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -5554,6 +5379,248 @@ state 198
 
 state 199
 
+    (85) while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state . RBRACKET
+    (2) state -> state . statement
+    (4) statement -> . declaration SEMICOLON NEWLINE
+    (5) statement -> . assignment SEMICOLON NEWLINE
+    (6) statement -> . compare SEMICOLON NEWLINE
+    (7) statement -> . prison SEMICOLON NEWLINE
+    (8) statement -> . if NEWLINE
+    (9) statement -> . while NEWLINE
+    (10) statement -> . operator SEMICOLON NEWLINE
+    (11) statement -> . function NEWLINE
+    (12) statement -> . function_call SEMICOLON NEWLINE
+    (13) statement -> . function_return SEMICOLON NEWLINE
+    (14) statement -> . declaration SEMICOLON
+    (15) statement -> . assignment SEMICOLON
+    (16) statement -> . compare SEMICOLON
+    (17) statement -> . prison SEMICOLON
+    (18) statement -> . if
+    (19) statement -> . while
+    (20) statement -> . operator SEMICOLON
+    (21) statement -> . function
+    (22) statement -> . function_call SEMICOLON
+    (23) statement -> . function_return SEMICOLON
+    (24) statement -> . declaration error NEWLINE
+    (25) statement -> . assignment error NEWLINE
+    (26) statement -> . compare error NEWLINE
+    (27) statement -> . prison error NEWLINE
+    (28) statement -> . operator error NEWLINE
+    (29) statement -> . function_call error NEWLINE
+    (30) statement -> . function_return error NEWLINE
+    (31) declaration -> . type VAR
+    (32) declaration -> . type VAR ASSIGNMENT expression
+    (33) declaration -> . CONST type VAR ASSIGNMENT expression
+    (34) declaration -> . MATRIX type VAR
+    (35) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
+    (36) declaration -> . error VAR
+    (37) declaration -> . error VAR ASSIGNMENT expression
+    (38) declaration -> . CONST error VAR ASSIGNMENT expression
+    (39) declaration -> . MATRIX error VAR
+    (40) declaration -> . MATRIX error VAR LBRACKET expression COMMA expression RBRACKET
+    (80) assignment -> . variable ASSIGNMENT expression
+    (81) assignment -> . variable ASSIGNMENT error
+    (65) compare -> . expression EQ expression
+    (66) compare -> . expression LESS expression
+    (67) compare -> . expression GREATER expression
+    (68) compare -> . expression NOTEQ expression
+    (79) prison -> . SHARP variable
+    (82) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+    (83) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (84) if -> . TESTONCE error
+    (87) if -> . TESTREP error
+    (85) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+    (86) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) operator -> . variable ASSIGNMENT robot
+    (91) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
+    (92) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
+    (94) function_call -> . CALL VAR LBRACKET vars RBRACKET
+    (95) function_call -> . CALL VAR LBRACKET RBRACKET
+    (96) function_call -> . VAR LBRACKET vars RBRACKET error
+    (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
+    (93) function_return -> . VAR
+    (41) type -> . SIGNED
+    (42) type -> . UNSIGNED
+    (43) type -> . CELL
+    (76) variable -> . VAR
+    (77) variable -> . VAR LBRACKET index COMMA index RBRACKET
+    (44) expression -> . math_expression
+    (45) expression -> . const
+    (46) expression -> . variable
+    (47) expression -> . side
+    (48) expression -> . compare
+    (49) expression -> . prison
+    (50) expression -> . function_call
+    (51) expression -> . LBRACKET expression RBRACKET
+    (69) math_expression -> . expression PLUS expression
+    (70) math_expression -> . expression MINUS expression
+    (71) math_expression -> . expression STAR expression
+    (72) math_expression -> . expression DIV expression
+    (73) math_expression -> . expression PROCENT expression
+    (74) const -> . DECIMAL
+    (75) const -> . UDECIMAL
+    (52) side -> . LBRACKET directions RBRACKET
+    (53) side -> . LBRACKET error RBRACKET
+
+    RBRACKET        shift and go to state 208
+    CONST           shift and go to state 18
+    MATRIX          shift and go to state 19
+    error           shift and go to state 14
+    SHARP           shift and go to state 22
+    TESTONCE        shift and go to state 23
+    TESTREP         shift and go to state 25
+    FUNC            shift and go to state 26
+    CALL            shift and go to state 27
+    VAR             shift and go to state 16
+    SIGNED          shift and go to state 28
+    UNSIGNED        shift and go to state 29
+    CELL            shift and go to state 30
+    LBRACKET        shift and go to state 20
+    DECIMAL         shift and go to state 33
+    UDECIMAL        shift and go to state 34
+
+    math_expression                shift and go to state 24
+    statement                      shift and go to state 35
+    declaration                    shift and go to state 4
+    assignment                     shift and go to state 5
+    compare                        shift and go to state 6
+    prison                         shift and go to state 7
+    if                             shift and go to state 8
+    while                          shift and go to state 9
+    operator                       shift and go to state 10
+    function                       shift and go to state 11
+    function_call                  shift and go to state 12
+    function_return                shift and go to state 13
+    type                           shift and go to state 15
+    expression                     shift and go to state 17
+    variable                       shift and go to state 21
+    const                          shift and go to state 31
+    side                           shift and go to state 32
+
+state 200
+
+    (86) while -> TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state . RBRACKET
+    (2) state -> state . statement
+    (4) statement -> . declaration SEMICOLON NEWLINE
+    (5) statement -> . assignment SEMICOLON NEWLINE
+    (6) statement -> . compare SEMICOLON NEWLINE
+    (7) statement -> . prison SEMICOLON NEWLINE
+    (8) statement -> . if NEWLINE
+    (9) statement -> . while NEWLINE
+    (10) statement -> . operator SEMICOLON NEWLINE
+    (11) statement -> . function NEWLINE
+    (12) statement -> . function_call SEMICOLON NEWLINE
+    (13) statement -> . function_return SEMICOLON NEWLINE
+    (14) statement -> . declaration SEMICOLON
+    (15) statement -> . assignment SEMICOLON
+    (16) statement -> . compare SEMICOLON
+    (17) statement -> . prison SEMICOLON
+    (18) statement -> . if
+    (19) statement -> . while
+    (20) statement -> . operator SEMICOLON
+    (21) statement -> . function
+    (22) statement -> . function_call SEMICOLON
+    (23) statement -> . function_return SEMICOLON
+    (24) statement -> . declaration error NEWLINE
+    (25) statement -> . assignment error NEWLINE
+    (26) statement -> . compare error NEWLINE
+    (27) statement -> . prison error NEWLINE
+    (28) statement -> . operator error NEWLINE
+    (29) statement -> . function_call error NEWLINE
+    (30) statement -> . function_return error NEWLINE
+    (31) declaration -> . type VAR
+    (32) declaration -> . type VAR ASSIGNMENT expression
+    (33) declaration -> . CONST type VAR ASSIGNMENT expression
+    (34) declaration -> . MATRIX type VAR
+    (35) declaration -> . MATRIX type VAR LBRACKET expression COMMA expression RBRACKET
+    (36) declaration -> . error VAR
+    (37) declaration -> . error VAR ASSIGNMENT expression
+    (38) declaration -> . CONST error VAR ASSIGNMENT expression
+    (39) declaration -> . MATRIX error VAR
+    (40) declaration -> . MATRIX error VAR LBRACKET expression COMMA expression RBRACKET
+    (80) assignment -> . variable ASSIGNMENT expression
+    (81) assignment -> . variable ASSIGNMENT error
+    (65) compare -> . expression EQ expression
+    (66) compare -> . expression LESS expression
+    (67) compare -> . expression GREATER expression
+    (68) compare -> . expression NOTEQ expression
+    (79) prison -> . SHARP variable
+    (82) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+    (83) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (84) if -> . TESTONCE error
+    (87) if -> . TESTREP error
+    (85) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
+    (86) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) operator -> . variable ASSIGNMENT robot
+    (91) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
+    (92) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
+    (94) function_call -> . CALL VAR LBRACKET vars RBRACKET
+    (95) function_call -> . CALL VAR LBRACKET RBRACKET
+    (96) function_call -> . VAR LBRACKET vars RBRACKET error
+    (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
+    (93) function_return -> . VAR
+    (41) type -> . SIGNED
+    (42) type -> . UNSIGNED
+    (43) type -> . CELL
+    (76) variable -> . VAR
+    (77) variable -> . VAR LBRACKET index COMMA index RBRACKET
+    (44) expression -> . math_expression
+    (45) expression -> . const
+    (46) expression -> . variable
+    (47) expression -> . side
+    (48) expression -> . compare
+    (49) expression -> . prison
+    (50) expression -> . function_call
+    (51) expression -> . LBRACKET expression RBRACKET
+    (69) math_expression -> . expression PLUS expression
+    (70) math_expression -> . expression MINUS expression
+    (71) math_expression -> . expression STAR expression
+    (72) math_expression -> . expression DIV expression
+    (73) math_expression -> . expression PROCENT expression
+    (74) const -> . DECIMAL
+    (75) const -> . UDECIMAL
+    (52) side -> . LBRACKET directions RBRACKET
+    (53) side -> . LBRACKET error RBRACKET
+
+    RBRACKET        shift and go to state 209
+    CONST           shift and go to state 18
+    MATRIX          shift and go to state 19
+    error           shift and go to state 14
+    SHARP           shift and go to state 22
+    TESTONCE        shift and go to state 23
+    TESTREP         shift and go to state 25
+    FUNC            shift and go to state 26
+    CALL            shift and go to state 27
+    VAR             shift and go to state 16
+    SIGNED          shift and go to state 28
+    UNSIGNED        shift and go to state 29
+    CELL            shift and go to state 30
+    LBRACKET        shift and go to state 20
+    DECIMAL         shift and go to state 33
+    UDECIMAL        shift and go to state 34
+
+    compare                        shift and go to state 6
+    statement                      shift and go to state 35
+    declaration                    shift and go to state 4
+    assignment                     shift and go to state 5
+    prison                         shift and go to state 7
+    if                             shift and go to state 8
+    while                          shift and go to state 9
+    operator                       shift and go to state 10
+    function                       shift and go to state 11
+    function_call                  shift and go to state 12
+    function_return                shift and go to state 13
+    type                           shift and go to state 15
+    expression                     shift and go to state 17
+    variable                       shift and go to state 21
+    math_expression                shift and go to state 24
+    const                          shift and go to state 31
+    side                           shift and go to state 32
+
+state 201
+
     (91) function -> FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE . state RBRACKET
     (2) state -> . state statement
     (3) state -> . statement
@@ -5614,6 +5681,7 @@ state 199
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -5654,7 +5722,7 @@ state 199
     DECIMAL         shift and go to state 33
     UDECIMAL        shift and go to state 34
 
-    state                          shift and go to state 208
+    state                          shift and go to state 210
     statement                      shift and go to state 3
     declaration                    shift and go to state 4
     assignment                     shift and go to state 5
@@ -5673,7 +5741,7 @@ state 199
     const                          shift and go to state 31
     side                           shift and go to state 32
 
-state 200
+state 202
 
     (92) function -> FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state . RBRACKET
     (2) state -> state . statement
@@ -5734,6 +5802,7 @@ state 200
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -5758,7 +5827,7 @@ state 200
     (52) side -> . LBRACKET directions RBRACKET
     (53) side -> . LBRACKET error RBRACKET
 
-    RBRACKET        shift and go to state 209
+    RBRACKET        shift and go to state 211
     CONST           shift and go to state 18
     MATRIX          shift and go to state 19
     error           shift and go to state 14
@@ -5793,14 +5862,14 @@ state 200
     const                          shift and go to state 31
     side                           shift and go to state 32
 
-state 201
+state 203
 
-    (100) parameters -> type VAR COMMA parameters .
+    (101) parameters -> type VAR COMMA parameters .
 
-    RBRACKET        reduce using rule 100 (parameters -> type VAR COMMA parameters .)
+    RBRACKET        reduce using rule 101 (parameters -> type VAR COMMA parameters .)
 
 
-state 202
+state 204
 
     (35) declaration -> MATRIX type VAR LBRACKET expression COMMA expression RBRACKET .
 
@@ -5808,7 +5877,7 @@ state 202
     error           reduce using rule 35 (declaration -> MATRIX type VAR LBRACKET expression COMMA expression RBRACKET .)
 
 
-state 203
+state 205
 
     (40) declaration -> MATRIX error VAR LBRACKET expression COMMA expression RBRACKET .
 
@@ -5816,7 +5885,7 @@ state 203
     error           reduce using rule 40 (declaration -> MATRIX error VAR LBRACKET expression COMMA expression RBRACKET .)
 
 
-state 204
+state 206
 
     (82) if -> TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET .
 
@@ -5840,7 +5909,7 @@ state 204
     RBRACKET        reduce using rule 82 (if -> TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET .)
 
 
-state 205
+state 207
 
     (83) if -> TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET .
 
@@ -5864,7 +5933,7 @@ state 205
     RBRACKET        reduce using rule 83 (if -> TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET .)
 
 
-state 206
+state 208
 
     (85) while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET .
 
@@ -5888,7 +5957,7 @@ state 206
     RBRACKET        reduce using rule 85 (while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET .)
 
 
-state 207
+state 209
 
     (86) while -> TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET .
 
@@ -5912,7 +5981,7 @@ state 207
     RBRACKET        reduce using rule 86 (while -> TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET .)
 
 
-state 208
+state 210
 
     (91) function -> FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state . RBRACKET
     (2) state -> state . statement
@@ -5973,6 +6042,7 @@ state 208
     (95) function_call -> . CALL VAR LBRACKET RBRACKET
     (96) function_call -> . VAR LBRACKET vars RBRACKET error
     (97) function_call -> . VAR LBRACKET RBRACKET error
+    (98) function_call -> . CALL VAR LBRACKET error RBRACKET
     (93) function_return -> . VAR
     (41) type -> . SIGNED
     (42) type -> . UNSIGNED
@@ -5997,7 +6067,7 @@ state 208
     (52) side -> . LBRACKET directions RBRACKET
     (53) side -> . LBRACKET error RBRACKET
 
-    RBRACKET        shift and go to state 210
+    RBRACKET        shift and go to state 212
     CONST           shift and go to state 18
     MATRIX          shift and go to state 19
     error           shift and go to state 14
@@ -6032,7 +6102,7 @@ state 208
     const                          shift and go to state 31
     side                           shift and go to state 32
 
-state 209
+state 211
 
     (92) function -> FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET .
 
@@ -6056,7 +6126,7 @@ state 209
     RBRACKET        reduce using rule 92 (function -> FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET .)
 
 
-state 210
+state 212
 
     (91) function -> FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET .
 

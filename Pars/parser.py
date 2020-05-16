@@ -59,7 +59,7 @@ class Parser():
                      | function_call SEMICOLON
                      | function_return SEMICOLON """
         p[0] = Tree('error', value="NEWLINE is absent", lineno=p.lineno(1), lexpos=p.lexpos(1))
-        sys.stderr.write(f'-> NEWLINE is absent <-\n')
+        sys.stderr.write(f'-> NEWLINE is absent. <-\n')
 
     def p_statement_error(self, p):
         """statement : declaration error NEWLINE
@@ -295,6 +295,11 @@ class Parser():
             p[0] = Tree('error', value="Incorrect call",  lineno=p.lineno(2), lexpos=p.lexpos(2))
             sys.stderr.write(f'-> Incorrect call <-\n')
 
+    def p_function_call_var_error(self, p):
+        """function_call : CALL VAR LBRACKET error RBRACKET"""
+        p[0] = Tree('error', value="Incorrect call", lineno=p.lineno(1), lexpos=p.lexpos(1))
+        sys.stderr.write(f'-> Incorrect call <-\n')
+
     def p_vars(self, p):
         """vars : VAR vars
                 | VAR"""
@@ -311,39 +316,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-data = '''func factorial(signed n)(
-	signed result;
-	testonce (n = 1)(
-		result <- 1;
-	)
-	testonce (n > 1)(
-		x = n - 1;
-		result <- call factorial(x) * n;
-	)
-	result;
-)		
-
-matrix signed a(n,n);
-
-signed length <- n * n;
-signed i <- 0;
-signed j <- 0;
-signed tmp;
-testrep(i < length)(
-	testrep(j < length - i - 1)(
-		testonce( a(j/n,j%n) > a((j+1)/n,(j+1)%n))(
-			tmp <- a(j/n,j%n);
-			a(j/n,j%n) <- a((j+1)/n,(j+1)%n);
-			a((j+1)/n,(j+1)%n) <- a(j/n,j%n);
-		)
-	)
-)
-
-func main()(
-	signed a;
-	signed n <- 5;
-	a <- call factorial(n);
-)
+data = '''call a(5);
 '''
 
 
