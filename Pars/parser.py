@@ -13,12 +13,13 @@ class Parser():
         self.ok = True
         self.lexer = Lexer()
         self.parser = yacc.yacc(module=self)
+        self.functions = dict()
 
 
     def parse(self, t):
         try:
             res = self.parser.parse(t)
-            return res
+            return res,  self.ok, self.functions
         except LexError:
             sys.stderr.write(f'Illegal token {t}\n')
 
@@ -261,15 +262,22 @@ class Parser():
         """function : FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
                     | FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET"""
         if len(p) == 10:
-            p[0] = Tree('function', value=p[2], children={
-                'par_body': Tree('par', value=p[4], children=p[4], lineno=p.lineno(4),
-                                  lexpos=p.lexpos(4)),
-                                 'func_body': Tree('body', value=p[8], children=p[8], lineno=p.lineno(8),
-                                lexpos=p.lexpos(8))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
+            self.functions[p[2]] = Tree('function', children={'param': p[4], 'body': p[8]}, lineno=p.lineno(1),
+                                             lexpos=p.lexpos(1))
+            p[0] = Tree('func', value=p[2], lineno=p.lineno(1), lexpos=p.lexpos(2))
         else:
-            p[0] = Tree('function', value=p[2], children={
-                                 'func_body': Tree('body', value=p[7], children=p[7], lineno=p.lineno(7),
-                                lexpos=p.lexpos(7))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
+            self.functions[p[2]] = Tree('function', children={'body': p[7]}, lineno=p.lineno(1),
+                                             lexpos=p.lexpos(1))
+            p[0] = Tree('func', value=p[2], lineno=p.lineno(1), lexpos=p.lexpos(2))
+        #     p[0] = Tree('function', value=p[2], children={
+        #         'par_body': Tree('par', value=p[4], children=p[4], lineno=p.lineno(4),
+        #                           lexpos=p.lexpos(4)),
+        #                          'func_body': Tree('body', value=p[8], children=p[8], lineno=p.lineno(8),
+        #                         lexpos=p.lexpos(8))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
+        # else:
+        #     p[0] = Tree('function', value=p[2], children={
+        #                          'func_body': Tree('body', value=p[7], children=p[7], lineno=p.lineno(7),
+        #                         lexpos=p.lexpos(7))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
 
     def p_function_return(self, p):
         """function_return : VAR"""
@@ -316,7 +324,25 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-data = '''call a(5);
+data = '''func factorial(signed n)(
+	signed result;
+	testonce (n = 1)(
+		result <- 1;
+	)
+	testonce (n > 1)(
+		x = n - 1;
+		result <- call factorial(x) * n;
+	)
+	result;
+)		
+
+func main()(
+	signed a;
+	a <- call factorial(n);
+)
+
+
+
 '''
 
 
@@ -331,5 +357,7 @@ while True:
         print(token)
 
 parser = Parser()
-tree = parser.parse(data)
+tree, ok, functions = parser.parse(data)
 tree.print()
+print(ok)
+functions['factorial'].children['body'].print()

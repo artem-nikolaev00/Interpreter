@@ -110,7 +110,7 @@ func factorial(signed n)(
 
 func main()(
 	signed a;
-	a <- call factorial(5);
+	a <- call factorial(n);
 )
 --------------------------------------------------------------------------
 сортровка
