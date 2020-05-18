@@ -121,7 +121,7 @@ class Parser():
         """type : SIGNED
                 | UNSIGNED
                 | CELL"""
-        p[0] = p[1]
+        p[0] = Tree('type', value=p[1], children=[], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_expression(self, p):
         """expression : math_expression
@@ -324,24 +324,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-data = '''func factorial(signed n)(
-	signed result;
-	testonce (n = 1)(
-		result <- 1;
-	)
-	testonce (n > 1)(
-		x = n - 1;
-		result <- call factorial(x) * n;
-	)
-	result;
-)		
-
-func main()(
-	signed a;
-	a <- call factorial(n);
-)
-
-
+data = '''cell a <- 2;
 
 '''
 
@@ -360,4 +343,4 @@ parser = Parser()
 tree, ok, functions = parser.parse(data)
 tree.print()
 print(ok)
-functions['factorial'].children['body'].print()
+#functions['factorial'].children['body'].print()
