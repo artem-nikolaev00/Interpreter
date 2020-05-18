@@ -25,3 +25,9 @@ class InterpreterRedeclarationError(Exception):
 class InterpreterUndeclaredError(Exception):
     pass
 
+class InterpreterTypeError(Exception):
+    pass
+
+class InterpreterConvertationError(Exception):
+    pass
+
