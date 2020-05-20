@@ -32,10 +32,11 @@ class Matrix:
         self.type = m_type
         self.lines = m_lines
         self.column = m_column
-        # if self.lines is None and self.column is None:
-        #     self.size = None
-        # else:
-        #     self.size = m_lines * m_column
+        self.value = []
+        if self.lines is not None and self.column is not None:
+           for i in range(m_lines):
+               for j in range(m_column):
+                   self.value.append(None)
 
     def __repr__(self):
         return f'{self.type} {self.lines} {self.column}'
@@ -108,7 +109,7 @@ class Interpreter:
         self.functions = None
         self.scope = 0
         self.error = Errors()
-        self.error_types = {
+        self.error_types = {'RedeclarationError': 0
 
         }
 
@@ -174,6 +175,14 @@ class Interpreter:
             except InterpreterRedeclarationError:
                 self.error.err(self.error_types['RedeclarationError'], node)
 
+        elif node.type == 'matrix_declaration':
+            declaration_type = node.value[0].value
+            declaration_child = node.children
+            try:
+                self.declare_matrix(declaration_type, declaration_child)
+            except InterpreterRedeclarationError:
+                self.error.err(self.error_types['RedeclarationError'], node)
+
         elif node.type == 'expression':
             return self.interpreter_node(node.children)
 
@@ -190,18 +199,32 @@ class Interpreter:
         expression = Matrix(type)
         self.symbol_table[self.scope][variable] = expression
 
+    def declare_matrix(self, type, child):
+        variable = child[0].value
+        expression1 = child[1].children.value
+        expression2 = child[2].children.value
+        self.declare_m(type, variable, expression1, expression2)
+
     def declare_variable_without_init(self, type, child):
         variable = child[0].value
         expression = Variable(type)
         self.symbol_table[self.scope][variable] = expression
 
+    def declare_m(self, type, var, exp1, exp2):
+        if var in self.symbol_table[self.scope].keys():
+            raise InterpreterRedeclarationError
+        else:
+            expression = Matrix(type, exp1, exp2)
+            self.symbol_table[self.scope][var] = expression
 
     def declare_variable(self, type, child, const=False):
         if len(child) == 2:
             variable = child[0].value
             expression = self.interpreter_node(child[1])
-            self.declare(type, variable, expression, const)
-        #elif child[1] == 'expression' and child[2] == 'expression':
+            try:
+                self.declare(type, variable, expression, const)
+            except InterpreterRedeclarationError:
+                raise InterpreterRedeclarationError
 
     def declare(self, type, var, expression, const):
         expression = self.check_type(type, expression, const)
@@ -233,7 +256,8 @@ class Interpreter:
             return self.symbol_table[self.scope][node.value]
 
 
-data = '''matrix signed a;
+data = '''signed b <- 1;
+signed b <- 1;
 
 '''
 

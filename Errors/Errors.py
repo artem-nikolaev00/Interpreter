@@ -5,7 +5,7 @@ class Errors:
     def __init__(self):
         self.type = None
         self.node = None
-        self.types = [
+        self.types = ['RedeclarationError'
 
         ]
 
@@ -15,9 +15,7 @@ class Errors:
         sys.stderr.write(f'Error {self.types[int(errors_type)]}: ')
 
         if self.type == 0:
-            sys.stderr.write(f' incorrect syntax at '
-                             f'{self.node.children[0].lineno} line \n')
-            return
+            sys.stderr.write(f'Variant "{self.node.children.value}" at line {self.node.lineno} is already declared\n')
 
 class InterpreterRedeclarationError(Exception):
     pass
