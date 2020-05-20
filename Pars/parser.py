@@ -81,7 +81,7 @@ class Parser():
                        | MATRIX type VAR
                        | MATRIX type VAR LBRACKET expression COMMA expression RBRACKET"""
         if len(p) == 3:
-            p[0] = Tree('declaration', value=p[1],
+            p[0] = Tree('decl_without_init', value=p[1],
                         children=[Tree('init', value=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))],
                         lineno=p.lineno(2), lexpos=p.lexpos(2))
         elif len(p) == 5:
@@ -93,7 +93,7 @@ class Parser():
                         children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3)), p[5]],
                         lineno=p.lineno(3), lexpos=p.lexpos(3))
         elif len(p) == 4:
-            p[0] = Tree('declaration', value=[p[2], p[1]],
+            p[0] = Tree('decl_without_init', value=[p[2], p[1]],
                         children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3))],
                         lineno=p.lineno(3), lexpos=p.lexpos(3))
         else:
@@ -324,23 +324,23 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-data = '''cell a <- 2;
-
-'''
-
-
-
-lexer = Lexer()
-lexer.input(data)
-while True:
-    token = lexer.token()
-    if token is None:
-        break
-    else:
-        print(token)
-
-parser = Parser()
-tree, ok, functions = parser.parse(data)
-tree.print()
-print(ok)
-#functions['factorial'].children['body'].print()
+# data = '''signed a <- 1;
+#
+# '''
+#
+#
+#
+# lexer = Lexer()
+# lexer.input(data)
+# while True:
+#     token = lexer.token()
+#     if token is None:
+#         break
+#     else:
+#         print(token)
+#
+# parser = Parser()
+# tree, ok, functions = parser.parse(data)
+# tree.print()
+# print(ok)
+# functions['factorial'].children['body'].print()
