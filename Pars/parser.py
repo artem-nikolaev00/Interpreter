@@ -328,7 +328,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-# data = '''const cell a <- 1;
+# data = '''matrix signed a (1, 1);
 #
 # '''
 #
