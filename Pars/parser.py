@@ -89,15 +89,15 @@ class Parser():
                         children=[Tree('init', value=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2)), p[4]],
                         lineno=p.lineno(2), lexpos=p.lexpos(2))
         elif len(p) == 6:
-            p[0] = Tree('declaration', value=[p[2], p[1]],
+            p[0] = Tree('const_declaration', value=[p[2], p[1]],
                         children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3)), p[5]],
                         lineno=p.lineno(3), lexpos=p.lexpos(3))
         elif len(p) == 4:
-            p[0] = Tree('decl_without_init', value=[p[2], p[1]],
+            p[0] = Tree('matrix_decl_without_init', value=[p[2], p[1]],
                         children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3))],
                         lineno=p.lineno(3), lexpos=p.lexpos(3))
         else:
-            p[0] = Tree('declaration', value=[p[2], p[1]],
+            p[0] = Tree('matrix_declaration', value=[p[2], p[1]],
                         children=[Tree('init', value=p[3], lineno=p.lineno(3), lexpos=p.lexpos(3)), p[5], p[7]],
                         lineno=p.lineno(3), lexpos=p.lexpos(3))
 
@@ -184,8 +184,12 @@ class Parser():
 
     def p_const(self, p):
         """const : DECIMAL
-                | UDECIMAL"""
-        p[0] = Tree('const', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+                | UDECIMAL
+                | MINUS DECIMAL"""
+        if len(p) == 2:
+            p[0] = Tree('const', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+        else:
+            p[0] = Tree('const', value=[p[1], p[2]], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_variable(self, p):
         """variable : VAR
@@ -280,7 +284,7 @@ class Parser():
         #                         lexpos=p.lexpos(7))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
 
     def p_function_return(self, p):
-        """function_return : VAR"""
+        """function_return : variable"""
         p[0] = Tree('var', value=p[1], lineno=p.lineno(1),  lexpos=p.lexpos(1))
 
     def p_function_call(self, p):
@@ -324,7 +328,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-# data = '''signed a <- 1;
+# data = '''const cell a <- 1;
 #
 # '''
 #
