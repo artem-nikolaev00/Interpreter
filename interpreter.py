@@ -34,14 +34,22 @@ class Converter:
             return var
         elif type == 'signed':
             if var.type == 'unsigned':
-                val = self.string_to_int(var)
-                return Variable('signed', val)
+                return self.unsigned_to_signed(var)
         elif type == 'unsigned':
             if var.type == 'signed':
-                val = self.string_to_uint(var)
-                return Variable('unsigned', val)
+                return self.signed_to_unsigned(var)
         elif type.find(var.type) != -1:
             return Variable(type, var.value)
+
+    @staticmethod
+    def signed_to_unsigned(var):
+        val = uint(var.value)
+        return Variable('unsigned', val)
+
+    @staticmethod
+    def unsigned_to_signed(var):
+        val = int(var.value)
+        return Variable('signed', val)
 
     @staticmethod
     def string_to_int(val):
@@ -104,6 +112,14 @@ class Interpreter:
             for child in node.children:
                 self.interpreter_node(child)
 
+        elif node.type == 'decl_without_init':
+            declaration_type = node.value.value
+            declaration_child = node.children
+            try:
+                self.declare_variable_without_init(declaration_type, declaration_child)
+            except InterpreterRedeclarationError:
+                self.error.err(self.error_types['RedeclarationError'], node)
+
         elif node.type == 'declaration':
             declaration_type = node.value.value
             declaration_child = node.children
@@ -112,19 +128,25 @@ class Interpreter:
             except InterpreterRedeclarationError:
                 self.error.err(self.error_types['RedeclarationError'], node)
 
+        elif node.type == 'expression':
+            return self.interpreter_node(node.children)
 
+        elif node.type == 'const':
+            return self.const_val(node.value)
         return ''
 
+    def declare_variable_without_init(self, type, child):
+        variable = child[0].value
+        expression = Variable(type)
+        self.symbol_table[self.scope][variable] = expression
+
+
     def declare_variable(self, type, child):
-        if child[1] is None:
-            variable = child[0].value
-            expression = None
-            self.declare(type, variable, expression)
-        elif child[1] == 'expression' and child[2] is None:
+        if len(child) == 2:
             variable = child[0].value
             expression = self.interpreter_node(child[1])
             self.declare(type, variable, expression)
-        elif child[1] == 'expression' and child[2] == 'expression':
+        #elif child[1] == 'expression' and child[2] == 'expression':
 
 
     def declare(self, type, var, expression):
@@ -136,9 +158,7 @@ class Interpreter:
 
     def check_type(self, type, exp):
         var = ['signed', 'unsigned']
-        if type.find('m') != -1 and exp.type.find('m') != -1:
-            return self.check_matrix(type, exp)
-        elif type in var and exp.type in var:
+        if type in var and exp.type in var:
             return self.check_var(type, exp)
         else:
             raise InterpreterTypeError
@@ -146,3 +166,19 @@ class Interpreter:
     def check_var(self, type, exp):
         exp = self.converter.converse(type, exp)
         return exp
+
+    def const_val(self, value):
+        if type(value) == int:
+            return Variable('signed', value)
+        elif type(value) == str:
+            val = self.converter.string_to_uint(value)
+            return Variable('unsigned', val)
+
+
+data = '''unsigned a <- 1;
+
+'''
+
+a = Interpreter()
+a.interpreter(data)
+pass
