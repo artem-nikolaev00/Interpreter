@@ -9,14 +9,15 @@ from Errors.Errors import InterpreterTypeError
 from Errors.Errors import InterpreterConvertationError
 
 
-
 class Variable:
-    def __init__(self, var_type, var_value = None):
+
+    def __init__(self, var_type, var_value=None, var_const=False):
         self.type = var_type
         self.value = var_value
+        self.const = var_const
 
     def __repr__(self):
-        return f'{self.type} {self.value}'
+        return f'{self.type} {self.value} {self.const}'
 
     def __eq__(self, other):
         if isinstance(other, Variable):
@@ -25,31 +26,59 @@ class Variable:
         return NotImplemented
 
 
+class Matrix:
+
+    def __init__(self, m_type, m_lines=None, m_column=None):
+        self.type = m_type
+        self.lines = m_lines
+        self.column = m_column
+        # if self.lines is None and self.column is None:
+        #     self.size = None
+        # else:
+        #     self.size = m_lines * m_column
+
+    def __repr__(self):
+        return f'{self.type} {self.lines} {self.column}'
+
+
 class Converter:
+
     def __init__(self):
         pass
 
-    def converse(self, type, var):
-        if type == var.type:
-            return var
-        elif type == 'signed':
-            if var.type == 'unsigned':
-                return self.unsigned_to_signed(var)
-        elif type == 'unsigned':
-            if var.type == 'signed':
-                return self.signed_to_unsigned(var)
-        elif type.find(var.type) != -1:
-            return Variable(type, var.value)
+    def converse(self, type, var, const):
+        if const is True:
+            if type == var.type:
+                return Variable(var.type, var.value, const)
+            elif type == 'signed':
+                if var.type == 'unsigned':
+                    return self.unsigned_to_signed(var, const)
+            elif type == 'unsigned':
+                if var.type == 'signed':
+                    return self.signed_to_unsigned(var, const)
+            elif type.find(var.type) != -1:
+                return Variable(type, var.value)
+        else:
+            if type == var.type:
+                return var
+            elif type == 'signed':
+                if var.type == 'unsigned':
+                    return self.unsigned_to_signed(var)
+            elif type == 'unsigned':
+                if var.type == 'signed':
+                    return self.signed_to_unsigned(var)
+            elif type.find(var.type) != -1:
+                return Variable(type, var.value)
 
     @staticmethod
-    def signed_to_unsigned(var):
+    def signed_to_unsigned(var, const=False):
         val = uint(var.value)
-        return Variable('unsigned', val)
+        return Variable('unsigned', val, const)
 
     @staticmethod
-    def unsigned_to_signed(var):
+    def unsigned_to_signed(var, const=False):
         val = int(var.value)
-        return Variable('signed', val)
+        return Variable('signed', val, const)
 
     @staticmethod
     def string_to_int(val):
@@ -128,12 +157,38 @@ class Interpreter:
             except InterpreterRedeclarationError:
                 self.error.err(self.error_types['RedeclarationError'], node)
 
+        elif node.type == 'const_declaration':
+            declaration_const = True
+            declaration_type = node.value[0].value
+            declaration_child = node.children
+            try:
+                self.declare_variable(declaration_type, declaration_child, declaration_const)
+            except InterpreterRedeclarationError:
+                self.error.err(self.error_types['RedeclarationError'], node)
+
+        elif node.type == 'matrix_decl_without_init':
+            declaration_type = node.value[0].value
+            declaration_child = node.children
+            try:
+                self.declare_matrix_without_init(declaration_type, declaration_child)
+            except InterpreterRedeclarationError:
+                self.error.err(self.error_types['RedeclarationError'], node)
+
         elif node.type == 'expression':
             return self.interpreter_node(node.children)
 
         elif node.type == 'const':
             return self.const_val(node.value)
+
+        elif node.type == 'variable':
+            return self.get_value(node)
+
         return ''
+
+    def declare_matrix_without_init(self, type, child):
+        variable = child[0].value
+        expression = Matrix(type)
+        self.symbol_table[self.scope][variable] = expression
 
     def declare_variable_without_init(self, type, child):
         variable = child[0].value
@@ -141,30 +196,29 @@ class Interpreter:
         self.symbol_table[self.scope][variable] = expression
 
 
-    def declare_variable(self, type, child):
+    def declare_variable(self, type, child, const=False):
         if len(child) == 2:
             variable = child[0].value
             expression = self.interpreter_node(child[1])
-            self.declare(type, variable, expression)
+            self.declare(type, variable, expression, const)
         #elif child[1] == 'expression' and child[2] == 'expression':
 
-
-    def declare(self, type, var, expression):
-        expression = self.check_type(type, expression)
+    def declare(self, type, var, expression, const):
+        expression = self.check_type(type, expression, const)
         if var in self.symbol_table[self.scope].keys():
             raise InterpreterRedeclarationError
         else:
             self.symbol_table[self.scope][var] = expression
 
-    def check_type(self, type, exp):
+    def check_type(self, type, exp, const):
         var = ['signed', 'unsigned']
         if type in var and exp.type in var:
-            return self.check_var(type, exp)
+            return self.check_var(type, exp, const)
         else:
             raise InterpreterTypeError
 
-    def check_var(self, type, exp):
-        exp = self.converter.converse(type, exp)
+    def check_var(self, type, exp, const):
+        exp = self.converter.converse(type, exp, const)
         return exp
 
     def const_val(self, value):
@@ -174,8 +228,12 @@ class Interpreter:
             val = self.converter.string_to_uint(value)
             return Variable('unsigned', val)
 
+    def get_value(self, node):
+        if node.value in self.symbol_table[self.scope].keys():
+            return self.symbol_table[self.scope][node.value]
 
-data = '''unsigned a <- 1;
+
+data = '''matrix signed a;
 
 '''
 
