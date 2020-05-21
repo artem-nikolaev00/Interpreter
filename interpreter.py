@@ -7,6 +7,7 @@ from Errors.Errors import Errors
 from Errors.Errors import InterpreterRedeclarationError
 from Errors.Errors import InterpreterTypeError
 from Errors.Errors import InterpreterConvertationError
+from Errors.Errors import InterpreterIndexError
 
 
 class Variable:
@@ -109,9 +110,10 @@ class Interpreter:
         self.functions = None
         self.scope = 0
         self.error = Errors()
-        self.error_types = {'RedeclarationError': 0
-
-        }
+        self.error_types = {'UnexpectedError': 0,
+                            'RedeclarationError': 1,
+                            'TypeError': 2,
+                            'IndexError': 3}
 
     def interpreter(self, program=None):
         self.program = program
@@ -149,6 +151,8 @@ class Interpreter:
                 self.declare_variable_without_init(declaration_type, declaration_child)
             except InterpreterRedeclarationError:
                 self.error.err(self.error_types['RedeclarationError'], node)
+            except InterpreterTypeError:
+                self.error.err(self.error_types['TypeError'], node)
 
         elif node.type == 'declaration':
             declaration_type = node.value.value
@@ -157,6 +161,8 @@ class Interpreter:
                 self.declare_variable(declaration_type, declaration_child)
             except InterpreterRedeclarationError:
                 self.error.err(self.error_types['RedeclarationError'], node)
+            except InterpreterTypeError:
+                self.error.err(self.error_types['TypeError'], node)
 
         elif node.type == 'const_declaration':
             declaration_const = True
@@ -166,6 +172,8 @@ class Interpreter:
                 self.declare_variable(declaration_type, declaration_child, declaration_const)
             except InterpreterRedeclarationError:
                 self.error.err(self.error_types['RedeclarationError'], node)
+            except InterpreterTypeError:
+                self.error.err(self.error_types['TypeError'], node)
 
         elif node.type == 'matrix_decl_without_init':
             declaration_type = node.value[0].value
@@ -174,6 +182,8 @@ class Interpreter:
                 self.declare_matrix_without_init(declaration_type, declaration_child)
             except InterpreterRedeclarationError:
                 self.error.err(self.error_types['RedeclarationError'], node)
+            except InterpreterTypeError:
+                self.error.err(self.error_types['TypeError'], node)
 
         elif node.type == 'matrix_declaration':
             declaration_type = node.value[0].value
@@ -182,6 +192,10 @@ class Interpreter:
                 self.declare_matrix(declaration_type, declaration_child)
             except InterpreterRedeclarationError:
                 self.error.err(self.error_types['RedeclarationError'], node)
+            except InterpreterTypeError:
+                self.error.err(self.error_types['TypeError'], node)
+            except InterpreterIndexError:
+                self.error.err(self.error_types['IndexError'], node)
 
         elif node.type == 'expression':
             return self.interpreter_node(node.children)
@@ -195,9 +209,12 @@ class Interpreter:
         return ''
 
     def declare_matrix_without_init(self, type, child):
-        variable = child[0].value
-        expression = Matrix(type)
-        self.symbol_table[self.scope][variable] = expression
+        var = child[0].value
+        if var in self.symbol_table[self.scope].keys():
+            raise InterpreterRedeclarationError
+        else:
+            expression = Matrix(type)
+            self.symbol_table[self.scope][var] = expression
 
     def declare_matrix(self, type, child):
         variable = child[0].value
@@ -206,14 +223,21 @@ class Interpreter:
         self.declare_m(type, variable, expression1, expression2)
 
     def declare_variable_without_init(self, type, child):
-        variable = child[0].value
-        expression = Variable(type)
-        self.symbol_table[self.scope][variable] = expression
+        var = child[0].value
+        if var in self.symbol_table[self.scope].keys():
+            raise InterpreterRedeclarationError
+        else:
+            expression = Variable(type)
+            self.symbol_table[self.scope][var] = expression
 
     def declare_m(self, type, var, exp1, exp2):
         if var in self.symbol_table[self.scope].keys():
             raise InterpreterRedeclarationError
         else:
+            # try:
+            #     expression = self.check_matrix_index(type, exp1, exp2)
+            # except InterpreterIndexError:
+            #     raise InterpreterIndexError
             expression = Matrix(type, exp1, exp2)
             self.symbol_table[self.scope][var] = expression
 
@@ -240,6 +264,19 @@ class Interpreter:
         else:
             raise InterpreterTypeError
 
+    # def check_matrix_index(self, type, exp1, exp2):
+    #     if type(exp1) == int and type(exp2) == int:
+    #         if exp1 > 0 and exp2 > 0:
+    #             return Matrix(type, exp1, exp2)
+    #         else:
+    #             raise InterpreterIndexError
+    #     elif type(exp1) == list or type(exp2) == list:
+    #         if exp1[0] == '-':
+    #             raise InterpreterIndexError
+    #         if exp2[0] == '-':
+    #             raise InterpreterIndexError
+
+
     def check_var(self, type, exp, const):
         exp = self.converter.converse(type, exp, const)
         return exp
@@ -247,17 +284,15 @@ class Interpreter:
     def const_val(self, value):
         if type(value) == int:
             return Variable('signed', value)
-        elif type(value) == str:
-            val = self.converter.string_to_uint(value)
-            return Variable('unsigned', val)
+        elif type(value) == uint:
+            return Variable('unsigned', value)
 
     def get_value(self, node):
         if node.value in self.symbol_table[self.scope].keys():
             return self.symbol_table[self.scope][node.value]
 
 
-data = '''signed b <- 1;
-signed b <- 1;
+data = '''matrix signed a(13, 1);
 
 '''
 
