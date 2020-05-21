@@ -1,5 +1,7 @@
 import sys
 import ply.lex as lex
+import re
+from numpy import uint
 
 reserved = {
     'signed': 'SIGNED',
@@ -63,6 +65,8 @@ class Lexer(object):
 
     def t_UDECIMAL(self, t):
         r'\d+u'
+        t.value = re.findall(r'\d+', t.value)
+        t.value = uint(t.value[0])
         return t
 
     def t_DECIMAL(self, t):
