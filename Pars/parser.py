@@ -139,7 +139,7 @@ class Parser():
 
     def p_side(self, p):
         """side : LBRACKET directions RBRACKET"""
-        p[0] = Tree('diractions', children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
+        p[0] = Tree('side', children=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
 
     def p_side_error(self, p):
         """side : LBRACKET error RBRACKET"""
@@ -152,7 +152,7 @@ class Parser():
         if len(p) == 4:
             p[0] = Tree('directions', children=[p[1], p[3]], lineno=p.lineno(1), lexpos=p.lexpos(1))
         else:
-            p[0] = Tree('directions', children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+            p[0] = Tree('direction', children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_direction(self, p):
         """direction : TOP
@@ -164,7 +164,7 @@ class Parser():
                     | DOWN
                     | NDOWN
                     | BOTTOM"""
-        p[0] = Tree('direction', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+        p[0] = Tree('dir', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_compare(self, p):
         """compare : expression EQ expression
@@ -328,7 +328,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-data = '''a <- 1u;
+data = '''cell a <- (top, left, down, right);
 
 '''
 
