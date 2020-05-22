@@ -8,7 +8,8 @@ class Errors:
         self.types = ['UnexpectedError',
                         'RedeclarationError',
                         'TypeError',
-                        'IndexError']
+                        'IndexError',
+                        'UndeclaredError']
 
     def err(self, errors_type, node=None):
         self.type = errors_type
@@ -28,6 +29,10 @@ class Errors:
         elif self.type == 3:
             sys.stderr.write(f'List index is out of range at line '
                              f'{self.node.value[0].lineno}\n')
+        elif self.type == 4:
+            if node.type == 'declaration':
+                sys.stderr.write(f'Variable for declaration at line '
+                                 f'{self.node.lineno} is not used before\n')
 
 
 class InterpreterRedeclarationError(Exception):
@@ -47,5 +52,9 @@ class InterpreterConvertationError(Exception):
 
 
 class InterpreterIndexError(Exception):
+    pass
+
+
+class InterpreterNameError(Exception):
     pass
 
