@@ -328,23 +328,23 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-data = '''cell a <- (top, left, down, right);
-
-'''
-
-
-
-lexer = Lexer()
-lexer.input(data)
-while True:
-    token = lexer.token()
-    if token is None:
-        break
-    else:
-        print(token)
-
-parser = Parser()
-tree, ok, functions = parser.parse(data)
-tree.print()
-print(ok)
-# functions['factorial'].children['body'].print()
+# data = '''a <> b;
+#
+# '''
+#
+#
+#
+# lexer = Lexer()
+# lexer.input(data)
+# while True:
+#     token = lexer.token()
+#     if token is None:
+#         break
+#     else:
+#         print(token)
+#
+# parser = Parser()
+# tree, ok, functions = parser.parse(data)
+# tree.print()
+# print(ok)
+#  functions['factorial'].children['body'].print()

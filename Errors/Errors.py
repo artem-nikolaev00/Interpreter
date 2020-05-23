@@ -9,7 +9,12 @@ class Errors:
                         'RedeclarationError',
                         'TypeError',
                         'IndexError',
-                        'UndeclaredError']
+                        'UndeclaredError',
+                        'SidesError',
+                        'ConstError',
+                        'NoneError',
+                        'UnsignedInitError',
+                        'DivError']
 
     def err(self, errors_type, node=None):
         self.type = errors_type
@@ -24,15 +29,40 @@ class Errors:
             sys.stderr.write(f'Variable "{node.children[0].value}" at line '
                              f'{self.node.lineno} is already declared\n')
         elif self.type == 2:
-            sys.stderr.write(f'Bad type for declaration "{self.node.children[0].value}" at line '
-                            f'{self.node.lineno}\n')
+            if node.type == 'declaration':
+                sys.stderr.write(f'Bad type for declaration "{self.node.children[0].value}" at line '
+                            f'{self.node.children[0].lineno}\n')
+            else:
+                sys.stderr.write(f'non-matching types at line '
+                                 f'{self.node.lineno}\n')
         elif self.type == 3:
-            sys.stderr.write(f'List index is out of range at line '
+            if node.type == 'assignment':
+                sys.stderr.write(f'List index is out of range at line '
+                                 f'{self.node.children[0].lineno}\n')
+            else:
+                sys.stderr.write(f'List index is out of range at line '
                              f'{self.node.value[0].lineno}\n')
         elif self.type == 4:
-            if node.type == 'declaration':
-                sys.stderr.write(f'Variable for declaration at line '
-                                 f'{self.node.lineno} is not used before\n')
+            sys.stderr.write(f'Variable for declaration at line '
+                                 f'{self.node.children[0].lineno} is not used before\n')
+        elif self.type == 5:
+            sys.stderr.write(f'Error at sides of "{self.node.children[0].value}" at line '
+                             f'{self.node.lineno}\n')
+        elif self.type == 6:
+            sys.stderr.write(f'Impossible reinitialize const variable "{self.node.children[0].value}" at line '
+                         f'{self.node.children[0].lineno}\n')
+        elif self.type == 7:
+            sys.stderr.write(f'Variable "{self.node.value.value}" at line '
+                         f'{self.node.value.lineno} initialized by uninitialized variable\n')
+        elif self.type == 8:
+            sys.stderr.write(f'Impossible to initialize unsigned "{self.node.children[0].value}" at line '
+                            f'{self.node.children[0].lineno} because value < 0\n')
+        elif self.type == 9:
+            sys.stderr.write(f'Div by zero!!!!!  at line '
+                            f'{self.node.lineno} because value < 0\n')
+
+
+
 
 
 class InterpreterRedeclarationError(Exception):
@@ -56,5 +86,25 @@ class InterpreterIndexError(Exception):
 
 
 class InterpreterNameError(Exception):
+    pass
+
+
+class InterpreterSidesError(Exception):
+    pass
+
+
+class InterpreterConstError(Exception):
+    pass
+
+
+class InterpreterNoneError(Exception):
+    pass
+
+
+class InterpreterUnsignedInitError(Exception):
+    pass
+
+
+class InterpreterDivError(Exception):
     pass
 

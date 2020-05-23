@@ -9,6 +9,11 @@ from Errors.Errors import InterpreterTypeError
 from Errors.Errors import InterpreterConvertationError
 from Errors.Errors import InterpreterIndexError
 from Errors.Errors import InterpreterNameError
+from Errors.Errors import InterpreterSidesError
+from Errors.Errors import InterpreterConstError
+from Errors.Errors import InterpreterNoneError
+from Errors.Errors import InterpreterUnsignedInitError
+from Errors.Errors import InterpreterDivError
 
 
 class Variable:
@@ -38,40 +43,24 @@ class Cell:
                 self.right = True
             else:
                 self.right = False
-        elif c_right == 'nright':
-            self.right = False
-        elif c_right == 'right':
-            self.right = True
 
         if isinstance(c_left, bool):
             if c_left:
                 self.left = True
             else:
                 self.left = False
-        elif c_left == 'nleft':
-            self.left = False
-        elif c_left == 'left':
-            self.left = True
 
         if isinstance(c_top, bool):
             if c_top:
                 self.top = True
             else:
                 self.top = False
-        elif c_top == 'ntop':
-            self.top = False
-        elif c_top == 'top':
-            self.top = True
 
         if isinstance(c_down, bool):
             if c_down:
                 self.down = True
             else:
                 self.down = False
-        elif c_down == 'ndown':
-            self.down = False
-        elif c_down == 'down':
-            self.down = True
 
     def __repr__(self):
         return f'{self.top} {self.left} {self.right} {self.down}'
@@ -81,14 +70,17 @@ class Cell:
 class Matrix:
 
     def __init__(self, m_type, m_lines=None, m_column=None):
+        self.const = False
         self.type = m_type
         self.lines = m_lines
         self.column = m_column
         self.value = []
         if self.lines is not None and self.column is not None:
            for i in range(m_lines):
+               buf = []
                for j in range(m_column):
-                   self.value.append(None)
+                   buf.append(None)
+               self.value.append(buf)
 
     def __repr__(self):
         return f'{self.type} {self.lines} {self.column}'
@@ -99,7 +91,7 @@ class Converter:
     def __init__(self):
         pass
 
-    def converse(self, type, var, const):
+    def converse(self, type, var, const=False):
         if const is True:
             if type == var.type:
                 if type == 'cell':
@@ -125,13 +117,25 @@ class Converter:
                 return Variable(type, var.value)
         else:
             if type == var.type:
-                return var
+                if type == 'cell':
+                    return Cell(c_top=var.top, c_right=var.right, c_left=var.left, c_down=var.down)
+                else:
+                    return Variable(var.type, var.value)
             elif type == 'signed':
                 if var.type == 'unsigned':
                     return self.unsigned_to_signed(var)
+                elif var.type == 'cell':
+                    return self.cell_to_signed(var)
             elif type == 'unsigned':
                 if var.type == 'signed':
                     return self.signed_to_unsigned(var)
+                elif var.type == 'cell':
+                    return self.cell_to_unsigned(var)
+            elif type == 'cell':
+                if var.type == 'signed':
+                    return self.signed_to_cell(var)
+                elif var.type == 'unsigned':
+                    return self.unsigned_to_cell(var)
             elif type.find(var.type) != -1:
                 return Variable(type, var.value)
 
@@ -216,6 +220,7 @@ class Interpreter:
         self.parser = parser
         self.converter = converter
         self.check_cell = 0
+        self.cell_scope = 0
         self.program = None
         self.symbol_table = [dict()]
         self.tree = None
@@ -226,7 +231,12 @@ class Interpreter:
                             'RedeclarationError': 1,
                             'TypeError': 2,
                             'IndexError': 3,
-                            'UndeclaredError': 4}
+                            'UndeclaredError': 4,
+                            'SidesError': 5,
+                            'ConstError': 6,
+                            'NoneError': 7,
+                            'UnsignedInitError': 8,
+                            'DivError': 9}
 
     def interpreter(self, program=None):
         self.program = program
@@ -278,6 +288,8 @@ class Interpreter:
                 self.error.err(self.error_types['TypeError'], node)
             except InterpreterNameError:
                 self.error.err(self.error_types['UndeclaredError'], node)
+            except InterpreterSidesError:
+                self.error.err(self.error_types['SidesError'], node)
 
         elif node.type == 'const_declaration':
             declaration_const = True
@@ -326,7 +338,10 @@ class Interpreter:
             if self.check_cell == 0:
                 self.check_cell = 1
             tmp = self.direct(node)
-            return self.sides(tmp)
+            if self.cell_scope == 0:
+                return self.sides(tmp)
+            else:
+                return tmp
 
         elif node.type == 'direction':
             if self.check_cell == 0:
@@ -341,15 +356,327 @@ class Interpreter:
         elif node.type == 'const':
             return self.const_val(node.value)
 
+        elif node.type == 'indexing':
+            var = node.value
+            if var not in self.symbol_table[self.scope].keys():
+                self.error.err(self.error_types['UndeclaredError'], node)
+            index1 = self.interpreter_node(node.children[0])
+            index2 = self.interpreter_node(node.children[1])
+            return self.symbol_table[self.scope][var].value[index1.value][index2.value]
+
         elif node.type == 'variable':
             return self.get_value(node)
 
+        elif node.type == 'assignment':
+            var = node.value.value
+            index1 = None
+            index2 = None
+            _const = False
+            if var not in self.symbol_table[self.scope].keys():
+                self.error.err(self.error_types['UndeclaredError'], node)
+            else:
+                if node.value.type == 'indexing':
+                    index1 = self.interpreter_node(node.value.children[0])
+                    index2 = self.interpreter_node(node.value.children[1])
+                try:
+                    _type = self.symbol_table[self.scope][var].type
+                    if node.value.type != 'indexing':
+                        _const = self.symbol_table[self.scope][var].const
+                    expression = self.interpreter_node(node.children[1])
+                    if not isinstance(self.symbol_table[self.scope][var], Matrix) and\
+                            _type == 'unsigned' and expression.value < 0:
+                        raise InterpreterUnsignedInitError
+                    if node.value.type == 'indexing':
+                        self.assign(_type, _const, var, expression, index1.value, index2.value)
+                    else:
+                        if isinstance(self.symbol_table[self.scope][var], Matrix):
+                            self.symbol_table[self.scope][var] = expression
+                        else:
+                            self.assign(_type, _const, var, expression)
+                except InterpreterNameError:
+                        self.error.err(self.error_types['UndeclaredError'], node)
+                except InterpreterConstError:
+                    self.error.err(self.error_types['ConstError'], node)
+                except InterpreterNoneError:
+                    self.error.err(self.error_types['NoneError'], node)
+                except InterpreterIndexError:
+                    self.error.err(self.error_types['IndexError'], node)
+                except InterpreterUnsignedInitError:
+                    self.error.err(self.error_types['UnsignedInitError'], node)
+
+
+        elif node.type == 'bin_op':
+            try:
+                if node.value == '+':
+                    return self.bin_plus(node.children[0], node.children[1])
+                elif node.value == '-':
+                    return self.bin_minus(node.children[0], node.children[1])
+                elif node.value == '*':
+                    return self.bin_mul(node.children[0], node.children[1])
+                elif node.value == '/':
+                    return self.bin_div(node.children[0], node.children[1])
+                elif node.value == '%':
+                    return self.bin_mod(node.children[0], node.children[1])
+            except InterpreterDivError:
+                self.error.err(self.error_types['DivError'], node)
+            except InterpreterTypeError:
+                self.error.err(self.error_types['TypeError'], node)
         return ''
+
+    def bin_plus(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) and isinstance(expr2, Matrix):
+            if expr1.lines <= expr2.lines:
+                lines = expr1.lines
+            else:
+                lines = expr2.lines
+            if expr1.column <= expr2.column:
+                column = expr1.column
+            else:
+                column = expr2.column
+            tmp = Matrix('signed', lines, column)
+            val = []
+            for i in range(lines):
+                buf = []
+                for j in range(column):
+                    if expr1.value[i][j] is not None and expr2.value[i][j] is not None:
+                        num = expr1.value[i][j].value + expr2.value[i][j].value
+                        buf.append(Variable('signed', num))
+                    elif expr1.value[i][j] is not None:
+                        buf.append(expr1.value[i][j])
+                    elif expr2.value[i][j] is not None:
+                        buf.append(expr2.value[i][j])
+                    else:
+                        buf.append(None)
+                val.append(buf)
+            tmp.value = val
+            return tmp
+        elif (expr1.type == 'signed' or expr1.type == 'unsigned') and\
+                (expr2.type == 'signed' or expr2.type == 'unsigned')\
+                and isinstance(expr1, Variable) and isinstance(expr2, Variable):
+            expr1 = self.converter.converse('signed', self.interpreter_node(var1))
+            expr2 = self.converter.converse('signed', self.interpreter_node(var2))
+            return Variable('signed', expr1.value + expr2.value)
+        elif expr1.type == 'cell' and expr2.type == 'cell':
+            top = expr1.top or expr2.top
+            left = expr1.left or expr2.left
+            right = expr1.right or expr2.right
+            down = expr1.down or expr2.down
+            return Cell(c_top=top, c_down=down, c_left=left, c_right=right)
+        else:
+            raise InterpreterTypeError
+
+    def bin_minus(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) and isinstance(expr2, Matrix):
+            if expr1.lines <= expr2.lines:
+                lines = expr1.lines
+            else:
+                lines = expr2.lines
+            if expr1.column <= expr2.column:
+                column = expr1.column
+            else:
+                column = expr2.column
+            tmp = Matrix('signed', lines, column)
+            val = []
+            for i in range(lines):
+                buf = []
+                for j in range(column):
+                    if expr1.value[i][j] is not None and expr2.value[i][j] is not None:
+                        if expr1.value[i][j].type == 'unsigned':
+                            num = expr1.value[i][j].value - expr2.value[i][j].value
+                            if num < 0:
+                                raise InterpreterUnsignedInitError
+                        else:
+                            num = expr1.value[i][j].value - expr2.value[i][j].value
+                        buf.append(Variable('signed', num))
+                    elif expr1.value[i][j] is not None:
+                        buf.append(expr1.value[i][j])
+                    elif expr2.value[i][j] is not None:
+                        buf.append(expr2.value[i][j])
+                    else:
+                        buf.append(None)
+                val.append(buf)
+            tmp.value = val
+            return tmp
+        elif (expr1.type == 'signed' or expr1.type == 'unsigned') and \
+                (expr2.type == 'signed' or expr2.type == 'unsigned') \
+                and isinstance(expr1, Variable) and isinstance(expr2, Variable):
+            expr1 = self.converter.converse('signed', self.interpreter_node(var1))
+            expr2 = self.converter.converse('signed', self.interpreter_node(var2))
+            return Variable('signed', expr1.value - expr2.value)
+        elif expr1.type == 'cell' and expr2.type == 'cell':
+            top = expr1.top ^ expr2.top
+            left = expr1.left ^ expr2.left
+            right = expr1.right ^ expr2.right
+            down = expr1.down ^expr2.down
+            return Cell(c_top=top, c_down=down, c_left=left, c_right=right)
+        else:
+            raise InterpreterTypeError
+
+    def bin_mul(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) and isinstance(expr2, Matrix):
+            if expr1.lines <= expr2.lines:
+                lines = expr1.lines
+            else:
+                lines = expr2.lines
+            if expr1.column <= expr2.column:
+                column = expr1.column
+            else:
+                column = expr2.column
+            tmp = Matrix('signed', lines, column)
+            val = []
+            for i in range(lines):
+                buf = []
+                for j in range(column):
+                    if expr1.value[i][j] is not None and expr2.value[i][j] is not None:
+                        if expr1.value[i][j].type == 'unsigned':
+                            num = expr1.value[i][j].value * expr2.value[i][j].value
+                            if num < 0:
+                                raise InterpreterUnsignedInitError
+                        else:
+                            num = expr1.value[i][j].value * expr2.value[i][j].value
+                        buf.append(Variable('signed', num))
+                    elif expr1.value[i][j] is not None:
+                        buf.append(expr1.value[i][j])
+                    elif expr2.value[i][j] is not None:
+                        buf.append(expr2.value[i][j])
+                    else:
+                        buf.append(None)
+                val.append(buf)
+            tmp.value = val
+            return tmp
+        elif (expr1.type == 'signed' or expr1.type == 'unsigned') and \
+                (expr2.type == 'signed' or expr2.type == 'unsigned')\
+                and isinstance(expr1, Variable) and isinstance(expr2, Variable):
+            expr1 = self.converter.converse('signed', self.interpreter_node(var1))
+            expr2 = self.converter.converse('signed', self.interpreter_node(var2))
+            return Variable('signed', expr1.value * expr2.value)
+        elif expr1.type == 'cell' and expr2.type == 'cell':
+            top = expr1.top and expr2.top
+            left = expr1.left and expr2.left
+            right = expr1.right and expr2.right
+            down = expr1.down and expr2.down
+            return Cell(c_top=top, c_down=down, c_left=left, c_right=right)
+        else:
+            raise InterpreterTypeError
+
+    def bin_div(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) and isinstance(expr2, Matrix):
+            if expr1.lines <= expr2.lines:
+                lines = expr1.lines
+            else:
+                lines = expr2.lines
+            if expr1.column <= expr2.column:
+                column = expr1.column
+            else:
+                column = expr2.column
+            tmp = Matrix('signed', lines, column)
+            val = []
+            for i in range(lines):
+                buf = []
+                for j in range(column):
+                    if expr1.value[i][j] is not None and expr2.value[i][j] is not None:
+                        if expr2.value[i][j].value == 0:
+                            raise InterpreterDivError
+                        if expr1.value[i][j].type == 'unsigned':
+                            num = expr1.value[i][j].value / expr2.value[i][j].value
+                            if num < 0:
+                                raise InterpreterUnsignedInitError
+                        else:
+                            num = expr1.value[i][j].value / expr2.value[i][j].value
+                        buf.append(Variable('signed', num))
+                    elif expr1.value[i][j] is not None:
+                        buf.append(expr1.value[i][j])
+                    elif expr2.value[i][j] is not None:
+                        buf.append(expr2.value[i][j])
+                    else:
+                        buf.append(None)
+                val.append(buf)
+            tmp.value = val
+            return tmp
+        elif (expr1.type == 'signed' or expr1.type == 'unsigned') and \
+                (expr2.type == 'signed' or expr2.type == 'unsigned')\
+                and isinstance(expr1, Variable) and isinstance(expr2, Variable):
+            expr1 = self.converter.converse('signed', self.interpreter_node(var1))
+            expr2 = self.converter.converse('signed', self.interpreter_node(var2))
+            if expr2.value == 0:
+                raise InterpreterDivError
+            return Variable('signed', expr1.value / expr2.value)
+        elif expr1.type == 'cell' and expr2.type == 'cell':
+            top = expr1.top ^ expr2.top
+            left = expr1.left ^ expr2.left
+            right = expr1.right ^ expr2.right
+            down = expr1.down ^expr2.down
+            return Cell(c_top=top, c_down=down, c_left=left, c_right=right)
+        else:
+            raise InterpreterTypeError
+
+    def bin_mod(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) and isinstance(expr2, Matrix):
+            if expr1.lines <= expr2.lines:
+                lines = expr1.lines
+            else:
+                lines = expr2.lines
+            if expr1.column <= expr2.column:
+                column = expr1.column
+            else:
+                column = expr2.column
+            tmp = Matrix('signed', lines, column)
+            val = []
+            for i in range(lines):
+                buf = []
+                for j in range(column):
+                    if expr1.value[i][j] is not None and expr2.value[i][j] is not None:
+                        if expr2.value[i][j].value == 0:
+                            raise InterpreterDivError
+                        if expr1.value[i][j].type == 'unsigned':
+                            num = expr1.value[i][j].value % expr2.value[i][j].value
+                            if num < 0:
+                                raise InterpreterUnsignedInitError
+                        else:
+                            num = expr1.value[i][j].value % expr2.value[i][j].value
+                        buf.append(Variable('signed', num))
+                    elif expr1.value[i][j] is not None:
+                        buf.append(expr1.value[i][j])
+                    elif expr2.value[i][j] is not None:
+                        buf.append(expr2.value[i][j])
+                    else:
+                        buf.append(None)
+                val.append(buf)
+            tmp.value = val
+            return tmp
+        elif (expr1.type == 'signed' or expr1.type == 'unsigned') and \
+                (expr2.type == 'signed' or expr2.type == 'unsigned')\
+                and isinstance(expr1, Variable) and isinstance(expr2, Variable):
+            expr1 = self.converter.converse('signed', self.interpreter_node(var1))
+            expr2 = self.converter.converse('signed', self.interpreter_node(var2))
+            if expr2.value == 0:
+                raise InterpreterDivError
+            return Variable('signed', expr1.value % expr2.value)
+        elif expr1.type == 'cell' and expr2.type == 'cell':
+            top = expr1.top ^ expr2.top
+            left = expr1.left ^ expr2.left
+            right = expr1.right ^ expr2.right
+            down = expr1.down ^ expr2.down
+            return Cell(c_top=top, c_down=down, c_left=left, c_right=right)
+        else:
+            raise InterpreterTypeError
 
     def direct(self, node):
         if isinstance(node.children, list):
             val1 = self.interpreter_node(node.children[0])
+            self.cell_scope += 1
             val2 = self.interpreter_node(node.children[1])
+            self.cell_scope -= 1
             val1 += val2
             return val1
         else:
@@ -358,20 +685,40 @@ class Interpreter:
 
     def sides(self, lst):
         if isinstance(lst, list):
-            tmp_top = False
-            tmp_right = False
-            tmp_left = False
-            tmp_down = False
+            if len(lst) > 4:
+                raise InterpreterSidesError
             for flag in lst:
                 if flag == 'top':
-                    tmp_top = True
-                if flag == 'right':
-                    tmp_right = True
+                    for flag in lst:
+                        if flag == 'ntop':
+                            raise InterpreterSidesError
                 if flag == 'left':
-                    tmp_left = True
+                    for flag in lst:
+                        if flag == 'nleft':
+                            raise InterpreterSidesError
+                if flag == 'fight':
+                    for flag in lst:
+                        if flag == 'nright':
+                            raise InterpreterSidesError
                 if flag == 'down':
-                    tmp_down = True
-            return Cell(c_top=tmp_top, c_right=tmp_right, c_left=tmp_left, c_down=tmp_down)
+                    for flag in lst:
+                        if flag == 'ndown':
+                            raise InterpreterSidesError
+            else:
+                tmp_top = False
+                tmp_right = False
+                tmp_left = False
+                tmp_down = False
+                for flag in lst:
+                    if flag == 'top':
+                        tmp_top = True
+                    if flag == 'right':
+                        tmp_right = True
+                    if flag == 'left':
+                        tmp_left = True
+                    if flag == 'down':
+                        tmp_down = True
+                return Cell(c_top=tmp_top, c_right=tmp_right, c_left=tmp_left, c_down=tmp_down)
 
     def declare_matrix_without_init(self, type, child):
         var = child[0].value
@@ -417,6 +764,8 @@ class Interpreter:
     def declare_variable(self, type, child, const=False):
         variable = child[0].value
         expression = self.interpreter_node(child[1])
+        if type == 'unsigned' and expression.value < 0:
+            raise InterpreterTypeError
         try:
             self.declare(type, variable, expression, const)
         except InterpreterRedeclarationError:
@@ -444,7 +793,48 @@ class Interpreter:
         else:
             raise InterpreterIndexError
 
-    def check_var(self, type, exp, const):
+    def assign(self, type, const, var, expression, index1=None, index2=None):
+        if const:
+            raise InterpreterConstError
+        if isinstance(self.symbol_table[self.scope][var], Matrix):
+            self.add_to_matr(type, var, expression, index1, index2)
+        elif type == expression.type:
+            if expression.value is None:
+                raise InterpreterNoneError
+            else:
+                self.symbol_table[self.scope][var] = expression
+        elif (type == 'signed' or type == 'unsigned' or type == 'cell') and \
+                (expression.type == 'signed' or expression.type == 'unsigned' or type == 'cell'):
+            self.symbol_table[self.scope][var] = self.check_var(type, expression)
+
+    def add_to_matr(self, type, var, expression, index1, index2):
+        if index1 < self.symbol_table[self.scope][var].lines:
+            if index2 < self.symbol_table[self.scope][var].column:
+                if type == expression.type:
+                    self.symbol_table[self.scope][var].value[index1][index2] = expression
+                elif type == 'signed':
+                    if expression.type == 'unsigned':
+                        tmp = self.converter.unsigned_to_signed(expression)
+                        self.symbol_table[self.scope][var].value[index1][index2] = tmp
+                    elif expression.type == 'cell':
+                        tmp = self.converter.cell_to_signed(expression)
+                        self.symbol_table[self.scope][var].value[index1][index2] = tmp
+                elif type == 'unsigned':
+                    if expression.type == 'signed':
+                        tmp = self.converter.signed_to_unsigned(expression)
+                        self.symbol_table[self.scope][var].value[index1][index2] = tmp
+                    elif expression.type == 'cell':
+                        tmp = self.converter.cell_to_unsigned(expression)
+                        self.symbol_table[self.scope][var].value[index1][index2] = tmp
+                elif type == 'cell':
+                    if expression.type == 'signed':
+                        tmp = self.converter.signed_to_cell(expression)
+                        self.symbol_table[self.scope][var].value[index1][index2] = tmp
+                    elif expression.type == 'unsigned':
+                        tmp = self.converter.unsigned_to_cell(expression)
+                        self.symbol_table[self.scope][var].value[index1][index2] = tmp
+
+    def check_var(self, type, exp, const=False):
         exp = self.converter.converse(type, exp, const)
         return exp
 
@@ -456,7 +846,7 @@ class Interpreter:
         elif isinstance(value, list):
             if value[0] == '-':
                 exp = self.converter.neg_to_int(value)
-            return Variable('signed', exp)
+                return Variable('signed', exp)
 
     def get_value(self, node):
         if node.value in self.symbol_table[self.scope].keys():
@@ -464,9 +854,16 @@ class Interpreter:
         else:
             raise InterpreterNameError
 
-#TODO невозможность (top, ntop), список не больше 4 сторон
+#TODO разобраться с unsigned матрицами
 
-data = '''cell a <- (top, down);
+data = '''matrix signed b(3, 2);
+matrix signed c(4, 4);
+b(1, 1) <- 2;
+c(1, 1) <- 0;
+matrix unsigned e(3,3);
+e <- b / c;
+
+
 '''
 
 a = Interpreter()
