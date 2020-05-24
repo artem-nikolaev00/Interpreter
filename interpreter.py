@@ -499,8 +499,14 @@ class Interpreter:
         elif node.type == 'function_call':
             if node.children is not None:
                 param = self.interpreter_node(node.children)
-                if isinstance(param, list):
-                    res = self.func_call(node.value['name'], param)
+                tmp = {}
+                try:
+                    for i in range(len(param)):
+                        tmp[param[i]] = self.symbol_table[self.scope][param[i]]
+                except InterpreterNameError:
+                    self.error.err(self.error_types['UndeclaredError'], node)
+                if isinstance(tmp, dict):
+                    res = self.func_call(node.value['name'], tmp)
             else:
                 param = None
                 try:
@@ -519,12 +525,9 @@ class Interpreter:
                 pass
             else:
                 self.symbol_table[self.scope]['#RETURN'] = self.interpreter_node(node.children)
-
-
-
         return ''
 
-    def func_call(self, name, parametr=None):
+    def func_call(self, name, parametrs=None):
         if name not in self.functions.keys():
             raise InterpreterNameError
         self.scope += 1
@@ -532,8 +535,10 @@ class Interpreter:
             self.scope -= 1
             raise InterpreterRecursionError
         self.symbol_table.append(dict())
-        if parametr is not None:
-            self.symbol_table[self.scope]['PARAM'] = parametr
+        if parametrs is not None:
+            keys = parametrs.keys()
+            for key in keys:
+                self.symbol_table[self.scope][key] = parametrs[key]
         self.interpreter_node(self.functions[name].children['body'])
         if '#RETURN' in self.symbol_table[self.scope].keys():
             result = copy.deepcopy(self.symbol_table[self.scope]['#RETURN'])
@@ -1093,30 +1098,13 @@ class Interpreter:
 
 #TODO разобраться с unsigned матрицами(если обе un, то пусть возвр un)
 
-data = '''matrix signed a(3, 3);
-signed i <- 0;
-signed j <- 0;
-testrep(i < 3)(
-    testrep(j < 3)(
-        a(i, j) <- i + j;
-        j <- j + 1;
-    )
-    i <- i + 1;
-    j <- 0;
+data = '''signed b <- 1;
+func mephi(signed b)(
+signed c <- 1;
+c <- c + b;
+c;
 )
-
-i <- 0;
-j <- 0;
-signed tmp;
-signed len <- 9;
-
-testrep(i < 3)(
-    testrep(j < 3)(
-        testonce(a(
-    )
-    i <- i + 1;
-    j <- 0;
-)
+signed a <- call mephi(b);
 
 '''
 
