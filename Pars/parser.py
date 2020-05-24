@@ -268,15 +268,6 @@ class Parser():
             self.functions[p[2]] = Tree('function', children={'body': p[7]}, lineno=p.lineno(1),
                                              lexpos=p.lexpos(1))
             p[0] = Tree('func', value=p[2], lineno=p.lineno(1), lexpos=p.lexpos(2))
-        #     p[0] = Tree('function', value=p[2], children={
-        #         'par_body': Tree('par', value=p[4], children=p[4], lineno=p.lineno(4),
-        #                           lexpos=p.lexpos(4)),
-        #                          'func_body': Tree('body', value=p[8], children=p[8], lineno=p.lineno(8),
-        #                         lexpos=p.lexpos(8))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
-        # else:
-        #     p[0] = Tree('function', value=p[2], children={
-        #                          'func_body': Tree('body', value=p[7], children=p[7], lineno=p.lineno(7),
-        #                         lexpos=p.lexpos(7))}, lineno=p.lineno(2), lexpos=p.lexpos(2))
 
     def p_function_return(self, p):
         """function_return : variable"""

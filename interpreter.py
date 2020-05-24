@@ -27,7 +27,7 @@ class Variable:
         self.const = var_const
 
     def __repr__(self):
-        return f'{self.type} {self.value} {self.const}'
+        return f'{self.type} {self.value} const:{self.const}'
 
     def __eq__(self, other):
         if isinstance(other, Variable):
@@ -66,7 +66,7 @@ class Cell:
                 self.down = False
 
     def __repr__(self):
-        return f'{self.top} {self.left} {self.right} {self.down}'
+        return f'top:{self.top} left:{self.left} right:{self.right} down:{self.down}'
 
 
 
@@ -86,7 +86,7 @@ class Matrix:
                self.value.append(buf)
 
     def __repr__(self):
-        return f'{self.type} {self.lines} {self.column}'
+        return f'{self.type} ({self.lines}, {self.column})'
 
 
 class Converter:
@@ -229,6 +229,7 @@ class Interpreter:
         self.tree = None
         self.functions = None
         self.correct = True
+        self.correct = True
         self.scope = 0
         self.error = Errors()
         self.error_types = {'UnexpectedError': 0,
@@ -244,15 +245,18 @@ class Interpreter:
                             'ParametrError': 10,
                             'RecursionError': 11}
 
-    def interpreter(self, program=None):
+    def interpreter(self, program=None, tree_print=False):
         self.program = program
         self.symbol_table = [dict()]
         self.tree, tmp, self.functions = self.parser.parse(self.program)
         if tmp:
-            self.interpreter_tree(self.tree)
+            if tree_print:
+                self.interpreter_tree(self.tree)
             self.interpreter_node(self.tree)
+            return self.correct
         else:
             sys.stderr.write(f'Can\'t interpretate this program. Incorrect syntax!\n')
+            return False
 
     def interpreter_tree(self, tree):
         print("Program tree:\n")
@@ -519,12 +523,12 @@ class Interpreter:
 
         elif node.type == 'return':
             if self.scope == 0:
-                self.error.err(self.error_types['FuncStatementsError'], node)
+                self.error.err(self.error_types['RecursionError'], node)
                 self.correct = False
-            elif '#RETURN' in self.symbol_table[self.scope].keys():
+            elif 'RETURN' in self.symbol_table[self.scope].keys():
                 pass
             else:
-                self.symbol_table[self.scope]['#RETURN'] = self.interpreter_node(node.children)
+                self.symbol_table[self.scope]['RETURN'] = self.interpreter_node(node.children)
         return ''
 
     def func_call(self, name, parametrs=None):
@@ -538,10 +542,10 @@ class Interpreter:
         if parametrs is not None:
             keys = parametrs.keys()
             for key in keys:
-                self.symbol_table[self.scope][key] = parametrs[key]
+                self.symbol_table[self.scope][key] = copy.deepcopy(parametrs[key])
         self.interpreter_node(self.functions[name].children['body'])
-        if '#RETURN' in self.symbol_table[self.scope].keys():
-            result = copy.deepcopy(self.symbol_table[self.scope]['#RETURN'])
+        if 'RETURN' in self.symbol_table[self.scope].keys():
+            result = copy.deepcopy(self.symbol_table[self.scope]['RETURN'])
         else:
             result = None
         self.symbol_table.pop()
@@ -1096,18 +1100,47 @@ class Interpreter:
         else:
             raise InterpreterNameError
 
-#TODO разобраться с unsigned матрицами(если обе un, то пусть возвр un)
 
-data = '''signed b <- 1;
-func mephi(signed b)(
-signed c <- 1;
-c <- c + b;
-c;
-)
-signed a <- call mephi(b);
 
-'''
 
-a = Interpreter()
-a.interpreter(data)
-pass
+
+
+
+if __name__ == '__main__':
+
+    tests = ['Tests/factorial.txt', 'Tests/signed_matrix.txt', 'Tests/cells.txt']
+    print("Enter: 1 - tests from file, 2 - data")
+    n = int(input())
+    if n == 1:
+        interpreter = Interpreter()
+        print('Which test do you want to run?\n 0 - factorial\n 1 - signed_matrix\n 2 - cells\n')
+        num = int(input())
+        if num not in range(len(tests)):
+            print('Incorrect number. Goodbay!\n')
+        else:
+            prog = open(tests[num], 'r').read()
+            res = interpreter.interpreter(program=prog, tree_print=False)
+            if res:
+                print('Table of symbols:')
+                for key, value in interpreter.symbol_table[0].items():
+                    print(key,'=', value)
+
+    elif n == 2:
+        data = '''signed n <- 4;
+        matrix cell a(n, n);
+        a(0, 0) <- (top, down);
+        a(0, 2) <- (left, nright, top);
+        a(2, 2) <- 1;
+        a(3, 3) <- 0;
+        const cell c <- a(0, 2);
+        #a;
+        '''
+
+        interpreter = Interpreter()
+        interpreter.interpreter(data)
+        print('Table of symbols:')
+        for key, value in interpreter.symbol_table[0].items():
+            print(key, '=', value)
+        pass
+    else:
+        print('Incorrect number. Goodbay!\n')
