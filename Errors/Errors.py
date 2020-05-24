@@ -14,7 +14,9 @@ class Errors:
                         'ConstError',
                         'NoneError',
                         'UnsignedInitError',
-                        'DivError']
+                        'DivError',
+                        'ParametrError',
+                        'RecursionError']
 
     def err(self, errors_type, node=None):
         self.type = errors_type
@@ -38,12 +40,20 @@ class Errors:
         elif self.type == 3:
             if node.type == 'assignment':
                 sys.stderr.write(f'List index is out of range at line '
-                                 f'{self.node.children[0].lineno}\n')
+                                 f'{self.node.children[0].lineno} (Indexing in matrix from 0 to n-1)\n')
             else:
                 sys.stderr.write(f'List index is out of range at line '
-                             f'{self.node.value[0].lineno}\n')
+                             f'{self.node.value[0].lineno} \n')
         elif self.type == 4:
-            sys.stderr.write(f'Variable for declaration at line '
+            if node.type == 'if':
+                sys.stderr.write(f'Variable for declaration at line "testonce" not very good\n')
+            elif node.type == 'while':
+                sys.stderr.write(f'Variable for declaration at line "testrep" not very good\n')
+            elif node.type == 'assignment':
+                sys.stderr.write(f'Variable for declaration at line '
+                                 f'{self.node.children[0].lineno} is not used before\n')
+            else:
+                sys.stderr.write(f'Variable for declaration at line '
                                  f'{self.node.children[0].lineno} is not used before\n')
         elif self.type == 5:
             sys.stderr.write(f'Error at sides of "{self.node.children[0].value}" at line '
@@ -60,6 +70,11 @@ class Errors:
         elif self.type == 9:
             sys.stderr.write(f'Div by zero!!!!!  at line '
                             f'{self.node.lineno} because value < 0\n')
+        elif self.type == 10:
+            sys.stderr.write(f'Parametrs error \n')
+        elif self.type == 11:
+            sys.stderr.write(f'Recursion error\n')
+
 
 
 
@@ -108,3 +123,10 @@ class InterpreterUnsignedInitError(Exception):
 class InterpreterDivError(Exception):
     pass
 
+
+class InterpreterParametrError(Exception):
+    pass
+
+
+class InterpreterRecursionError(Exception):
+    pass

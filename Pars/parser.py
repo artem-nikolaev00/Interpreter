@@ -8,6 +8,7 @@ from STree.STree import Tree
 
 class Parser():
     tokens = Lexer().tokens
+    precedence = Lexer.precedence
 
     def __init__(self):
         self.ok = True
@@ -220,26 +221,20 @@ class Parser():
     def p_if(self, p):
         """if : TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
               | TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET"""
-        p[0] = Tree('if', children={
-            'cond_exp': Tree('condition', children=p[3], lineno=p.lineno(3),
-                                    lexpos=p.lexpos(3)), 'body_exp': Tree('body', children=p[7], lineno=p.lineno(7),
-                                    lexpos=p.lexpos(7))}, lineno=p.lineno(1), lexpos=p.lexpos(1))
+        p[0] = Tree('if', children={'condition': p[3], 'body': p[7]}, lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_if_error(self, p):
         """if : TESTONCE error"""
         p[0] = Tree('error', value="Incorrect if", lineno=p.lineno(2), lexpos=p.lexpos(2))
         sys.stderr.write(f'-> Incorrect if <-\n')
 
-    def p_for(self, p):
+    def p_while(self, p):
         """while : TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
               | TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET"""
-        p[0] = Tree('while', children={
-            'cond_exp': Tree('condition', children=p[3], lineno=p.lineno(3),
-                                    lexpos=p.lexpos(3)), 'body_exp': Tree('body', children=p[7], lineno=p.lineno(7),
-                                    lexpos=p.lexpos(7))}, lineno=p.lineno(1), lexpos=p.lexpos(1))
+        p[0] = Tree('while', children={'condition': p[3], 'body': p[7]}, lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-    def p_for_error(self, p):
-        """if : TESTREP error"""
+    def p_while_error(self, p):
+        """while : TESTREP error"""
         p[0] = Tree('error', value="Incorrect for", lineno=p.lineno(2), lexpos=p.lexpos(2))
         sys.stderr.write(f'-> Incorrect for <-\n')
 
@@ -285,17 +280,15 @@ class Parser():
 
     def p_function_return(self, p):
         """function_return : variable"""
-        p[0] = Tree('var', value=p[1], lineno=p.lineno(1),  lexpos=p.lexpos(1))
+        p[0] = Tree('return', children=p[1], lineno=p.lineno(1),  lexpos=p.lexpos(1))
 
     def p_function_call(self, p):
         """function_call : CALL VAR LBRACKET vars RBRACKET
                         | CALL VAR LBRACKET RBRACKET"""
         if len(p) == 6:
-            p[0] = Tree('call',  value=p[2],
-                    children=Tree('var', value=p[4], children=p[4], lineno=p.lineno(4),  lexpos=p.lexpos(4)),
-                    lineno=p.lineno(2), lexpos=p.lexpos(2))
+            p[0] = Tree('function_call',  value={'name': p[2]}, children=p[4], lineno=p.lineno(2), lexpos=p.lexpos(2))
         else:
-            p[0] = Tree('call', value=p[2], lineno=p.lineno(2), lexpos=p.lexpos(2))
+            p[0] = Tree('function_call', value={'name': p[2]}, lineno=p.lineno(2), lexpos=p.lexpos(2))
 
     def p_function_call_error(self, p):
         """function_call : VAR LBRACKET vars RBRACKET error
@@ -328,7 +321,17 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-# data = '''a <> b;
+# data = '''signed b <- 1;
+# func fact()(
+# signed c <- a;
+# c;
+# )
+# a <- call fact(b);
+#
+#
+#
+#
+#
 #
 # '''
 #
@@ -347,4 +350,4 @@ class Parser():
 # tree, ok, functions = parser.parse(data)
 # tree.print()
 # print(ok)
-#  functions['factorial'].children['body'].print()
+#functions['a'].children['body'].print()

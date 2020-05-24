@@ -1,5 +1,6 @@
 import sys
 import re
+import copy
 from numpy import uint, dtype
 from STree.STree import Tree
 from Pars.parser import Parser
@@ -14,6 +15,8 @@ from Errors.Errors import InterpreterConstError
 from Errors.Errors import InterpreterNoneError
 from Errors.Errors import InterpreterUnsignedInitError
 from Errors.Errors import InterpreterDivError
+from Errors.Errors import InterpreterParametrError
+from Errors.Errors import InterpreterRecursionError
 
 
 class Variable:
@@ -225,6 +228,7 @@ class Interpreter:
         self.symbol_table = [dict()]
         self.tree = None
         self.functions = None
+        self.correct = True
         self.scope = 0
         self.error = Errors()
         self.error_types = {'UnexpectedError': 0,
@@ -236,7 +240,9 @@ class Interpreter:
                             'ConstError': 6,
                             'NoneError': 7,
                             'UnsignedInitError': 8,
-                            'DivError': 9}
+                            'DivError': 9,
+                            'ParametrError': 10,
+                            'RecursionError': 11}
 
     def interpreter(self, program=None):
         self.program = program
@@ -290,6 +296,8 @@ class Interpreter:
                 self.error.err(self.error_types['UndeclaredError'], node)
             except InterpreterSidesError:
                 self.error.err(self.error_types['SidesError'], node)
+            except InterpreterDivError:
+                self.error.err(self.error_types['DivError'], node)
 
         elif node.type == 'const_declaration':
             declaration_const = True
@@ -303,6 +311,8 @@ class Interpreter:
                 self.error.err(self.error_types['TypeError'], node)
             except InterpreterNameError:
                 self.error.err(self.error_types['UndeclaredError'], node)
+            except InterpreterDivError:
+                self.error.err(self.error_types['DivError'], node)
 
         elif node.type == 'matrix_decl_without_init':
             declaration_type = node.value[0].value
@@ -327,8 +337,13 @@ class Interpreter:
                 self.error.err(self.error_types['IndexError'], node)
             except InterpreterNameError:
                 self.error.err(self.error_types['UndeclaredError'], node)
+            except InterpreterDivError:
+                self.error.err(self.error_types['DivError'], node)
 
         elif node.type == 'expression':
+            return self.interpreter_node(node.children)
+
+        elif node.type == 'brackets':
             return self.interpreter_node(node.children)
 
         elif node.type == 'side':
@@ -403,7 +418,10 @@ class Interpreter:
                     self.error.err(self.error_types['IndexError'], node)
                 except InterpreterUnsignedInitError:
                     self.error.err(self.error_types['UnsignedInitError'], node)
-
+                except InterpreterTypeError:
+                    self.error.err(self.error_types['TypeError'], node)
+                except InterpreterDivError:
+                    self.error.err(self.error_types['DivError'], node)
 
         elif node.type == 'bin_op':
             try:
@@ -417,11 +435,220 @@ class Interpreter:
                     return self.bin_div(node.children[0], node.children[1])
                 elif node.value == '%':
                     return self.bin_mod(node.children[0], node.children[1])
+                elif node.value == '<':
+                    return self.logic_less(node.children[0], node.children[1])
+                elif node.value == '>':
+                    return self.logic_greater(node.children[0], node.children[1])
+                elif node.value == '=':
+                    return self.logic_eq(node.children[0], node.children[1])
+                elif node.value == '<>':
+                    return self.logic_noteq(node.children[0], node.children[1])
             except InterpreterDivError:
-                self.error.err(self.error_types['DivError'], node)
+                raise InterpreterDivError
+            except InterpreterTypeError:
+                raise InterpreterTypeError
+            except InterpreterNameError:
+                raise InterpreterNameError
+
+        elif node.type == 'prison':
+            try:
+                var = node.children.value
+                if isinstance(self.symbol_table[self.scope][var], Matrix):
+                    if self.symbol_table[self.scope][var].type == 'signed' \
+                            or self.symbol_table[self.scope][var].type == 'unsigned':
+                        self.average(self.symbol_table[self.scope][var])
+                    elif self.symbol_table[self.scope][var].type == 'cell':
+                        self.unification(self.symbol_table[self.scope][var])
+            except InterpreterTypeError:
+                raise InterpreterTypeError
+
+        elif node.type == 'if':
+            try:
+                self.op_if(node)
+            except InterpreterConvertationError:
+                self.error.err(self.error_types['ConvertationError'], node)
             except InterpreterTypeError:
                 self.error.err(self.error_types['TypeError'], node)
+            except InterpreterNameError:
+                self.error.err(self.error_types['UndeclaredError'], node)
+
+        elif node.type == 'while':
+            try:
+                self.op_while(node)
+            except InterpreterConvertationError:
+                self.error.err(self.error_types['ConvertationError'], node)
+            except InterpreterTypeError:
+                self.error.err(self.error_types['TypeError'], node)
+            except InterpreterNameError:
+                self.error.err(self.error_types['UndeclaredError'], node)
+
+        elif node.type == 'var':
+            val1 = None
+            if node.children is not None:
+                val1 = self.interpreter_node(node.children)
+            val2 = [node.value]
+            if val1 is not None:
+                val2 += val1
+            return val2
+
+        elif node.type == 'func':
+            if self.scope != 0:
+                self.correct = False
+                self.error.err(self.error_types['FuncDescriptionError'], node)
+
+        elif node.type == 'function_call':
+            if node.children is not None:
+                param = self.interpreter_node(node.children)
+                if isinstance(param, list):
+                    res = self.func_call(node.value['name'], param)
+            else:
+                param = None
+                try:
+                    res = self.func_call(node.value['name'], param)
+                except InterpreterParametrError:
+                    self.error.err(self.error_types['ParametrError'], node)
+                    self.correct = False
+                    res = 0
+            return res
+
+        elif node.type == 'return':
+            if self.scope == 0:
+                self.error.err(self.error_types['FuncStatementsError'], node)
+                self.correct = False
+            elif '#RETURN' in self.symbol_table[self.scope].keys():
+                pass
+            else:
+                self.symbol_table[self.scope]['#RETURN'] = self.interpreter_node(node.children)
+
+
+
         return ''
+
+    def func_call(self, name, parametr=None):
+        if name not in self.functions.keys():
+            raise InterpreterNameError
+        self.scope += 1
+        if self.scope > 100:
+            self.scope -= 1
+            raise InterpreterRecursionError
+        self.symbol_table.append(dict())
+        if parametr is not None:
+            self.symbol_table[self.scope]['PARAM'] = parametr
+        self.interpreter_node(self.functions[name].children['body'])
+        if '#RETURN' in self.symbol_table[self.scope].keys():
+            result = copy.deepcopy(self.symbol_table[self.scope]['#RETURN'])
+        else:
+            result = None
+        self.symbol_table.pop()
+        self.scope -= 1
+        return result
+
+    def op_if(self, node):
+        condition = self.interpreter_node(node.children['condition'])
+        if condition != 0:
+            self.interpreter_node(node.children['body'])
+
+    def op_while(self, node):
+        condition = self.interpreter_node(node.children['condition'])
+        while condition != 0:
+            self.interpreter_node(node.children['body'])
+            condition = self.interpreter_node(node.children['condition'])
+
+
+    def unification(self, matr):
+        for i in range(matr.lines):
+            for j in range(matr.column):
+                if matr.value[i][j] is not None:
+                    if i - 1 > -1:
+                        if matr.value[i][j].top == True:
+                            if matr.value[i - 1][j] is not None:
+                                matr.value[i - 1][j].down = True
+                            else:
+                                matr.value[i - 1][j] = Cell(c_down=True)
+                    if i + 1 < matr.lines:
+                        if matr.value[i][j].down == True:
+                            if matr.value[i + 1][j] is not None:
+                                matr.value[i + 1][j].top = True
+                            else:
+                                matr.value[i + 1][j] = Cell(c_top=True)
+                    if j -1  > -1:
+                        if matr.value[i][j].left == True:
+                            if matr.value[i][j - 1] is not None:
+                                matr.value[i][j - 1].right = True
+                            else:
+                                matr.value[i][j - 1] = Cell(c_right=True)
+                    if j + 1 < matr.lines:
+                        if matr.value[i][j].right == True:
+                            if matr.value[i][j + 1] is not None:
+                                matr.value[i][j + 1].left = True
+                            else:
+                                matr.value[i][j + 1] = Cell(c_left=True)
+
+    def average(self, matr):
+        tmp = 0
+        count = 0
+        for i in range(matr.lines):
+            for j in range(matr.column):
+                if matr.value[i][j] is not None:
+                    tmp += matr.value[i][j].value
+                    count += 1
+        if count > 0:
+            tmp = tmp // count
+        for i in range(matr.lines):
+            for j in range(matr.column):
+                matr.value[i][j] = tmp
+
+    def logic_noteq(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) or isinstance(expr2, Matrix):
+            raise InterpreterTypeError
+        elif expr1.type == 'cell' or expr2.type == 'cell':
+            raise InterpreterTypeError
+        else:
+            if expr1.value != expr2.value:
+                return 1
+            else:
+                return 0
+
+    def logic_eq(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) or isinstance(expr2, Matrix):
+            raise InterpreterTypeError
+        elif expr1.type == 'cell' or expr2.type == 'cell':
+            raise InterpreterTypeError
+        else:
+            if expr1.value == expr2.value:
+                return 1
+            else:
+                return 0
+
+    def logic_less(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) or isinstance(expr2, Matrix):
+            raise InterpreterTypeError
+        elif expr1.type == 'cell' or expr2.type == 'cell':
+            raise InterpreterTypeError
+        else:
+            if expr1.value < expr2.value:
+                return 1
+            else:
+                return 0
+
+    def logic_greater(self, var1, var2):
+        expr1 = self.interpreter_node(var1)
+        expr2 = self.interpreter_node(var2)
+        if isinstance(expr1, Matrix) or isinstance(expr2, Matrix):
+            raise InterpreterTypeError
+        elif expr1.type == 'cell' or expr2.type == 'cell':
+            raise InterpreterTypeError
+        else:
+            if expr1.value > expr2.value:
+                return 1
+            else:
+                return 0
 
     def bin_plus(self, var1, var2):
         expr1 = self.interpreter_node(var1)
@@ -586,11 +813,11 @@ class Interpreter:
                         if expr2.value[i][j].value == 0:
                             raise InterpreterDivError
                         if expr1.value[i][j].type == 'unsigned':
-                            num = expr1.value[i][j].value / expr2.value[i][j].value
+                            num = expr1.value[i][j].value // expr2.value[i][j].value
                             if num < 0:
                                 raise InterpreterUnsignedInitError
                         else:
-                            num = expr1.value[i][j].value / expr2.value[i][j].value
+                            num = expr1.value[i][j].value // expr2.value[i][j].value
                         buf.append(Variable('signed', num))
                     elif expr1.value[i][j] is not None:
                         buf.append(expr1.value[i][j])
@@ -764,8 +991,11 @@ class Interpreter:
     def declare_variable(self, type, child, const=False):
         variable = child[0].value
         expression = self.interpreter_node(child[1])
-        if type == 'unsigned' and expression.value < 0:
-            raise InterpreterTypeError
+        if isinstance(expression, int) or isinstance(expression, float):
+            expression = Variable(type, expression, const)
+        if not isinstance(expression, Matrix) and \
+                type == 'unsigned' and expression.value < 0:
+            raise InterpreterUnsignedInitError
         try:
             self.declare(type, variable, expression, const)
         except InterpreterRedeclarationError:
@@ -797,7 +1027,10 @@ class Interpreter:
         if const:
             raise InterpreterConstError
         if isinstance(self.symbol_table[self.scope][var], Matrix):
-            self.add_to_matr(type, var, expression, index1, index2)
+            try:
+                self.add_to_matr(type, var, expression, index1, index2)
+            except InterpreterIndexError:
+                raise InterpreterIndexError
         elif type == expression.type:
             if expression.value is None:
                 raise InterpreterNoneError
@@ -833,6 +1066,10 @@ class Interpreter:
                     elif expression.type == 'unsigned':
                         tmp = self.converter.unsigned_to_cell(expression)
                         self.symbol_table[self.scope][var].value[index1][index2] = tmp
+            else:
+                raise InterpreterIndexError
+        elif index1 >= self.symbol_table[self.scope][var].lines:
+            raise InterpreterIndexError
 
     def check_var(self, type, exp, const=False):
         exp = self.converter.converse(type, exp, const)
@@ -854,15 +1091,32 @@ class Interpreter:
         else:
             raise InterpreterNameError
 
-#TODO разобраться с unsigned матрицами
+#TODO разобраться с unsigned матрицами(если обе un, то пусть возвр un)
 
-data = '''matrix signed b(3, 2);
-matrix signed c(4, 4);
-b(1, 1) <- 2;
-c(1, 1) <- 0;
-matrix unsigned e(3,3);
-e <- b / c;
+data = '''matrix signed a(3, 3);
+signed i <- 0;
+signed j <- 0;
+testrep(i < 3)(
+    testrep(j < 3)(
+        a(i, j) <- i + j;
+        j <- j + 1;
+    )
+    i <- i + 1;
+    j <- 0;
+)
 
+i <- 0;
+j <- 0;
+signed tmp;
+signed len <- 9;
+
+testrep(i < 3)(
+    testrep(j < 3)(
+        testonce(a(
+    )
+    i <- i + 1;
+    j <- 0;
+)
 
 '''
 

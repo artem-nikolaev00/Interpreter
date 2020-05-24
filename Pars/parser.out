@@ -90,7 +90,7 @@ Rule 84    if -> TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRAC
 Rule 85    if -> TESTONCE error
 Rule 86    while -> TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
 Rule 87    while -> TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
-Rule 88    if -> TESTREP error
+Rule 88    while -> TESTREP error
 Rule 89    operator -> variable ASSIGNMENT robot
 Rule 90    robot -> direction
 Rule 91    robot -> XRAY
@@ -232,9 +232,9 @@ state 0
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -362,9 +362,9 @@ state 2
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -868,12 +868,12 @@ state 24
 
 state 25
 
-    (88) if -> TESTREP . error
     (86) while -> TESTREP . LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> TESTREP . LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> TESTREP . error
 
-    error           shift and go to state 93
-    LBRACKET        shift and go to state 94
+    LBRACKET        shift and go to state 93
+    error           shift and go to state 94
 
 
 state 26
@@ -2325,31 +2325,6 @@ state 92
 
 state 93
 
-    (88) if -> TESTREP error .
-
-    NEWLINE         reduce using rule 88 (if -> TESTREP error .)
-    CONST           reduce using rule 88 (if -> TESTREP error .)
-    MATRIX          reduce using rule 88 (if -> TESTREP error .)
-    error           reduce using rule 88 (if -> TESTREP error .)
-    SHARP           reduce using rule 88 (if -> TESTREP error .)
-    TESTONCE        reduce using rule 88 (if -> TESTREP error .)
-    TESTREP         reduce using rule 88 (if -> TESTREP error .)
-    FUNC            reduce using rule 88 (if -> TESTREP error .)
-    CALL            reduce using rule 88 (if -> TESTREP error .)
-    VAR             reduce using rule 88 (if -> TESTREP error .)
-    SIGNED          reduce using rule 88 (if -> TESTREP error .)
-    UNSIGNED        reduce using rule 88 (if -> TESTREP error .)
-    CELL            reduce using rule 88 (if -> TESTREP error .)
-    LBRACKET        reduce using rule 88 (if -> TESTREP error .)
-    DECIMAL         reduce using rule 88 (if -> TESTREP error .)
-    UDECIMAL        reduce using rule 88 (if -> TESTREP error .)
-    MINUS           reduce using rule 88 (if -> TESTREP error .)
-    $end            reduce using rule 88 (if -> TESTREP error .)
-    RBRACKET        reduce using rule 88 (if -> TESTREP error .)
-
-
-state 94
-
     (86) while -> TESTREP LBRACKET . math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> TESTREP LBRACKET . compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (69) math_expression -> . expression PLUS expression
@@ -2399,6 +2374,31 @@ state 94
     side                           shift and go to state 32
     prison                         shift and go to state 75
     function_call                  shift and go to state 76
+
+state 94
+
+    (88) while -> TESTREP error .
+
+    NEWLINE         reduce using rule 88 (while -> TESTREP error .)
+    CONST           reduce using rule 88 (while -> TESTREP error .)
+    MATRIX          reduce using rule 88 (while -> TESTREP error .)
+    error           reduce using rule 88 (while -> TESTREP error .)
+    SHARP           reduce using rule 88 (while -> TESTREP error .)
+    TESTONCE        reduce using rule 88 (while -> TESTREP error .)
+    TESTREP         reduce using rule 88 (while -> TESTREP error .)
+    FUNC            reduce using rule 88 (while -> TESTREP error .)
+    CALL            reduce using rule 88 (while -> TESTREP error .)
+    VAR             reduce using rule 88 (while -> TESTREP error .)
+    SIGNED          reduce using rule 88 (while -> TESTREP error .)
+    UNSIGNED        reduce using rule 88 (while -> TESTREP error .)
+    CELL            reduce using rule 88 (while -> TESTREP error .)
+    LBRACKET        reduce using rule 88 (while -> TESTREP error .)
+    DECIMAL         reduce using rule 88 (while -> TESTREP error .)
+    UDECIMAL        reduce using rule 88 (while -> TESTREP error .)
+    MINUS           reduce using rule 88 (while -> TESTREP error .)
+    $end            reduce using rule 88 (while -> TESTREP error .)
+    RBRACKET        reduce using rule 88 (while -> TESTREP error .)
+
 
 state 95
 
@@ -2961,38 +2961,29 @@ state 119
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for STAR resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for PROCENT resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for LESS resolved as shift
-  ! shift/reduce conflict for GREATER resolved as shift
-  ! shift/reduce conflict for NOTEQ resolved as shift
     SEMICOLON       reduce using rule 65 (compare -> expression EQ expression .)
     error           reduce using rule 65 (compare -> expression EQ expression .)
+    EQ              reduce using rule 65 (compare -> expression EQ expression .)
+    LESS            reduce using rule 65 (compare -> expression EQ expression .)
+    GREATER         reduce using rule 65 (compare -> expression EQ expression .)
+    NOTEQ           reduce using rule 65 (compare -> expression EQ expression .)
+    PLUS            reduce using rule 65 (compare -> expression EQ expression .)
+    MINUS           reduce using rule 65 (compare -> expression EQ expression .)
+    STAR            reduce using rule 65 (compare -> expression EQ expression .)
+    DIV             reduce using rule 65 (compare -> expression EQ expression .)
+    PROCENT         reduce using rule 65 (compare -> expression EQ expression .)
     RBRACKET        reduce using rule 65 (compare -> expression EQ expression .)
     COMMA           reduce using rule 65 (compare -> expression EQ expression .)
-    PLUS            shift and go to state 61
-    MINUS           shift and go to state 62
-    STAR            shift and go to state 63
-    DIV             shift and go to state 64
-    PROCENT         shift and go to state 65
-    EQ              shift and go to state 57
-    LESS            shift and go to state 58
-    GREATER         shift and go to state 59
-    NOTEQ           shift and go to state 60
 
-  ! EQ              [ reduce using rule 65 (compare -> expression EQ expression .) ]
-  ! LESS            [ reduce using rule 65 (compare -> expression EQ expression .) ]
-  ! GREATER         [ reduce using rule 65 (compare -> expression EQ expression .) ]
-  ! NOTEQ           [ reduce using rule 65 (compare -> expression EQ expression .) ]
-  ! PLUS            [ reduce using rule 65 (compare -> expression EQ expression .) ]
-  ! MINUS           [ reduce using rule 65 (compare -> expression EQ expression .) ]
-  ! STAR            [ reduce using rule 65 (compare -> expression EQ expression .) ]
-  ! DIV             [ reduce using rule 65 (compare -> expression EQ expression .) ]
-  ! PROCENT         [ reduce using rule 65 (compare -> expression EQ expression .) ]
+  ! PLUS            [ shift and go to state 61 ]
+  ! MINUS           [ shift and go to state 62 ]
+  ! STAR            [ shift and go to state 63 ]
+  ! DIV             [ shift and go to state 64 ]
+  ! PROCENT         [ shift and go to state 65 ]
+  ! EQ              [ shift and go to state 57 ]
+  ! LESS            [ shift and go to state 58 ]
+  ! GREATER         [ shift and go to state 59 ]
+  ! NOTEQ           [ shift and go to state 60 ]
 
 
 state 120
@@ -3008,38 +2999,29 @@ state 120
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for STAR resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for PROCENT resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for LESS resolved as shift
-  ! shift/reduce conflict for GREATER resolved as shift
-  ! shift/reduce conflict for NOTEQ resolved as shift
     SEMICOLON       reduce using rule 66 (compare -> expression LESS expression .)
     error           reduce using rule 66 (compare -> expression LESS expression .)
+    EQ              reduce using rule 66 (compare -> expression LESS expression .)
+    LESS            reduce using rule 66 (compare -> expression LESS expression .)
+    GREATER         reduce using rule 66 (compare -> expression LESS expression .)
+    NOTEQ           reduce using rule 66 (compare -> expression LESS expression .)
+    PLUS            reduce using rule 66 (compare -> expression LESS expression .)
+    MINUS           reduce using rule 66 (compare -> expression LESS expression .)
+    STAR            reduce using rule 66 (compare -> expression LESS expression .)
+    DIV             reduce using rule 66 (compare -> expression LESS expression .)
+    PROCENT         reduce using rule 66 (compare -> expression LESS expression .)
     RBRACKET        reduce using rule 66 (compare -> expression LESS expression .)
     COMMA           reduce using rule 66 (compare -> expression LESS expression .)
-    PLUS            shift and go to state 61
-    MINUS           shift and go to state 62
-    STAR            shift and go to state 63
-    DIV             shift and go to state 64
-    PROCENT         shift and go to state 65
-    EQ              shift and go to state 57
-    LESS            shift and go to state 58
-    GREATER         shift and go to state 59
-    NOTEQ           shift and go to state 60
 
-  ! EQ              [ reduce using rule 66 (compare -> expression LESS expression .) ]
-  ! LESS            [ reduce using rule 66 (compare -> expression LESS expression .) ]
-  ! GREATER         [ reduce using rule 66 (compare -> expression LESS expression .) ]
-  ! NOTEQ           [ reduce using rule 66 (compare -> expression LESS expression .) ]
-  ! PLUS            [ reduce using rule 66 (compare -> expression LESS expression .) ]
-  ! MINUS           [ reduce using rule 66 (compare -> expression LESS expression .) ]
-  ! STAR            [ reduce using rule 66 (compare -> expression LESS expression .) ]
-  ! DIV             [ reduce using rule 66 (compare -> expression LESS expression .) ]
-  ! PROCENT         [ reduce using rule 66 (compare -> expression LESS expression .) ]
+  ! PLUS            [ shift and go to state 61 ]
+  ! MINUS           [ shift and go to state 62 ]
+  ! STAR            [ shift and go to state 63 ]
+  ! DIV             [ shift and go to state 64 ]
+  ! PROCENT         [ shift and go to state 65 ]
+  ! EQ              [ shift and go to state 57 ]
+  ! LESS            [ shift and go to state 58 ]
+  ! GREATER         [ shift and go to state 59 ]
+  ! NOTEQ           [ shift and go to state 60 ]
 
 
 state 121
@@ -3055,38 +3037,29 @@ state 121
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for STAR resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for PROCENT resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for LESS resolved as shift
-  ! shift/reduce conflict for GREATER resolved as shift
-  ! shift/reduce conflict for NOTEQ resolved as shift
     SEMICOLON       reduce using rule 67 (compare -> expression GREATER expression .)
     error           reduce using rule 67 (compare -> expression GREATER expression .)
+    EQ              reduce using rule 67 (compare -> expression GREATER expression .)
+    LESS            reduce using rule 67 (compare -> expression GREATER expression .)
+    GREATER         reduce using rule 67 (compare -> expression GREATER expression .)
+    NOTEQ           reduce using rule 67 (compare -> expression GREATER expression .)
+    PLUS            reduce using rule 67 (compare -> expression GREATER expression .)
+    MINUS           reduce using rule 67 (compare -> expression GREATER expression .)
+    STAR            reduce using rule 67 (compare -> expression GREATER expression .)
+    DIV             reduce using rule 67 (compare -> expression GREATER expression .)
+    PROCENT         reduce using rule 67 (compare -> expression GREATER expression .)
     RBRACKET        reduce using rule 67 (compare -> expression GREATER expression .)
     COMMA           reduce using rule 67 (compare -> expression GREATER expression .)
-    PLUS            shift and go to state 61
-    MINUS           shift and go to state 62
-    STAR            shift and go to state 63
-    DIV             shift and go to state 64
-    PROCENT         shift and go to state 65
-    EQ              shift and go to state 57
-    LESS            shift and go to state 58
-    GREATER         shift and go to state 59
-    NOTEQ           shift and go to state 60
 
-  ! EQ              [ reduce using rule 67 (compare -> expression GREATER expression .) ]
-  ! LESS            [ reduce using rule 67 (compare -> expression GREATER expression .) ]
-  ! GREATER         [ reduce using rule 67 (compare -> expression GREATER expression .) ]
-  ! NOTEQ           [ reduce using rule 67 (compare -> expression GREATER expression .) ]
-  ! PLUS            [ reduce using rule 67 (compare -> expression GREATER expression .) ]
-  ! MINUS           [ reduce using rule 67 (compare -> expression GREATER expression .) ]
-  ! STAR            [ reduce using rule 67 (compare -> expression GREATER expression .) ]
-  ! DIV             [ reduce using rule 67 (compare -> expression GREATER expression .) ]
-  ! PROCENT         [ reduce using rule 67 (compare -> expression GREATER expression .) ]
+  ! PLUS            [ shift and go to state 61 ]
+  ! MINUS           [ shift and go to state 62 ]
+  ! STAR            [ shift and go to state 63 ]
+  ! DIV             [ shift and go to state 64 ]
+  ! PROCENT         [ shift and go to state 65 ]
+  ! EQ              [ shift and go to state 57 ]
+  ! LESS            [ shift and go to state 58 ]
+  ! GREATER         [ shift and go to state 59 ]
+  ! NOTEQ           [ shift and go to state 60 ]
 
 
 state 122
@@ -3102,38 +3075,29 @@ state 122
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for STAR resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for PROCENT resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for LESS resolved as shift
-  ! shift/reduce conflict for GREATER resolved as shift
-  ! shift/reduce conflict for NOTEQ resolved as shift
     SEMICOLON       reduce using rule 68 (compare -> expression NOTEQ expression .)
     error           reduce using rule 68 (compare -> expression NOTEQ expression .)
+    EQ              reduce using rule 68 (compare -> expression NOTEQ expression .)
+    LESS            reduce using rule 68 (compare -> expression NOTEQ expression .)
+    GREATER         reduce using rule 68 (compare -> expression NOTEQ expression .)
+    NOTEQ           reduce using rule 68 (compare -> expression NOTEQ expression .)
+    PLUS            reduce using rule 68 (compare -> expression NOTEQ expression .)
+    MINUS           reduce using rule 68 (compare -> expression NOTEQ expression .)
+    STAR            reduce using rule 68 (compare -> expression NOTEQ expression .)
+    DIV             reduce using rule 68 (compare -> expression NOTEQ expression .)
+    PROCENT         reduce using rule 68 (compare -> expression NOTEQ expression .)
     RBRACKET        reduce using rule 68 (compare -> expression NOTEQ expression .)
     COMMA           reduce using rule 68 (compare -> expression NOTEQ expression .)
-    PLUS            shift and go to state 61
-    MINUS           shift and go to state 62
-    STAR            shift and go to state 63
-    DIV             shift and go to state 64
-    PROCENT         shift and go to state 65
-    EQ              shift and go to state 57
-    LESS            shift and go to state 58
-    GREATER         shift and go to state 59
-    NOTEQ           shift and go to state 60
 
-  ! EQ              [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
-  ! LESS            [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
-  ! GREATER         [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
-  ! NOTEQ           [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
-  ! PLUS            [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
-  ! MINUS           [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
-  ! STAR            [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
-  ! DIV             [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
-  ! PROCENT         [ reduce using rule 68 (compare -> expression NOTEQ expression .) ]
+  ! PLUS            [ shift and go to state 61 ]
+  ! MINUS           [ shift and go to state 62 ]
+  ! STAR            [ shift and go to state 63 ]
+  ! DIV             [ shift and go to state 64 ]
+  ! PROCENT         [ shift and go to state 65 ]
+  ! EQ              [ shift and go to state 57 ]
+  ! LESS            [ shift and go to state 58 ]
+  ! GREATER         [ shift and go to state 59 ]
+  ! NOTEQ           [ shift and go to state 60 ]
 
 
 state 123
@@ -3243,24 +3207,15 @@ state 125
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for STAR resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for PROCENT resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for LESS resolved as shift
-  ! shift/reduce conflict for GREATER resolved as shift
-  ! shift/reduce conflict for NOTEQ resolved as shift
+    PLUS            reduce using rule 71 (math_expression -> expression STAR expression .)
+    MINUS           reduce using rule 71 (math_expression -> expression STAR expression .)
+    STAR            reduce using rule 71 (math_expression -> expression STAR expression .)
+    DIV             reduce using rule 71 (math_expression -> expression STAR expression .)
+    PROCENT         reduce using rule 71 (math_expression -> expression STAR expression .)
     RBRACKET        reduce using rule 71 (math_expression -> expression STAR expression .)
     COMMA           reduce using rule 71 (math_expression -> expression STAR expression .)
     SEMICOLON       reduce using rule 71 (math_expression -> expression STAR expression .)
     error           reduce using rule 71 (math_expression -> expression STAR expression .)
-    PLUS            shift and go to state 61
-    MINUS           shift and go to state 62
-    STAR            shift and go to state 63
-    DIV             shift and go to state 64
-    PROCENT         shift and go to state 65
     EQ              shift and go to state 57
     LESS            shift and go to state 58
     GREATER         shift and go to state 59
@@ -3270,11 +3225,11 @@ state 125
   ! LESS            [ reduce using rule 71 (math_expression -> expression STAR expression .) ]
   ! GREATER         [ reduce using rule 71 (math_expression -> expression STAR expression .) ]
   ! NOTEQ           [ reduce using rule 71 (math_expression -> expression STAR expression .) ]
-  ! PLUS            [ reduce using rule 71 (math_expression -> expression STAR expression .) ]
-  ! MINUS           [ reduce using rule 71 (math_expression -> expression STAR expression .) ]
-  ! STAR            [ reduce using rule 71 (math_expression -> expression STAR expression .) ]
-  ! DIV             [ reduce using rule 71 (math_expression -> expression STAR expression .) ]
-  ! PROCENT         [ reduce using rule 71 (math_expression -> expression STAR expression .) ]
+  ! PLUS            [ shift and go to state 61 ]
+  ! MINUS           [ shift and go to state 62 ]
+  ! STAR            [ shift and go to state 63 ]
+  ! DIV             [ shift and go to state 64 ]
+  ! PROCENT         [ shift and go to state 65 ]
 
 
 state 126
@@ -3290,24 +3245,15 @@ state 126
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for STAR resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for PROCENT resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for LESS resolved as shift
-  ! shift/reduce conflict for GREATER resolved as shift
-  ! shift/reduce conflict for NOTEQ resolved as shift
+    PLUS            reduce using rule 72 (math_expression -> expression DIV expression .)
+    MINUS           reduce using rule 72 (math_expression -> expression DIV expression .)
+    STAR            reduce using rule 72 (math_expression -> expression DIV expression .)
+    DIV             reduce using rule 72 (math_expression -> expression DIV expression .)
+    PROCENT         reduce using rule 72 (math_expression -> expression DIV expression .)
     RBRACKET        reduce using rule 72 (math_expression -> expression DIV expression .)
     COMMA           reduce using rule 72 (math_expression -> expression DIV expression .)
     SEMICOLON       reduce using rule 72 (math_expression -> expression DIV expression .)
     error           reduce using rule 72 (math_expression -> expression DIV expression .)
-    PLUS            shift and go to state 61
-    MINUS           shift and go to state 62
-    STAR            shift and go to state 63
-    DIV             shift and go to state 64
-    PROCENT         shift and go to state 65
     EQ              shift and go to state 57
     LESS            shift and go to state 58
     GREATER         shift and go to state 59
@@ -3317,11 +3263,11 @@ state 126
   ! LESS            [ reduce using rule 72 (math_expression -> expression DIV expression .) ]
   ! GREATER         [ reduce using rule 72 (math_expression -> expression DIV expression .) ]
   ! NOTEQ           [ reduce using rule 72 (math_expression -> expression DIV expression .) ]
-  ! PLUS            [ reduce using rule 72 (math_expression -> expression DIV expression .) ]
-  ! MINUS           [ reduce using rule 72 (math_expression -> expression DIV expression .) ]
-  ! STAR            [ reduce using rule 72 (math_expression -> expression DIV expression .) ]
-  ! DIV             [ reduce using rule 72 (math_expression -> expression DIV expression .) ]
-  ! PROCENT         [ reduce using rule 72 (math_expression -> expression DIV expression .) ]
+  ! PLUS            [ shift and go to state 61 ]
+  ! MINUS           [ shift and go to state 62 ]
+  ! STAR            [ shift and go to state 63 ]
+  ! DIV             [ shift and go to state 64 ]
+  ! PROCENT         [ shift and go to state 65 ]
 
 
 state 127
@@ -3337,24 +3283,15 @@ state 127
     (67) compare -> expression . GREATER expression
     (68) compare -> expression . NOTEQ expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for STAR resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for PROCENT resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for LESS resolved as shift
-  ! shift/reduce conflict for GREATER resolved as shift
-  ! shift/reduce conflict for NOTEQ resolved as shift
+    PLUS            reduce using rule 73 (math_expression -> expression PROCENT expression .)
+    MINUS           reduce using rule 73 (math_expression -> expression PROCENT expression .)
+    STAR            reduce using rule 73 (math_expression -> expression PROCENT expression .)
+    DIV             reduce using rule 73 (math_expression -> expression PROCENT expression .)
+    PROCENT         reduce using rule 73 (math_expression -> expression PROCENT expression .)
     RBRACKET        reduce using rule 73 (math_expression -> expression PROCENT expression .)
     COMMA           reduce using rule 73 (math_expression -> expression PROCENT expression .)
     SEMICOLON       reduce using rule 73 (math_expression -> expression PROCENT expression .)
     error           reduce using rule 73 (math_expression -> expression PROCENT expression .)
-    PLUS            shift and go to state 61
-    MINUS           shift and go to state 62
-    STAR            shift and go to state 63
-    DIV             shift and go to state 64
-    PROCENT         shift and go to state 65
     EQ              shift and go to state 57
     LESS            shift and go to state 58
     GREATER         shift and go to state 59
@@ -3364,11 +3301,11 @@ state 127
   ! LESS            [ reduce using rule 73 (math_expression -> expression PROCENT expression .) ]
   ! GREATER         [ reduce using rule 73 (math_expression -> expression PROCENT expression .) ]
   ! NOTEQ           [ reduce using rule 73 (math_expression -> expression PROCENT expression .) ]
-  ! PLUS            [ reduce using rule 73 (math_expression -> expression PROCENT expression .) ]
-  ! MINUS           [ reduce using rule 73 (math_expression -> expression PROCENT expression .) ]
-  ! STAR            [ reduce using rule 73 (math_expression -> expression PROCENT expression .) ]
-  ! DIV             [ reduce using rule 73 (math_expression -> expression PROCENT expression .) ]
-  ! PROCENT         [ reduce using rule 73 (math_expression -> expression PROCENT expression .) ]
+  ! PLUS            [ shift and go to state 61 ]
+  ! MINUS           [ shift and go to state 62 ]
+  ! STAR            [ shift and go to state 63 ]
+  ! DIV             [ shift and go to state 64 ]
+  ! PROCENT         [ shift and go to state 65 ]
 
 
 state 128
@@ -4618,9 +4555,9 @@ state 190
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -4742,9 +4679,9 @@ state 191
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -4866,9 +4803,9 @@ state 192
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -4990,9 +4927,9 @@ state 193
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -5121,9 +5058,9 @@ state 195
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -5310,9 +5247,9 @@ state 199
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -5433,9 +5370,9 @@ state 200
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -5556,9 +5493,9 @@ state 201
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -5679,9 +5616,9 @@ state 202
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -5803,9 +5740,9 @@ state 203
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -5926,9 +5863,9 @@ state 204
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -6172,9 +6109,9 @@ state 212
     (83) if -> . TESTONCE LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (84) if -> . TESTONCE LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
     (85) if -> . TESTONCE error
-    (88) if -> . TESTREP error
     (86) while -> . TESTREP LBRACKET math_expression RBRACKET LBRACKET NEWLINE state RBRACKET
     (87) while -> . TESTREP LBRACKET compare RBRACKET LBRACKET NEWLINE state RBRACKET
+    (88) while -> . TESTREP error
     (89) operator -> . variable ASSIGNMENT robot
     (92) function -> . FUNC VAR LBRACKET parameters RBRACKET LBRACKET NEWLINE state RBRACKET
     (93) function -> . FUNC VAR LBRACKET RBRACKET LBRACKET NEWLINE state RBRACKET
@@ -6296,42 +6233,6 @@ state 214
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: shift/reduce conflict for PLUS in state 119 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 119 resolved as shift
-WARNING: shift/reduce conflict for STAR in state 119 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 119 resolved as shift
-WARNING: shift/reduce conflict for PROCENT in state 119 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 119 resolved as shift
-WARNING: shift/reduce conflict for LESS in state 119 resolved as shift
-WARNING: shift/reduce conflict for GREATER in state 119 resolved as shift
-WARNING: shift/reduce conflict for NOTEQ in state 119 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 120 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 120 resolved as shift
-WARNING: shift/reduce conflict for STAR in state 120 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 120 resolved as shift
-WARNING: shift/reduce conflict for PROCENT in state 120 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 120 resolved as shift
-WARNING: shift/reduce conflict for LESS in state 120 resolved as shift
-WARNING: shift/reduce conflict for GREATER in state 120 resolved as shift
-WARNING: shift/reduce conflict for NOTEQ in state 120 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 121 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 121 resolved as shift
-WARNING: shift/reduce conflict for STAR in state 121 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 121 resolved as shift
-WARNING: shift/reduce conflict for PROCENT in state 121 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 121 resolved as shift
-WARNING: shift/reduce conflict for LESS in state 121 resolved as shift
-WARNING: shift/reduce conflict for GREATER in state 121 resolved as shift
-WARNING: shift/reduce conflict for NOTEQ in state 121 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 122 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 122 resolved as shift
-WARNING: shift/reduce conflict for STAR in state 122 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 122 resolved as shift
-WARNING: shift/reduce conflict for PROCENT in state 122 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 122 resolved as shift
-WARNING: shift/reduce conflict for LESS in state 122 resolved as shift
-WARNING: shift/reduce conflict for GREATER in state 122 resolved as shift
-WARNING: shift/reduce conflict for NOTEQ in state 122 resolved as shift
 WARNING: shift/reduce conflict for PLUS in state 123 resolved as shift
 WARNING: shift/reduce conflict for MINUS in state 123 resolved as shift
 WARNING: shift/reduce conflict for STAR in state 123 resolved as shift
@@ -6350,30 +6251,3 @@ WARNING: shift/reduce conflict for EQ in state 124 resolved as shift
 WARNING: shift/reduce conflict for LESS in state 124 resolved as shift
 WARNING: shift/reduce conflict for GREATER in state 124 resolved as shift
 WARNING: shift/reduce conflict for NOTEQ in state 124 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 125 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 125 resolved as shift
-WARNING: shift/reduce conflict for STAR in state 125 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 125 resolved as shift
-WARNING: shift/reduce conflict for PROCENT in state 125 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 125 resolved as shift
-WARNING: shift/reduce conflict for LESS in state 125 resolved as shift
-WARNING: shift/reduce conflict for GREATER in state 125 resolved as shift
-WARNING: shift/reduce conflict for NOTEQ in state 125 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 126 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 126 resolved as shift
-WARNING: shift/reduce conflict for STAR in state 126 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 126 resolved as shift
-WARNING: shift/reduce conflict for PROCENT in state 126 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 126 resolved as shift
-WARNING: shift/reduce conflict for LESS in state 126 resolved as shift
-WARNING: shift/reduce conflict for GREATER in state 126 resolved as shift
-WARNING: shift/reduce conflict for NOTEQ in state 126 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 127 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 127 resolved as shift
-WARNING: shift/reduce conflict for STAR in state 127 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 127 resolved as shift
-WARNING: shift/reduce conflict for PROCENT in state 127 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 127 resolved as shift
-WARNING: shift/reduce conflict for LESS in state 127 resolved as shift
-WARNING: shift/reduce conflict for GREATER in state 127 resolved as shift
-WARNING: shift/reduce conflict for NOTEQ in state 127 resolved as shift

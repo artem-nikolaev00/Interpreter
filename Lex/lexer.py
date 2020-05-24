@@ -40,6 +40,12 @@ class Lexer(object):
               'LESS', 'GREATER', 'EQ', 'NOTEQ', 'COMMA',
               'SHARP', 'SEMICOLON', 'NEWLINE'] + list(reserved.values())
 
+    precedence = (
+        ('right', 'ASSIGNMENT'),
+        ('left', 'STAR', 'PROCENT', 'DIV'),
+        ('left', 'LESS', 'GREATER', 'EQ', 'NOTEQ')
+    )
+
     t_ASSIGNMENT = r'\<\-'
     t_PLUS = r'\+'
     t_MINUS = r'\-'
