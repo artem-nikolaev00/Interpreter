@@ -1,3 +1,11 @@
+squares = {
+    ' ': 'EMPTY',
+    'E': 'EXIT',
+    'W': 'WALL'
+}
+
+
+
 class Robot:
 
     def __init__(self, x, y, map):
@@ -29,16 +37,24 @@ class Robot:
 
 
     def move(self, direction):
-        if direction == 'UP' and self.map[self.y - 1][self.x].type != 'WALL':
+        if direction == 'TOP' and \
+                self.map[self.y - 1][self.x].top != True and \
+                self.map[self.y][self.x].top != True:
             self.y -= 1
             return True
-        elif direction == 'DOWN' and self.map[self.y + 1][self.x].type != 'WALL':
+        elif direction == 'BOTTOM' and \
+                self.map[self.y + 1][self.x].down != True and \
+                self.map[self.y][self.x].down != True:
             self.y += 1
             return True
-        elif direction == 'LEFT' and self.map[self.y][self.x - 1].type != 'WALL':
+        elif direction == 'LEFT' and \
+                self.map[self.y][self.x - 1].left != True and \
+                self.map[self.y][self.x].left != True:
             self.x -= 1
             return True
-        elif direction == 'RIGHT' and self.map[self.y][self.x + 1].type != 'WALL':
+        elif direction == 'RIGHT' and \
+                self.map[self.y][self.x + 1].right != True and \
+                self.map[self.y][self.x].right != True:
             self.x += 1
             return True
         return False

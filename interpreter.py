@@ -17,6 +17,7 @@ from Errors.Errors import InterpreterUnsignedInitError
 from Errors.Errors import InterpreterDivError
 from Errors.Errors import InterpreterParametrError
 from Errors.Errors import InterpreterRecursionError
+from Robot.robot import Robot, squares
 
 
 class Variable:
@@ -38,9 +39,22 @@ class Variable:
 
 class Cell:
 
-    def __init__(self, c_top=False, c_right=False, c_left=False, c_down=False, c_const=False):
+    def __init__(self, c_top=False, c_right=False, c_left=False, c_down=False, c_const=False,
+                 s_top = '', s_right = '', s_left = '', s_down = ''):
         self.type = 'cell'
         self.const = c_const
+        if s_top != '':
+            if s_top == 'top':
+                c_top = True
+        if s_right != '':
+            if s_right == 'right':
+                c_right = True
+        if s_left != '':
+            if s_left == 'left':
+                c_left = True
+        if s_down != '':
+            if s_down == 'down':
+                c_down = True
         if isinstance(c_right, bool):
             if c_right:
                 self.right = True
@@ -181,8 +195,11 @@ class Converter:
 
     @staticmethod
     def unsigned_to_signed(var, const=False):
-        val = int(var.value)
-        return Variable('signed', val, const)
+        if var.value > 2147483648:
+            raise InterpreterConvertationError
+        else:
+            val = int(var.value)
+            return Variable('signed', val, const)
 
     @staticmethod
     def string_to_int(val):
@@ -302,6 +319,8 @@ class Interpreter:
                 self.error.err(self.error_types['SidesError'], node)
             except InterpreterDivError:
                 self.error.err(self.error_types['DivError'], node)
+            except InterpreterUnsignedInitError:
+                self.error.err(self.error_types['UnsignedInitError'], node)
 
         elif node.type == 'const_declaration':
             declaration_const = True
@@ -381,7 +400,9 @@ class Interpreter:
                 self.error.err(self.error_types['UndeclaredError'], node)
             index1 = self.interpreter_node(node.children[0])
             index2 = self.interpreter_node(node.children[1])
-            return self.symbol_table[self.scope][var].value[index1.value][index2.value]
+            index1 = int(index1.value)
+            index2 = int(index2.value)
+            return self.symbol_table[self.scope][var].value[index1][index2]
 
         elif node.type == 'variable':
             return self.get_value(node)
@@ -426,6 +447,8 @@ class Interpreter:
                     self.error.err(self.error_types['TypeError'], node)
                 except InterpreterDivError:
                     self.error.err(self.error_types['DivError'], node)
+                except InterpreterSidesError:
+                    self.error.err(self.error_types['SidesError'], node)
 
         elif node.type == 'bin_op':
             try:
@@ -504,19 +527,24 @@ class Interpreter:
             if node.children is not None:
                 param = self.interpreter_node(node.children)
                 tmp = {}
-                try:
-                    for i in range(len(param)):
+                for i in range(len(param)):
+                    if param[i] in self.symbol_table[self.scope].keys():
                         tmp[param[i]] = self.symbol_table[self.scope][param[i]]
-                except InterpreterNameError:
-                    self.error.err(self.error_types['UndeclaredError'], node)
+                    else:
+                        self.error.err(self.error_types['UndeclaredError'], node)
                 if isinstance(tmp, dict):
-                    res = self.func_call(node.value['name'], tmp)
+                    try:
+                        res = self.func_call(node.value['name'], tmp)
+                    except InterpreterRecursionError:
+                        self.error.err(self.error_types['RecursionError'], node)
             else:
                 param = None
                 try:
                     res = self.func_call(node.value['name'], param)
                 except InterpreterParametrError:
                     self.error.err(self.error_types['ParametrError'], node)
+                except InterpreterRecursionError:
+                    self.error.err(self.error_types['RecursionError'], node)
                     self.correct = False
                     res = 0
             return res
@@ -612,7 +640,7 @@ class Interpreter:
         expr2 = self.interpreter_node(var2)
         if isinstance(expr1, Matrix) or isinstance(expr2, Matrix):
             raise InterpreterTypeError
-        elif expr1.type == 'cell' or expr2.type == 'cell':
+        elif isinstance(expr1, Cell) or isinstance(expr2, Cell):
             raise InterpreterTypeError
         else:
             if expr1.value != expr2.value:
@@ -625,7 +653,7 @@ class Interpreter:
         expr2 = self.interpreter_node(var2)
         if isinstance(expr1, Matrix) or isinstance(expr2, Matrix):
             raise InterpreterTypeError
-        elif expr1.type == 'cell' or expr2.type == 'cell':
+        elif isinstance(expr1, Cell) or isinstance(expr2, Cell):
             raise InterpreterTypeError
         else:
             if expr1.value == expr2.value:
@@ -638,7 +666,7 @@ class Interpreter:
         expr2 = self.interpreter_node(var2)
         if isinstance(expr1, Matrix) or isinstance(expr2, Matrix):
             raise InterpreterTypeError
-        elif expr1.type == 'cell' or expr2.type == 'cell':
+        elif isinstance(expr1, Cell) or isinstance(expr2, Cell):
             raise InterpreterTypeError
         else:
             if expr1.value < expr2.value:
@@ -651,7 +679,7 @@ class Interpreter:
         expr2 = self.interpreter_node(var2)
         if isinstance(expr1, Matrix) or isinstance(expr2, Matrix):
             raise InterpreterTypeError
-        elif expr1.type == 'cell' or expr2.type == 'cell':
+        elif isinstance(expr1, Cell) or isinstance(expr2, Cell):
             raise InterpreterTypeError
         else:
             if expr1.value > expr2.value:
@@ -1052,6 +1080,8 @@ class Interpreter:
     def add_to_matr(self, type, var, expression, index1, index2):
         if index1 < self.symbol_table[self.scope][var].lines:
             if index2 < self.symbol_table[self.scope][var].column:
+                index1 = int(index1)
+                index2 = int(index2)
                 if type == expression.type:
                     self.symbol_table[self.scope][var].value[index1][index2] = expression
                 elif type == 'signed':
@@ -1100,7 +1130,27 @@ class Interpreter:
         else:
             raise InterpreterNameError
 
-
+def make_robot(descriptor):
+    with open(descriptor) as file:
+        info = file.read()
+    info = info.split('\n')
+    map_size = info.pop(0).split()
+    robot_coordinates = info.pop(0).split()
+    x = int(robot_coordinates[0])
+    y = int(robot_coordinates[1])
+    map = [0] * int(map_size[0])
+    for i in range(int(map_size[0])):
+        map[i] = [0] * int(map_size[1])
+    for i in range(int(map_size[0])):
+        for j in range(int(map_size[1])):
+            map[i][j] = Cell()
+    buf = 0
+    while len(info) > 0:
+        ln = list(info.pop(0))
+        ln = [Cell(squares[i]) for i in ln]
+        map[buf] = ln
+        buf += 1
+    return Robot(x, y, map)
 
 
 
@@ -1108,12 +1158,14 @@ class Interpreter:
 
 if __name__ == '__main__':
 
-    tests = ['Tests/factorial.txt', 'Tests/signed_matrix.txt', 'Tests/cells.txt']
+    tests = ['Tests/factorial.txt', 'Tests/signed_matrix.txt', 'Tests/cells.txt',
+             'Tests/errors.txt', 'Tests/sort.txt']
     print("Enter: 1 - tests from file, 2 - data")
     n = int(input())
     if n == 1:
         interpreter = Interpreter()
-        print('Which test do you want to run?\n 0 - factorial\n 1 - signed_matrix\n 2 - cells\n')
+        print('Which test do you want to run?\n 0 - factorial\n 1 - signed_matrix\n 2 - cells\n'
+              ' 3 - errors\n 4 - sort\n ')
         num = int(input())
         if num not in range(len(tests)):
             print('Incorrect number. Goodbay!\n')
@@ -1126,14 +1178,7 @@ if __name__ == '__main__':
                     print(key,'=', value)
 
     elif n == 2:
-        data = '''signed n <- 4;
-        matrix cell a(n, n);
-        a(0, 0) <- (top, down);
-        a(0, 2) <- (left, nright, top);
-        a(2, 2) <- 1;
-        a(3, 3) <- 0;
-        const cell c <- a(0, 2);
-        #a;
+        data = '''cell a <- (top);
         '''
 
         interpreter = Interpreter()

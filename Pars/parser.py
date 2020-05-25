@@ -43,7 +43,7 @@ class Parser():
                      | prison SEMICOLON NEWLINE
                      | if NEWLINE
                      | while NEWLINE
-                     | operator SEMICOLON NEWLINE
+                     | robot SEMICOLON NEWLINE
                      | function NEWLINE
                      | function_call SEMICOLON NEWLINE
                      | function_return SEMICOLON NEWLINE"""
@@ -56,7 +56,7 @@ class Parser():
                      | prison SEMICOLON
                      | if
                      | while
-                     | operator SEMICOLON
+                     | robot SEMICOLON
                      | function
                      | function_call SEMICOLON
                      | function_return SEMICOLON """
@@ -68,7 +68,7 @@ class Parser():
                      | assignment error NEWLINE
                      | compare error NEWLINE
                      | prison error NEWLINE
-                     | operator error NEWLINE
+                     | robot error NEWLINE
                      | function_call error NEWLINE
                      | function_return error NEWLINE"""
         p[0] = Tree('error', value="SEMICOLON is absent", children=p[2], lineno=p.lineno(1), lexpos=p.lexpos(1))
@@ -237,10 +237,6 @@ class Parser():
         """while : TESTREP error"""
         p[0] = Tree('error', value="Incorrect for", lineno=p.lineno(2), lexpos=p.lexpos(2))
         sys.stderr.write(f'-> Incorrect for <-\n')
-
-    def p_operator(self, p):
-        """operator : variable ASSIGNMENT robot"""
-        p[0] = Tree('operator', value=p[1], children=p[3], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_robot(self, p):
         """robot : direction

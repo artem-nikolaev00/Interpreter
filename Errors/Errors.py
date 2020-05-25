@@ -33,10 +33,10 @@ class Errors:
         elif self.type == 2:
             if node.type == 'declaration':
                 sys.stderr.write(f'Bad type for declaration "{self.node.children[0].value}" at line '
-                            f'{self.node.children[0].lineno}\n')
-            else:
+                            f'{self.node.children[0].lineno} or init is not correct\n')
+            elif node.type == 'assignment':
                 sys.stderr.write(f'non-matching types at line '
-                                 f'{self.node.lineno}\n')
+                                 f'{self.node.children[0].lineno}\n')
         elif self.type == 3:
             if node.type == 'assignment':
                 sys.stderr.write(f'List index is out of range at line '
@@ -52,12 +52,19 @@ class Errors:
             elif node.type == 'assignment':
                 sys.stderr.write(f'Variable for declaration at line '
                                  f'{self.node.children[0].lineno} is not used before\n')
+            elif node.type == 'function_call':
+                sys.stderr.write(f'Variable for declaration at line '
+                                 f'{self.node.lineno} is not used before\n')
             else:
                 sys.stderr.write(f'Variable for declaration at line '
                                  f'{self.node.children[0].lineno} is not used before\n')
         elif self.type == 5:
-            sys.stderr.write(f'Error at sides of "{self.node.children[0].value}" at line '
-                             f'{self.node.lineno}\n')
+            if node.type == 'assignment':
+                sys.stderr.write(f'Error at sides of "{self.node.children[0].value}" at line '
+                             f'{self.node.children[0].lineno}\n')
+            else:
+                sys.stderr.write(f'Error at sides of "{self.node.children[0].value}" at line '
+                                 f'{self.node.lineno}\n')
         elif self.type == 6:
             sys.stderr.write(f'Impossible reinitialize const variable "{self.node.children[0].value}" at line '
                          f'{self.node.children[0].lineno}\n')
@@ -73,7 +80,7 @@ class Errors:
         elif self.type == 10:
             sys.stderr.write(f'Parametrs error \n')
         elif self.type == 11:
-            sys.stderr.write(f'Recursion error\n')
+            sys.stderr.write(f'Recursion error at {self.node.lineno} line\n')
 
 
 
