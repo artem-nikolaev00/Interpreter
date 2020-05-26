@@ -16,7 +16,8 @@ class Errors:
                         'UnsignedInitError',
                         'DivError',
                         'ParametrError',
-                        'RecursionError']
+                        'RecursionError',
+                        'RobotError']
 
     def err(self, errors_type, node=None):
         self.type = errors_type
@@ -81,7 +82,8 @@ class Errors:
             sys.stderr.write(f'Parametrs error \n')
         elif self.type == 11:
             sys.stderr.write(f'Recursion error at {self.node.lineno} line\n')
-
+        elif self.type == 12:
+            sys.stderr.write(f'Robot Error at {self.node.lineno} line\n')
 
 
 
@@ -136,4 +138,8 @@ class InterpreterParametrError(Exception):
 
 
 class InterpreterRecursionError(Exception):
+    pass
+
+
+class InterpreterRobotError(Exception):
     pass

@@ -130,6 +130,7 @@ class Parser():
                       | variable
                       | side
                       | compare
+                      | robot
                       | prison
                       | function_call
                       | LBRACKET expression RBRACKET"""
@@ -242,9 +243,9 @@ class Parser():
         """robot : direction
                 | XRAY"""
         if p[1] == 'xray':
-            p[0] = Tree('scan', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+            p[0] = Tree('xray', value=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
         else:
-            p[0] = Tree('direction', value=p[1], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
+            p[0] = Tree('robot', value=p[1], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
     def p_error(self, p):
         try:
@@ -308,17 +309,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-# data = '''signed b <- 1;
-# func fact()(
-# signed c <- a;
-# c;
-# )
-# a <- call fact(b);
-#
-#
-#
-#
-#
+# data = '''a <- top;
 #
 # '''
 #

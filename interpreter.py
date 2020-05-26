@@ -39,22 +39,10 @@ class Variable:
 
 class Cell:
 
-    def __init__(self, c_top=False, c_right=False, c_left=False, c_down=False, c_const=False,
-                 s_top = '', s_right = '', s_left = '', s_down = ''):
+    def __init__(self, c_top=False, c_right=False, c_left=False, c_down=False, c_const=False, c_types=''):
         self.type = 'cell'
+        self.types = c_types
         self.const = c_const
-        if s_top != '':
-            if s_top == 'top':
-                c_top = True
-        if s_right != '':
-            if s_right == 'right':
-                c_right = True
-        if s_left != '':
-            if s_left == 'left':
-                c_left = True
-        if s_down != '':
-            if s_down == 'down':
-                c_down = True
         if isinstance(c_right, bool):
             if c_right:
                 self.right = True
@@ -80,7 +68,7 @@ class Cell:
                 self.down = False
 
     def __repr__(self):
-        return f'top:{self.top} left:{self.left} right:{self.right} down:{self.down}'
+        return f'|top:{self.top} left:{self.left} right:{self.right} down:{self.down}|'
 
 
 
@@ -246,7 +234,7 @@ class Interpreter:
         self.tree = None
         self.functions = None
         self.correct = True
-        self.correct = True
+        self.robot = None
         self.scope = 0
         self.error = Errors()
         self.error_types = {'UnexpectedError': 0,
@@ -260,10 +248,12 @@ class Interpreter:
                             'UnsignedInitError': 8,
                             'DivError': 9,
                             'ParametrError': 10,
-                            'RecursionError': 11}
+                            'RecursionError': 11,
+                            'RobotError': 12}
 
-    def interpreter(self, program=None, tree_print=False):
+    def interpreter(self, program=None, robot =None, tree_print=False):
         self.program = program
+        self.robot = robot
         self.symbol_table = [dict()]
         self.tree, tmp, self.functions = self.parser.parse(self.program)
         if tmp:
@@ -489,6 +479,16 @@ class Interpreter:
             except InterpreterTypeError:
                 raise InterpreterTypeError
 
+        elif node.type == 'robot':
+            if self.robot is None:
+                self.error.err(self.error_types['RobotError'], node)
+                self.correct = False
+                return 0
+            command = node.children.value
+            if isinstance(command, str):
+                self.move(command)
+
+
         elif node.type == 'if':
             try:
                 self.op_if(node)
@@ -558,6 +558,11 @@ class Interpreter:
             else:
                 self.symbol_table[self.scope]['RETURN'] = self.interpreter_node(node.children)
         return ''
+
+    def move(self, command):
+        res = self.robot.move(command)
+        self.exit = self.robot.exit()
+        return res
 
     def func_call(self, name, parametrs=None):
         if name not in self.functions.keys():
@@ -947,8 +952,14 @@ class Interpreter:
             val1 = self.interpreter_node(node.children)
             return val1
 
-    def sides(self, lst):
+    @staticmethod
+    def sides(lst):
         if isinstance(lst, list):
+            if len(lst) == 0:
+                return Cell(c_types='EMPTY')
+            if len(lst) == 1:
+                if lst[0] == 'EXIT':
+                    return Cell(c_types='EXIT')
             if len(lst) > 4:
                 raise InterpreterSidesError
             for flag in lst:
@@ -982,7 +993,53 @@ class Interpreter:
                         tmp_left = True
                     if flag == 'down':
                         tmp_down = True
-                return Cell(c_top=tmp_top, c_right=tmp_right, c_left=tmp_left, c_down=tmp_down)
+                if tmp_top:
+                    if tmp_left:
+                        if tmp_right:
+                            if tmp_down:
+                                tmp_types = 'A'
+                            else:
+                                tmp_types = 'B'
+                        else:
+                            if tmp_down:
+                                tmp_types = 'F'
+                            else:
+                                tmp_types = 'H'
+                    else:
+                        if tmp_right:
+                            if tmp_down:
+                                tmp_types = 'C'
+                            else:
+                                tmp_types = 'J'
+                        else:
+                            if tmp_down:
+                                tmp_types = 'I'
+                            else:
+                                tmp_types = 'T'
+                else:
+                    if tmp_left:
+                        if tmp_right:
+                            if tmp_down:
+                                tmp_types = 'G'
+                            else:
+                                tmp_types = 'K'
+                        else:
+                            if tmp_down:
+                                tmp_types = 'M'
+                            else:
+                                tmp_types = 'L'
+                    else:
+                        if tmp_right:
+                            if tmp_down:
+                                tmp_types = 'N'
+                            else:
+                                tmp_types = 'R'
+                        else:
+                            if tmp_down:
+                                tmp_types = 'D'
+                            else:
+                                tmp_types = ''
+                return Cell(c_top=tmp_top, c_right=tmp_right, c_left=tmp_left, c_down=tmp_down, c_types=tmp_types)
 
     def declare_matrix_without_init(self, type, child):
         var = child[0].value
@@ -1147,7 +1204,7 @@ def make_robot(descriptor):
     buf = 0
     while len(info) > 0:
         ln = list(info.pop(0))
-        ln = [Cell(squares[i]) for i in ln]
+        ln = [Interpreter.sides(lst=squares[i]) for i in ln]
         map[buf] = ln
         buf += 1
     return Robot(x, y, map)
@@ -1160,7 +1217,9 @@ if __name__ == '__main__':
 
     tests = ['Tests/factorial.txt', 'Tests/signed_matrix.txt', 'Tests/cells.txt',
              'Tests/errors.txt', 'Tests/sort.txt']
-    print("Enter: 1 - tests from file, 2 - data")
+    algorithm = ['Algo/hand.txt']
+    maps = ['Map/map1.txt']
+    print("Enter: 1 - tests from file, 2 - data, 3 - robot")
     n = int(input())
     if n == 1:
         interpreter = Interpreter()
@@ -1178,7 +1237,7 @@ if __name__ == '__main__':
                     print(key,'=', value)
 
     elif n == 2:
-        data = '''cell a <- (top);
+        data = '''signed a <- top;
         '''
 
         interpreter = Interpreter()
@@ -1187,5 +1246,12 @@ if __name__ == '__main__':
         for key, value in interpreter.symbol_table[0].items():
             print(key, '=', value)
         pass
+    elif n == 3:
+        print(
+            "Which map do you want to use?\n0 - Map 1\n")
+        num = int(input())
+        robot = make_robot(maps[num])
+        print('Map:')
+        robot.show()
     else:
         print('Incorrect number. Goodbay!\n')
