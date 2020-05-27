@@ -1,7 +1,7 @@
 5 5
 3 1
-HTTTJ
-L   R
-L   R
-L   E
-MDDDN
+AAAAA
+A   A
+A   A
+A   E
+AAAAA

@@ -13,6 +13,6 @@ result;
 )
 
 
-signed n <- 20;
+signed n <- 5;
 const signed fact <- call factorial(n);
 

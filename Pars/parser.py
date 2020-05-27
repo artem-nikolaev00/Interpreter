@@ -309,19 +309,7 @@ class Parser():
         else:
             p[0] = Tree('parameters', value=[p[2], p[1]], children=p[1], lineno=p.lineno(1), lexpos=p.lexpos(1))
 
-# data = '''func start()(
-# signed tmp;
-# signed ex <- 0;
-# signed dir <- 1;
-# testrep(dir <> 0)(
-# 	dir <- left;
-# 	testonce(dir = 2)(
-# 		ex <- 1;
-# 		dir <- 0;
-# 	)
-# )
-# )
-# call start();
+# data = '''
 # '''
 #
 #

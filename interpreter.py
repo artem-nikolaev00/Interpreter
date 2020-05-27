@@ -582,9 +582,11 @@ class Interpreter:
                 if (y + i > -1) and (y + i < len(self.robot.map)):
                     if (x + j > -1) and (x + j < len(self.robot.map[i])):
                         tmp.value[i+2][j+2] = self.robot.map[y + i][x + j]
+                    else:
+                        tmp.value[i + 2][j + 2] = Cell(c_top=True, c_right=True, c_left=True, c_down=True)
+                else:
+                    tmp.value[i + 2][j + 2] = Cell(c_top=True, c_right=True, c_left=True, c_down=True)
         return tmp
-
-
 
     def move(self, command):
         res = self.robot.move(command)
@@ -1152,15 +1154,16 @@ class Interpreter:
                 self.add_to_matr(type, var, expression, index1, index2)
             except InterpreterIndexError:
                 raise InterpreterIndexError
-        if isinstance(expression, int):
+        elif isinstance(expression, int):
             self.symbol_table[self.scope][var] = Variable(type, expression, const)
         elif type == expression.type:
-            if expression.value is None:
-                raise InterpreterNoneError
-            else:
-                self.symbol_table[self.scope][var] = expression
+            if not isinstance(expression, Cell):
+                if expression.value is None:
+                    raise InterpreterNoneError
+                else:
+                    self.symbol_table[self.scope][var] = expression
         elif (type == 'signed' or type == 'unsigned' or type == 'cell') and \
-                (expression.type == 'signed' or expression.type == 'unsigned' or type == 'cell'):
+                (expression.type == 'signed' or expression.type == 'unsigned' or expression.type == 'cell'):
             self.symbol_table[self.scope][var] = self.check_var(type, expression)
 
     def add_to_matr(self, type, var, expression, index1, index2):
@@ -1246,8 +1249,8 @@ if __name__ == '__main__':
 
     tests = ['Tests/factorial.txt', 'Tests/signed_matrix.txt', 'Tests/cells.txt',
              'Tests/errors.txt', 'Tests/sort.txt']
-    algorithm = ['Algo/hand.txt']
-    maps = ['Map/map1.txt']
+    algorithm = ['Algo/algo1.txt', 'Algo/algo2.txt']
+    maps = ['Map/map1.txt', 'Map/map3.txt']
     print("Enter: 1 - tests from file, 2 - data, 3 - robot")
     n = int(input())
     if n == 1:
@@ -1266,9 +1269,20 @@ if __name__ == '__main__':
                     print(key,'=', value)
 
     elif n == 2:
-        data = '''signed a;
-        a <- right;
-        '''
+        data = '''signed n <- 5;
+matrix signed a(n, n);
+signed i <- 0;
+signed j <- 0;
+testrep (i < n)(
+	testrep (j < n)(
+		a(i, j) <- i + j;
+		j <- j + 1;
+	)
+	i <- i + 1;
+	j <- 0;
+)
+
+'''
 
         interpreter = Interpreter()
         interpreter.interpreter(data)
@@ -1278,9 +1292,9 @@ if __name__ == '__main__':
         pass
     elif n == 3:
         print(
-            "Which map do you want to use?\n0 - Map 1")
+            "Which map do you want to use?\n0 - Map #1\n1 - Map #2")
         num = int(input())
-        print("Which algorithm do you want to use?\n0 - Hand algorithm")
+        print("Which algorithm do you want to use?\n0 - First algorithm\n1 - Second algorithm\n")
         num2 = int(input())
         if num not in range(len(maps)) or num2 not in range(len(algorithm)):
             print('Wrong choice')
@@ -1296,10 +1310,11 @@ if __name__ == '__main__':
                 for key, value in interpreter.symbol_table[0].items():
                     print(key, '=', value)
             if interpreter.exit:
-                print('\n###### Exit has been found!!! ######\n')
+                print('\n -> Exit has been found!!!\n')
                 img = Image.open(r'C:\Users\stari\Desktop\like.jpg')
             else:
-                print('\n###### Exit hasn\'t been found :( ######\n')
+                print('\n -> Exit hasn\'t been found\n')
+                img = Image.open(r'C:\Users\stari\Desktop\dis.jpg')
             print('Robo:', interpreter.robot)
             print('Finals map:')
             interpreter.robot.show()
