@@ -1,0 +1,54 @@
+func start()(
+signed tmp;
+signed ex <- 0;
+signed dir <- 1;
+testrep(dir<>0)(
+	dir <- left;
+	testonce(dir = 2)(
+		ex <- 1;
+		dir <- 0;
+	)
+)
+dir <- 1;
+testonce(ex = 0)(
+testrep(dir<>0)(
+	dir <- left;
+	testonce(dir = 0)(
+		dir <- bottom;
+		testonce(dir = 2)(
+			ex <- 1;
+			dir <- 0;
+		)
+	)
+)
+)
+dir <- 1;
+testonce(ex = 0)(
+testrep(dir<>0)(
+	dir <- bottom;
+	testonce(dir = 0)(
+		dir <- right;
+		testonce(dir = 2)(
+			ex <- 1;
+			dir <- 0;
+		)
+	)
+)
+)
+dir <- 1;
+testonce(ex = 0)(
+testrep(dir<>0)(
+	dir <- right;
+	testonce(dir = 0)(
+		dir <- top;
+		testonce(dir = 2)(
+			ex <- 1;
+			dir <- 0;
+		)
+	)
+)
+)
+ex;
+)
+
+signed a <- call start();

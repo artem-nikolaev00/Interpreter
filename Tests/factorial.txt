@@ -1,0 +1,18 @@
+func factorial(signed n)(
+signed result;
+testonce (n < 2)(
+result <- 1;
+)
+
+testonce (n > 1)(
+signed x <- n;
+n <- n - 1;
+result <- call factorial(n) * x;
+)
+result;
+)
+
+
+signed n <- 20;
+const signed fact <- call factorial(n);
+

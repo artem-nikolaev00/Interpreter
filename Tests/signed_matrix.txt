@@ -1,0 +1,15 @@
+signed n <- 5;
+matrix signed a(n, n);
+signed i <- 0;
+signed j <- 0;
+testrep (i < n)(
+	testrep (j < n)(
+		a(i, j) <- i + j;
+		j <- j + 1;
+	)
+	i <- i + 1;
+	j <- 0;
+)
+signed c <- a(1, 1);
+#a;
+signed b <- a(1, 1);

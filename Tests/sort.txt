@@ -1,0 +1,33 @@
+signed n <- 3;
+matrix signed a(n,n);
+signed length <- n * n;
+signed i <- 0;
+signed j <- 0;
+testrep (i < n)(
+	testrep (j < n)(
+		a(i, j) <- i - j;
+		j <- j + 1;
+	)
+	i <- i + 1;
+	j <- 0;
+)
+i <- 0;
+j <- 0;
+signed k <- 0;
+signed tmp;
+testrep(i < n)(
+	testrep(j < (n-1))(
+	    k <- j + 1;
+		testrep(k < n)(
+		    testonce(a(i, j) > a(i, k))(
+		        tmp <- a(i, j);
+			    a(i,j) <- a(i,k);
+			    a(i,k) <- tmp;
+		    )
+		    k <- k + 1;
+		)
+		j <- j + 1;
+	)
+	i <- i + 1;
+	j <- 0;
+)

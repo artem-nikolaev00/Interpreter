@@ -1,0 +1,8 @@
+signed n <- 4;
+matrix cell a(n, n);
+a(0, 0) <- (top, down);
+a(0, 2) <- (left, nright, top);
+a(2, 2) <- 1;
+a(3, 3) <- 0;
+const cell c <- a(0, 2);
+#a;

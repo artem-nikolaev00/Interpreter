@@ -1,0 +1,23 @@
+const signed a <- 2;
+a <- 3;
+signed c <- a;
+signed c;
+cell b;
+b <- (top, ntop);
+signed f <- b + a;
+signed var1 <- 0;
+signed var2 <- 3;
+signed var <- var2/var1;
+v <- a;
+func rec()(
+call rec();
+signed n <- 0;
+n;
+)
+signed n <- call rec();
+func par(signed p)(
+p;
+)
+signed u <- call par(p);
+
+
