@@ -1,8 +1,10 @@
 import sys
+import os
 import re
 import copy
 from numpy import uint, dtype
 from STree.STree import Tree
+from PIL import Image
 from Pars.parser import Parser
 from Errors.Errors import Errors
 from Errors.Errors import InterpreterRedeclarationError
@@ -227,15 +229,16 @@ class Interpreter:
     def __init__(self, parser=Parser(), converter=Converter()):
         self.parser = parser
         self.converter = converter
-        self.check_cell = 0
-        self.cell_scope = 0
         self.program = None
         self.symbol_table = [dict()]
         self.tree = None
         self.functions = None
-        self.correct = True
-        self.robot = None
         self.scope = 0
+        self.robot = None
+        self.exit = False
+        self.correct = True
+        self.check_cell = 0
+        self.cell_scope = 0
         self.error = Errors()
         self.error_types = {'UnexpectedError': 0,
                             'RedeclarationError': 1,
@@ -486,7 +489,19 @@ class Interpreter:
                 return 0
             command = node.children.value
             if isinstance(command, str):
-                self.move(command)
+                res = self.move(command)
+            if self.exit == 1:
+                return 2
+            else:
+                return res
+
+        elif node.type == 'xray':
+            if self.robot is None:
+                self.error.err(self.error_types['RobotError'], node)
+                self.correct = False
+                return 0
+            return self.range(self.robot.y, self.robot.x)
+
 
 
         elif node.type == 'if':
@@ -558,6 +573,18 @@ class Interpreter:
             else:
                 self.symbol_table[self.scope]['RETURN'] = self.interpreter_node(node.children)
         return ''
+
+    def range(self, y, x):
+        ran = range(-2, 3)
+        tmp = Matrix('cell', 5, 5)
+        for i in ran:
+            for j in ran:
+                if (y + i > -1) and (y + i < len(self.robot.map)):
+                    if (x + j > -1) and (x + j < len(self.robot.map[i])):
+                        tmp.value[i+2][j+2] = self.robot.map[y + i][x + j]
+        return tmp
+
+
 
     def move(self, command):
         res = self.robot.move(command)
@@ -1125,6 +1152,8 @@ class Interpreter:
                 self.add_to_matr(type, var, expression, index1, index2)
             except InterpreterIndexError:
                 raise InterpreterIndexError
+        if isinstance(expression, int):
+            self.symbol_table[self.scope][var] = Variable(type, expression, const)
         elif type == expression.type:
             if expression.value is None:
                 raise InterpreterNoneError
@@ -1237,7 +1266,8 @@ if __name__ == '__main__':
                     print(key,'=', value)
 
     elif n == 2:
-        data = '''signed a <- top;
+        data = '''signed a;
+        a <- right;
         '''
 
         interpreter = Interpreter()
@@ -1248,10 +1278,31 @@ if __name__ == '__main__':
         pass
     elif n == 3:
         print(
-            "Which map do you want to use?\n0 - Map 1\n")
+            "Which map do you want to use?\n0 - Map 1")
         num = int(input())
-        robot = make_robot(maps[num])
-        print('Map:')
-        robot.show()
+        print("Which algorithm do you want to use?\n0 - Hand algorithm")
+        num2 = int(input())
+        if num not in range(len(maps)) or num2 not in range(len(algorithm)):
+            print('Wrong choice')
+        else:
+            robot = make_robot(maps[num])
+            print('Start Map:')
+            robot.show()
+            interpreter = Interpreter()
+            prog = open(algorithm[num2], 'r').read()
+            res = interpreter.interpreter(robot=robot, program=prog)
+            if res:
+                print('Result symbol table:')
+                for key, value in interpreter.symbol_table[0].items():
+                    print(key, '=', value)
+            if interpreter.exit:
+                print('\n###### Exit has been found!!! ######\n')
+                img = Image.open(r'C:\Users\stari\Desktop\like.jpg')
+            else:
+                print('\n###### Exit hasn\'t been found :( ######\n')
+            print('Robo:', interpreter.robot)
+            print('Finals map:')
+            interpreter.robot.show()
+            img.show()
     else:
         print('Incorrect number. Goodbay!\n')
