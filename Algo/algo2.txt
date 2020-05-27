@@ -1,0 +1,111 @@
+func change(signed x)(
+	matrix cell a(5, 5);
+	a <- xray;
+	signed tmp;
+	signed m <- 1;
+	signed dir;
+	tmp <- a(1, 2);
+	testonce(tmp = 0)(
+		testonce(x <> 3)(
+			m <- 0;
+			x <- 1;
+		)
+	)
+	testonce(m<>0)(
+		tmp <- a(2, 1);
+		testonce(tmp=0)(
+			testonce(x <> 4)(
+				m <- 0;
+				x <- 2;
+			)
+		)
+	)
+	testonce(m<>0)(
+		tmp <- a(3, 2);
+		testonce(tmp=0)(
+			testonce(x <> 1)(
+				m <- 0;
+				x <- 3;
+			)
+		)
+	)
+	testonce(m<>0)(
+		tmp <- a(2, 3);
+		testonce(tmp=0)(
+			testonce(x <> 2)(
+				m <- 0;
+				x <- 4;
+			)
+		)
+	)
+	x;
+)
+
+
+
+func start()(
+signed x <- 0;
+signed i <- 0;
+signed tmp;
+signed dir;
+signed ex <- 0;
+testrep(i < 1000)(
+	tmp <- call change(x);
+	x <- tmp;
+	testonce(x = 1)(
+		dir <- 1;
+		testonce(ex = 0)(
+			testrep(dir <> 0)(
+				dir <- top;
+				testonce(dir = 2)(
+					ex <- 1;
+					dir <- 0;
+				)
+			)
+		)
+	)
+	testonce(x = 2)(
+		dir <- 1;
+		testonce(ex = 0)(
+			testrep(dir <> 0)(
+				dir <- left;
+				testonce(dir = 2)(
+					ex <- 1;
+					dir <- 0;
+				)
+			)
+		)
+	)
+	testonce(x = 3)(
+		dir <- 1;
+		testonce(ex = 0)(
+			testrep(dir <> 0)(
+				dir <- bottom;
+				testonce(dir = 2)(
+					ex <- 1;
+					dir <- 0;
+				)
+			)
+		)
+	)
+	testonce(x = 4)(
+		dir <- 1;
+		testonce(ex = 0)(
+			testrep(dir <> 0)(
+				dir <- right;
+				testonce(dir = 2)(
+					ex <- 1;
+					dir <- 0;
+				)
+			)
+		)
+	)
+	i <- i + 1;
+	testonce(ex <> 0)(
+		i <- 1000;
+	)
+)
+ex;
+)
+
+call start();

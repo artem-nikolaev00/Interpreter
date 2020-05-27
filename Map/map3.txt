@@ -1,0 +1,9 @@
+7 7
+1 5
+AAAAAAA
+A   AEA
+A A A A
+A A A A
+A A A A
+A A   A
+AAAAAAA
