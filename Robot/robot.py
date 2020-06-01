@@ -78,38 +78,54 @@ class Robot:
                     (self.map[self.y - 1][self.x].down != True and \
                     self.map[self.y][self.x].top != True):
                 self.y -= 1
+                print()
+                self.show()
                 return 1
             elif direction == 'bottom' and \
                     (self.map[self.y + 1][self.x].top != True and \
                     self.map[self.y][self.x].down != True):
                 self.y += 1
+                print()
+                self.show()
                 return 1
             elif direction == 'left' and \
                     (self.map[self.y][self.x - 1].right != True and \
                     self.map[self.y][self.x].left != True):
                 self.x -= 1
+                print()
+                self.show()
                 return 1
             elif direction == 'right' and \
                     (self.map[self.y][self.x + 1].left != True and \
                     self.map[self.y][self.x].right != True):
                 self.x += 1
+                print()
+                self.show()
                 return 1
         else:
             if direction == 'top' and \
                     self.map[self.y][self.x].top != True:
                 self.y -= 1
+                print()
+                self.show()
                 return 1
             elif direction == 'bottom' and \
                     self.map[self.y][self.x].down != True:
                 self.y += 1
+                print()
+                self.show()
                 return 1
             elif direction == 'left' and \
                     self.map[self.y][self.x].left != True:
                 self.x -= 1
+                print()
+                self.show()
                 return 1
             elif direction == 'right' and \
                     self.map[self.y][self.x].right != True:
                 self.x += 1
+                print()
+                self.show()
                 return 1
         return 0
 

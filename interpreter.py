@@ -1248,15 +1248,15 @@ def make_robot(descriptor):
 if __name__ == '__main__':
 
     tests = ['Tests/factorial.txt', 'Tests/signed_matrix.txt', 'Tests/cells.txt',
-             'Tests/errors.txt', 'Tests/sort.txt']
-    algorithm = ['Algo/algo1.txt', 'Algo/algo2.txt']
-    maps = ['Map/map1.txt', 'Map/map3.txt']
+             'Tests/errors.txt', 'Tests/sort.txt', 'Algo/algo3.txt']
+    algorithm = ['Algo/algo1.txt', 'Algo/algo2.txt', 'Algo/algo3.txt']
+    maps = ['Map/map1.txt', 'Map/map3.txt', 'Map/map4.txt', 'Map/map5.txt']
     print("Enter: 1 - tests from file, 2 - data, 3 - robot")
     n = int(input())
     if n == 1:
         interpreter = Interpreter()
         print('Which test do you want to run?\n 0 - factorial\n 1 - signed_matrix\n 2 - cells\n'
-              ' 3 - errors\n 4 - sort\n ')
+              ' 3 - errors\n 4 - sort\n 5 - algo')
         num = int(input())
         if num not in range(len(tests)):
             print('Incorrect number. Goodbay!\n')
@@ -1269,19 +1269,8 @@ if __name__ == '__main__':
                     print(key,'=', value)
 
     elif n == 2:
-        data = '''signed n <- 5;
-matrix signed a(n, n);
-signed i <- 0;
-signed j <- 0;
-testrep (i < n)(
-	testrep (j < n)(
-		a(i, j) <- i + j;
-		j <- j + 1;
-	)
-	i <- i + 1;
-	j <- 0;
-)
-
+        data = '''signed a <- 0;
+        a <- a + 1;
 '''
 
         interpreter = Interpreter()
@@ -1292,9 +1281,9 @@ testrep (i < n)(
         pass
     elif n == 3:
         print(
-            "Which map do you want to use?\n0 - Map #1\n1 - Map #2")
+            "Which map do you want to use?\n0 - Map #1\n1 - Map #2\n2 - Map #3\n3 - Map #4")
         num = int(input())
-        print("Which algorithm do you want to use?\n0 - First algorithm\n1 - Second algorithm\n")
+        print("Which algorithm do you want to use?\n0 - First algorithm\n1 - Second algorithm\n2 - 3 algorithm")
         num2 = int(input())
         if num not in range(len(maps)) or num2 not in range(len(algorithm)):
             print('Wrong choice')

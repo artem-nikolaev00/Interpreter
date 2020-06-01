@@ -1,0 +1,279 @@
+ func find(signed dir)(
+	signed xxx <- 0;
+	signed tpf;
+	signed btf;
+	signed ltf;
+	signed rtf;
+	signed sum;
+	matrix signed tmp(5, 5);
+	signed count <- 0;
+	signed ex <- 0;
+	testrep(count < 100)(
+		tmp <- xray;
+		tpf <- tmp(1, 2);
+		btf <- tmp(3, 2);
+		ltf <- tmp(2, 1);
+		rtf <- tmp(2, 3);
+		sum <- tpf + btf + ltf + rtf;
+		testonce(sum = 0)(
+			ex <- top;
+		)
+		testonce(sum = 1)(
+			ex <- call per(dir);
+		)
+		testonce(sum = 2)(
+			testonce(dir = 1)(
+				testonce(ltf = 0)(
+					ex <- left;
+					xxx <- 2;
+				)
+				testonce(tpf = 0)(
+					ex <- top;
+					xxx <- 1;
+				)
+				testonce(rtf = 0)(
+					ex <- right;
+					xxx <- 4;
+				)
+			)
+			testonce(dir = 2)(
+				testonce(btf = 0)(
+					ex <- bottom;
+					xxx <- 3;
+				)
+				testonce(ltf = 0)(
+					ex <- left;
+					xxx <- 2;
+				)
+				testonce(tpf = 0)(
+					ex <- top;
+					xxx <- 1;
+				)
+			)
+			testonce(dir = 3)(
+				testonce(rtf = 0)(
+					ex <- right;
+					xxx <- 4;
+				)
+				testonce(btf = 0)(
+					ex <- bottom;
+					xxx <- 3;
+				)
+				testonce(ltf = 0)(
+					ex <- left;
+					xxx <- 2;
+				)
+			)
+			testonce(dir = 4)(
+				testonce(tpf = 0)(
+					ex <- top;
+					xxx <- 1;
+				)
+				testonce(rtf = 0)(
+					ex <- right;
+					xxx <- 4;
+				)
+				testonce(btf = 0)(
+					ex <- bottom;
+					xxx <- 3;
+				)
+			)
+			dir <- xxx;
+		)		
+		testonce(sum = 3)(
+			dir <- call move();
+		)
+		testonce(sum = 4)(
+			ex <- 2;
+		)
+		count <- count + 1;
+		testonce(ex = 2)(
+			count <- 1000;
+		)
+	)
+	ex;
+)
+
+func per(signed dir)(
+	signed m <- 0;
+	signed ex <- 0;
+	matrix signed tmp(5, 5);
+	tmp <- xray;
+	signed tps <- tmp(1, 2);
+	signed bts <- tmp(3, 2);
+	signed lts <- tmp(2, 1);
+	signed rts <- tmp(2, 3);
+	testonce(dir = 1)(
+		testonce(lts = 0)(
+			ex <- left;
+			dir <- 2;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+		testonce(tps = 0)(
+			ex <- top;
+			dir <- 1;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+		testonce(rts = 0)(
+			ex <- right;
+			dir <- 4;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+	)
+	testonce(dir = 2)(
+		testonce(bts = 0)(
+			ex <- bottom;
+			dir <- 3;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+		testonce(lts = 0)(
+			ex <- left;
+			dir <- 2;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+		testonce(tps = 0)(
+			ex <- top;
+			dir <- 1;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+	)
+	testonce(dir = 3)(
+		testonce(rts = 0)(
+			ex <- right;
+			dir <- 4;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+		testonce(bts = 0)(
+			ex <- bottom;
+			dir <- 3;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+		testonce(lts = 0)(
+			ex <- left;
+			dir <- 2;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+	)
+	testonce(dir = 4)(
+		testonce(tps = 0)(
+			ex <- top;
+			dir <- 1;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+		testonce(rts = 0)(
+			ex <- right;
+			dir <- 4;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+		testonce(bts = 0)(
+			ex <- bottom;
+			dir <- 3;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+	)
+	ex;
+)
+
+
+func move()(
+	matrix signed tmp(5, 5);
+	signed dir <- 0;
+	tmp <- xray;
+	signed tpm <- tmp(1, 2);
+	signed btm <- tmp(3, 2);
+	signed ltm <- tmp(2, 1);
+	signed rtm <- tmp(2, 3);
+	testonce (tpm = 0)(
+		top;
+		dir <- 1;
+	)
+	testonce (ltm = 0)(
+		left;
+		dir <- 2;
+	)
+	testonce (btm = 0)(
+		bottom;
+		dir <- 3;
+	)
+	testonce (rtm = 0)(
+		right;
+		dir <- 4;
+	)
+dir;
+)
+
+func start()(
+	signed dir <- 0;
+	matrix signed tmp(5, 5);
+	signed ex <- 0;
+	tmp <- xray;
+	signed tp;
+	signed bt;
+	signed lt;
+	signed rt;
+	tp <- tmp(1, 2);
+	bt <- tmp(3, 2);
+	lt <- tmp(2, 1);
+	rt <- tmp(2, 3);
+	testonce(tp = 0)(
+		ex <- top;
+		dir <- 1;
+		testonce(ex <> 2)(
+			ex <- call find(dir);
+		)
+	)
+	testonce(ex <> 2)(
+		testonce(lt = 0)(
+			ex <- left;
+			dir <- 2;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+	)
+	testonce(ex <> 2)(
+		testonce(rt = 0)(
+			ex <- right;
+			dir <- 3;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+	)
+	testonce(ex <> 2)(
+		testonce(bt = 0)(
+			ex <- bottom;
+			dir <- 4;
+			testonce(ex <> 2)(
+				ex <- call find(dir);
+			)
+		)
+	)
+	ex;	
+)
+
+call start();
